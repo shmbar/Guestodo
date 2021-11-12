@@ -1,0 +1,15 @@
+/* .MuiMenu-list li:first-child{
+	color:purple;
+	font-style: italic;
+} */
+.dltItem{
+	text-decoration: line-through!important;
+}
+
+
+
+@media only screen and (min-width: 600px) {
+ .customWidth .MuiDialog-container .MuiPaper-root{
+	max-width: 340px!important;
+}
+}

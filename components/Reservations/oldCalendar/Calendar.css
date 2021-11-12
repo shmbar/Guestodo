@@ -1,0 +1,18 @@
+body .fc .fc-event {
+    box-shadow: 0 4px 20px 0 rgba(0,0,0,.14), 0 7px 10px -5px #ccc;
+	padding-bottom: 3px;
+    padding-top: 3px;
+	padding-left: 8px;
+}
+
+body .fc-start {
+    margin-left: 140px;
+}
+
+body .fc-end {
+    margin-right: 140px;;
+}
+
+/* body .fc-resource-area{
+	width:15%!important;
+} */

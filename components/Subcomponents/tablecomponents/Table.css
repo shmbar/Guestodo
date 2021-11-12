@@ -1,0 +1,123 @@
+body .p-datatable .p-datatable-header, .p-treetable {
+    text-align: left;
+	border-top-left-radius: 0px!important;
+    border-top-right-radius: 0px!important;
+	border-left: 1px!important;
+    border-right: 1px!important; 
+}
+
+/* body .p-datatable th:last-child input {
+ display:none;
+} */
+
+.pannelImg{
+	background: linear-gradient(60deg, #26c6da, #00acc1);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(0, 172, 193,.4);
+}
+
+.pannelImgCl{
+	float: left;
+	margin-top: -25px;
+    border-radius: 3px;
+	padding:30px!important;
+	margin-right: 20px;
+}
+
+.Crdcont{
+	border-top: 1px solid #eee;
+	padding:1px!important;
+}
+
+p {
+    margin-top: 0;
+    margin-bottom: 5px!important;
+}
+
+body .p-datatable .p-datatable-tbody > tr {
+  
+    height: 40px!important;
+}
+
+.badge {
+        border-radius: 2px;
+        padding: .25em .5em;
+        text-transform: uppercase;
+        font-weight: 700;
+        font-size: 12px;
+        letter-spacing: .3px;
+}
+
+.MuiCheckbox-colorSecondary.Mui-checked {
+    color: #43a047!important;
+}
+
+body .p-datatable {
+    border-left: none;
+    border-right: none;
+}
+
+.p-column-filter{
+    width: 100%;
+}
+
+.p-treetable-emptymessage{
+    text-align: center!important;
+}
+
+/*********************************************************************/
+body .p-treetable .p-treetable-tbody > tr:nth-child(even) {
+    background-color: #ffffff!important;
+    
+}
+
+body .p-treetable .p-treetable-tbody > tr > td:not(:first-child) {
+    white-space: nowrap!important;
+    overflow: hidden!important;
+    text-overflow: ellipsis!important;
+
+}
+
+.tabs{
+	background: linear-gradient(60deg, #ab47bc, #261bcc);
+	box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(156, 39, 176,.4);
+	margin-top: -40px;
+	border-radius: 4px;
+}
+.bBottom{
+	border-bottom: 1px solid #ccc;
+}
+
+body .p-datatable .p-datatable-tbody > tr>td{
+	border-left:0px!important;
+	border-right:0px!important;
+	padding:0.4em!important;
+	white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.p-treetable .p-treetable-tbody > tr > td{
+    padding:0.4em!important;
+}
+
+body .p-datatable .p-datatable-thead > tr>th{
+	border-left:0px!important;
+	border-right:0px!important;
+}
+
+
+body .p-paginator {
+	border-left:0px!important;
+	border-right:0px!important;
+}
+
+body .p-paginator .p-dropdown {
+     height: auto!important; 
+}
+
+.MuiDialogActions-root {
+    justify-content: flex-start!important;
+}
+
+body .p-link:focus {
+    box-shadow: none!important;  
+}

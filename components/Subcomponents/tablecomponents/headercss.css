@@ -1,0 +1,89 @@
+
+.myFont{ font-family: 'Varela Round', sans-serif!important; }
+
+.noPaddinTopBot{
+    padding-top: 0px!important;
+    padding-bottom: 0px!important;
+}
+
+
+
+.p-dropdown-item { 
+    font-family: 'Varela Round', sans-serif!important;
+    text-align: right!important;
+}
+.p-multiselect-item{ font-family: 'Varela Round', sans-serif!important; }
+.p-multiselect-item label{ vertical-align: top!important; }
+
+
+input {
+      font-family: 'Varela Round', sans-serif!important; 
+}
+
+
+body .p-datatable .p-datatable-header {
+    padding: .25em .5em!important;
+	text-align: right!important;
+	border-left: none;
+    border-right: none;
+	border-top-left-radius: none;
+    border-top-right-radius: none; 
+}
+
+.searchInput{
+
+	/* margin-left: 8px!important;
+    margin-right: 8px!important;  */
+
+	padding-top: 15px!important;
+	
+}
+.searchInput input{
+	width: 100%;
+	 /* padding: 6px 0 1px!important;  */
+	font:initial;
+}
+.ownerSelect{
+	 text-align: left;
+	 font-weight: normal!important;
+	font-family: 'Varela Round', sans-serif!important;
+}
+.MuiInputBase-input {
+    padding: 8px 0 2px!important;
+}
+
+
+.colsFiltermenuTop{ top:45px!important;}
+
+.txtFont > span{
+	font-family: 'Varela Round', sans-serif!important;
+}
+
+.menuColFilter{
+	display: inline-flex;
+}
+
+.menuColFilterTitle{
+    text-align: left;
+    padding-left: 18px!important;
+    padding-top: 8px!important;
+    pointer-events: none;
+}
+.menuColFilterTitle:focus{ outline-width: 0;}
+.menuColFilter:focus{ outline-width: 0;}
+
+.noPaddRightLEft{
+    padding-right: 0!important;
+    padding-left: 0!important;
+}
+
+.menuColFilterReset{
+    padding-left: 20px!important;
+    padding-top: 8px!important;
+    color: blue;
+}
+
+.react-bootstrap-daterangepicker-container{
+	display:block!important;
+}
+

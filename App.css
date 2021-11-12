@@ -1,0 +1,39 @@
+body {
+  color: rgba(0, 0, 0, 0.87);
+  margin: 0;
+  font-size: 0.875rem;
+  font-family: 'Varela Round', sans-serif!important; 
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+  font-weight: 400;
+  line-height: 1.43;
+  letter-spacing: 0.01071em;
+ /* background-color: #eee!important; */
+}
+
+code {
+font-family: 'Varela Round', sans-serif!important; 
+}
+
+*{
+	outline: none!important;
+	/*user-select: none;  */
+}
+
+
+.demotext {
+text-shadow: 1px 1px 0 #BCBD13, 2px 3px 0 #9C9CED;
+}
+
+.ttlClr{
+  color:#193e6d;
+  padding: 12px 12px 0px 12px;
+}
+.ttlClr1{
+  color:#45afed;
+}
+html, body {
+ 	width: 100%;
+	height: auto;
+	background: white; 
+}

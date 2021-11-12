@@ -1,0 +1,7 @@
+/* .MuiMenu-list li:first-child{
+	color:purple;
+	font-style: italic;
+} */
+.dltItem{
+	text-decoration: line-through!important;
+}

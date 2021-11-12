@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css?family=Open+Sans:400,700');
+
+
+
+.textBelowLogo {
+    text-align: center;
+    padding-top: 10px;
+    font-size: 1.2em;
+    color: #193e6d;
+    font-family: 'Poppins', Sans-serif !important;
+    line-height: 1.4em;
+}
+
+.footerTtl{
+	color: #5ec198;
+    font-family: "Poppins", Sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: 0.5px;
+	text-align: center;
+}
+
+.bnft{
+	text-align: center;
+	font-family: "Poppins", Sans-serif;
+	line-height: 1.8em;
+	color: #193e6d;
+	text-decoration: none!important;
+}
+
+
+#ftr a:hover{
+    text-decoration: none!important;
+}
+
+.privacy{
+	color:#193e6d;
+	font-weight:600;
+}
+.privacy a:hover{
+	text-decoration: none;
+}
+
+@media screen and (max-width: 600px) {
+    .logoFooter {
+      padding-bottom: 20px;
+    }
+	.bnft, .footerEmail{
+		font-size: 12px;
+	}
+}
+

@@ -1,0 +1,21 @@
+body .p-dialog .p-dialog-content {
+    background-color: #eee!important;
+}
+
+.paperImg{
+	float: left;
+	margin-top: -40px;
+    border-radius: 3px;
+	padding:22px;
+	margin-right: 20px;
+}
+
+
+.bakgrclr{
+	background: linear-gradient(60deg, #26c6da, #00acc1);
+    box-shadow: 0 4px 20px 0 rgba(0, 0, 0,.14), 0 7px 10px -5px rgba(0, 172, 193,.4);
+	
+}
+.MuiDialog-paperFullScreen {
+    background: #eee!important;
+}
