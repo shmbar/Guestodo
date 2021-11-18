@@ -34,7 +34,7 @@ const findImg=(txt,y, chnnlslogo)=>{
 ///////////////////////////////////////////////////////////////////////////////////////////
 
 const eventColor=(slot)=>{
-	return slot.Confirmed==null ? '#dce4ea': slot.Confirmed ? '#dce4ea': 'yellow'
+	return slot.pStatus==='Confirmed' ? '#dce4ea': 'yellow';
 }
 export const inCalendar = (settings, slot, chnnlslogo, index) => {
 	

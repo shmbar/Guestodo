@@ -50,7 +50,7 @@ const Calendar = () => {
 				 for(let i=0; i<=rsrcs.length; i++){ //Create an empty table of all dates
 					if(rsrcs[i]!=null){
 						let scheduleApt =  arrTmp.reduce((o, key) => ({ ...o, [key]: null}), {});
-							rcDataPrp.filter(q=> !q.RsrvCncl).filter(x=> x.AptName===rsrcs[i].id).map((y,i)=>{
+							rcDataPrp.filter(q=> q.pStatus!=='Cancelled').filter(x=> x.AptName===rsrcs[i].id).map((y,i)=>{
 							return	getDatesBetweenDates(y.ChckIn,y.ChckOut).filter(q=> dateFormat(q,'mm') * 1===(date.month+1)).map(z=> 
 																				 
 									scheduleApt[z.getDate()]= 	dateFormat(z,'dd-mmm-yyyy')=== y.ChckIn && scheduleApt[z.getDate()]!=='e'? 's' :
@@ -92,7 +92,7 @@ const Calendar = () => {
 						>							
 						
 						<div style={mouseDown ? cellsFuncSelect(ind, i, slctdCell, schdl, resources, tableObj) : null} >
-                        {!loading && rcDataPrp.filter(q=> !q.RsrvCncl).filter(z => z.AptName === rs.id).map((slot, index) => {
+                        {!loading && rcDataPrp.filter(q=> q.pStatus!=='Cancelled').filter(z => z.AptName === rs.id).map((slot, index) => {
 							
                             return (
                                     scd === dateFormat(slot.ChckIn, 'dd') * 1 &&
@@ -191,9 +191,9 @@ const Calendar = () => {
 		
 		let tmpObj = {ChckIn : dateFormat(strt, 'dd-mmm-yyyy'),  ChckOut: dateFormat(end,'dd-mmm-yyyy'),
 					  'Transaction':  'RC'.concat(tmpRC).concat('_' + uuidv4()), Payments:[{P:'', Date:null, PM:'', 'id' : uuidv4()}], Vat:true,
-					 				  	PrpName: settings.apartments.filter(x=> x.id===AptNAme)[0]['PrpName'],	RsrvCncl:false, RsrvChn:'', NetAmnt:'', CnclFee:'', 
+					 				  	PrpName: settings.apartments.filter(x=> x.id===AptNAme)[0]['PrpName'],	RsrvChn:'', NetAmnt:'', CnclFee:'', 
 					  					NigthsNum: getNights(dateFormat(end,'dd-mmm-yyyy'), dateFormat(strt, 'dd-mmm-yyyy')), 
-						  				RsrvAmnt:'', TtlPmnt:'', BlncRsrv:'', GstName:'', AptName:	AptNAme, Confirmed:true,
+						  				RsrvAmnt:'', TtlPmnt:'', BlncRsrv:'', GstName:'', AptName:	AptNAme, pStatus: 'Confirmed',
 					 				  	dtls : {adlts: '', chldrn:'', Passport:'', email:'', mobile: '', phone: '', addrss:'', cntry:''} }
 		
 		selectValueOrder(tmpObj);

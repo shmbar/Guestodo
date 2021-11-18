@@ -126,6 +126,7 @@ return {
 				setIsSlotAvailable(!availORnotavail);
 			
 		} else {
+			
 			setValue({...value, [e.target.name]:e.target.value });
 			
 		} 

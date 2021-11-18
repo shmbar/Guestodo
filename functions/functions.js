@@ -848,3 +848,33 @@ export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
     	console.log('Done')
 	}) 
 }
+
+export const setNewRsrvCncl = async(uidCollection, collection )=>{
+	
+	let batch = db.batch();
+	
+	var citiesRef = db.collection(uidCollection).doc('alldata').collection(collection);
+	let arr = [];
+
+	await  citiesRef.get().then((querySnapshot) => {
+        querySnapshot.forEach(async(doc) => {
+			arr.push(doc.data())
+		});
+    });
+	
+	
+	for(let i in arr){
+		
+		let docRef = await db.collection(uidCollection).doc('alldata').collection(collection).doc(arr[i].Transaction);
+		let newObj = {...arr[i], pStatus: !arr[i].RsrvCncl ? 'Confirmed': 'Cancelled'}
+		delete newObj.RsrvCncl
+		await batch.set(docRef, newObj);
+	}
+	
+  
+	// Commit the batch
+	 await batch.commit().then(() => {
+    	console.log('Done')
+	}) 
+	
+}

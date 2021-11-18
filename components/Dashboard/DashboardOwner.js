@@ -8,7 +8,7 @@ import {ExpCompare, RevenueCompare, PLCompare, ExpenseGroup, PieChart, OccupPrcn
 import PannelData from './SubComponents/PannelData';
 import { makeStyles } from '@material-ui/core/styles';
 //import 'chartjs-plugin-datalabels';
-import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,setID,setPmnt} from '../../functions/functions.js';
+import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,setID,setPmnt, setNewRsrvCncl} from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 
 import Rsrv from '../../logos/pics/balancedue.svg';
@@ -265,7 +265,7 @@ const Dashboard = () => {
 	//await	setID(uidCollection, 'vatcalCompany_2021')
 	
 	//await setPmnt(uidCollection, 'vatcalCompany_2021', settings, 'paymentsCompany')
-		
+	//	await setNewRsrvCncl(uidCollection, 'reservations_2022')
    
 	}
 

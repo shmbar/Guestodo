@@ -25,7 +25,7 @@ import '../../Subcomponents/tablecomponents/Table.css';
 
 const tableCols = [
             {field: 'LstSave', header: 'Last Created ', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'Confirmed', header: 'Status ', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'pStatus', header: 'Status ', showcol: true, s:['xs','sm','md','lg', 'xl']},
 			{field: 'GstName', header: 'Guest', showcol: true, s:['xs','sm','md','lg', 'xl']},
 			{field: 'Transaction', header: 'Transaction', showcol: true, s:['md','lg', 'xl']},
 			{field: 'ChckIn', header: 'Check In', showcol: true, s:['xs','sm','md','lg', 'xl']},
@@ -110,14 +110,14 @@ const Table =() =>{
 		 tmpObj.Payments=[{P:'', Date:null, PM:'', 'id': uuidv4()}];	
 		 tmpObj.Vat=true;
 		 tmpObj.PrpName=propertySlct;
-		 tmpObj.RsrvCncl=false;
+	//	 tmpObj.RsrvCncl=false;
 		 tmpObj.RsrvChn='';		/////////////////////
 		 tmpObj.NetAmnt='';
-		 tmpObj.Confirmed=true;
+		 tmpObj.pStatus='Confirmed';
 		 tmpObj.CnclFee='';
 		 tmpObj.dtls = {adlts: '', chldrn:'', Passport:'', email:'', mobile: '',
 			phone: '', addrss:'', cntry:''};
-		 console.log(tmpObj)
+		
 		 return tmpObj;
     };
 	

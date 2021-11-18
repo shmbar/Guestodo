@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {MenuItem, InputLabel, Select, FormControl, TextField,
-		Grid, ListItemIcon,Tooltip}  from '@material-ui/core';
+		Grid, ListItemIcon}  from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -39,12 +39,6 @@ const useStyles = makeStyles(theme => ({
 		return lastD.setDate(lastD.getDate() - 1);
 	}
 */
-
-const CustomToolTip = withStyles({
-        tooltip: {
-            fontSize: 13,
-        },
-})(Tooltip);
 
 const RsrvAmounts = () =>{
 	const classes = useStyles();
@@ -133,6 +127,13 @@ const RsrvAmounts = () =>{
 					width={findImg(idToItem(settings.channels,value.RsrvChn, 'RsrvChn'),'width')} />
 	}
 	
+	const valueExist = rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]
+	let rsr = ['Tentative','Confirmed','Cancelled'].map((s,i)=>{
+						return <MenuItem key={s} value={s} disabled={i===0 && valueExist!=null  && (valueExist.pStatus==='Confirmed' || 
+															valueExist.pStatus==='Cancelled')}>{s}</MenuItem>
+				});
+	
+	
 	// let ObjProperty={id:uuid(),PrpName: '' , StartDate: null, EndDate : null, ManagCommission : '',
 	// 	IntCshFlBnce: '', BAccNum: '', show:true};
 	let ObjChannel={RsrvChn:'',ChnCmsn:'', MngCmsn:'', id: uuidv4(), show:true };
@@ -143,8 +144,7 @@ const RsrvAmounts = () =>{
 		setRunTab(tab)
 	}
 	
-	const cnfrmd = rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]
-	const	cnfrmdVerified = cnfrmd!=null ? (cnfrmd.Confirmed || cnfrmd.Confirmed==null) : false
+	
 	return (
 			<Grid container spacing={3} alignItems="flex-end">
 					<Grid item xs={12} md={7}>
@@ -197,8 +197,40 @@ const RsrvAmounts = () =>{
 					<Grid item xs={12} md={6} >
 							<CustomDatePicker />
 					</Grid>
-					<Grid item xs={12} md={6} >	</Grid>
-				
+					<Grid item xs={12} md={3}>
+						  	<FormControl className={classes.formControl}>
+							<InputLabel htmlFor="pStatus"
+										error={value.pStatus==='' && redValid ? true: false}
+									>Reservation Status</InputLabel>
+								<Select
+									value={value.pStatus}  
+									onChange={e=> write && handleChange(uidCollection, e,settings)			 }
+									inputProps={{
+										name: 'pStatus'
+									}}
+									fullWidth
+									error={value.pStatus==='' && redValid ? true: false}
+									>
+									{rsr}
+								</Select>
+							</FormControl>
+					</Grid>
+					{value.pStatus==='Cancelled' ?
+						<Grid item xs={12} md={3} style={{alignSelf: 'normal'}}> 
+
+									  <TextField   
+										value={value.CnclFee}       
+										onChange={e=>write && handleChange(uidCollection, e,settings)}
+										name="CnclFee"
+										label="Cancellation Fee"
+										InputProps={{inputComponent: NumberFormatCustom}}
+										fullWidth
+										error={(value.CnclFee==='' && redValid) ? true: false}
+									  />
+
+						</Grid>:
+						''
+					 }
 					
 					<Grid item xs={12} md={6} style={{alignSelf: 'normal'}}>
 						
@@ -207,7 +239,7 @@ const RsrvAmounts = () =>{
 								onChange={e=>write && handleChange(uidCollection, e,settings)}
 								name="NetAmnt"
 								label="Amount"
-								disabled={value.RsrvCncl===false ? false:true}
+								disabled={value.pStatus==='Cancelled'}
 								InputProps={{inputComponent: NumberFormatCustom}}
 								fullWidth
 								 error={value.NetAmnt==='' && redValid ? true: false}
@@ -230,54 +262,7 @@ const RsrvAmounts = () =>{
       					/>	
 						</FormControl>
 					</Grid>
-					<Grid item xs={12} md={3}>
-						 <CustomToolTip title='Reservation can be confirmed or tentative'>
-						<FormControl >
-							<FormControlLabel
-							control={
-							  <GreenCheckbox
-								checked={value.Confirmed==null? true : value.Confirmed}
-								onChange={handleChangeTrueFalse('Confirmed')}
-								value="Confirmed"
-								disabled={!write  || cnfrmdVerified}
-							  />
-							}
-							label='Reservation Confirmed'
-							labelPlacement="end"
-      					/>	
-						</FormControl>
-						</CustomToolTip>
-					</Grid>
-					<Grid item xs={12} md={6} style={{alignSelf: 'normal'}}> 
 					
-								  <TextField   
-									value={value.CnclFee}       
-									onChange={e=>write && handleChange(uidCollection, e,settings)}
-									name="CnclFee"
-									label="Cancellation Fee"
-									InputProps={{inputComponent: NumberFormatCustom}}
-									disabled={value.RsrvCncl===false ? true:false}
-									fullWidth
-									error={(value.CnclFee==='' && value.RsrvCncl) && redValid ? true: false}
-								  />
-						
-					</Grid>
-					<Grid item xs={12} md={6}>
-						<FormControl >
-							<FormControlLabel
-								control={
-								  <GreenCheckbox
-									checked={value.RsrvCncl}
-									onChange={handleChangeTrueFalse('RsrvCncl', vat)}
-									value="RsrvCncl"
-								  />
-									}
-								label="Cancellation"
-								disabled={!write}
-								labelPlacement="end"
-								/>	
-						</FormControl>
-					</Grid>
 					<Grid item xs={12} md={8} > 
 						<TextField
 							value={value.Notes}   

@@ -102,14 +102,14 @@ const PaymentsPaper = (props) =>{
 						onChange={e=> write && handleChangePmnts(e, i)}
 						label={ `Payment #${i+1}`}
 						fullWidth
-						disabled={!value.Confirmed}
+						disabled={value.pStatus==='Tentative'}
 						error={value.Payments[i].P==='' && value.Payments[i].Date!==null && redValid ? true: false}	
 						InputProps={{inputComponent: NumberFormatCustom, endAdornment: i===0 ?
 							<InputAdornment position="end">
 								<Tooltip title="Paste amount here">
 									<span>
 									<IconButton
-											disabled={!value.Confirmed}
+											disabled={value.pStatus==='Tentative'}
 										  aria-label="toggle password visibility"
 									      onClick={write && CopyAmount}
 									>
@@ -128,7 +128,7 @@ const PaymentsPaper = (props) =>{
 						okLabel={false}
 						clearable
 						label='Payment Date'
-						disabled={!value.Confirmed}
+						disabled={value.pStatus==='Tentative'}
 						value={value.Payments[i].Date}
 						onChange={date=> write && handleChangeDPmnts('Date',date, i)}
 						format="dd-MMM-yyyy"
@@ -145,7 +145,7 @@ const PaymentsPaper = (props) =>{
 					<TextField
 						select
 						label="Payment Method"
-						disabled={!value.Confirmed}
+						disabled={value.pStatus==='Tentative'}
 						value={idToItem(settings.pmntMethods, value.Payments[i].PM, 'item')	}
 						onChange={e=> write && (e.target.value!=='Add new method'? handleChangePmnts(e,i, settings):
 												Add())}
@@ -161,7 +161,7 @@ const PaymentsPaper = (props) =>{
 				{write && <Box display={{ xs: 'none', md: 'block'}} style={{paddingTop: '10px' }}>
 					<Grid item md={1} >	
 							<Tooltip title="Delete payment" aria-label='Delete'><span>
-								<IconButton aria-label='Delete' onClick={()=> delPmnt(i)}  disabled={!value.Confirmed}>
+								<IconButton aria-label='Delete' onClick={()=> delPmnt(i)}  disabled={value.pStatus==='Tentative'}>
 									<DeleteIcon />
 								</IconButton></span>
 							</Tooltip>

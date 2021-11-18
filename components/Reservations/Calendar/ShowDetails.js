@@ -124,7 +124,7 @@ export default function MouseOverPopover(props) {
                             </Grid>
 							 <Grid item  xs={12} style={{ paddingLeft: '11px', paddingTop: '7px' }} >
                                 <span className="header2-text" >
-                                { `Reservation is`} {props.slot.Confirmed==null? 'Confirmed':  props.slot.Confirmed? 'Confirmed': 'Tentative'}
+                                { `Reservation is`} {props.slot.pStatus==='Confirmed'? 'Confirmed': 'Tentative'}
 								 </span>
                             </Grid>
                             <Grid item xs={12} style={{ paddingBottom: '0px', textAlign: 'end' }} onClick={(e) => e.stopPropagation()}>

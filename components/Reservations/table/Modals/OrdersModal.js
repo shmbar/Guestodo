@@ -176,7 +176,7 @@ const OrdersModal = (props) =>{
 		let validation = formValidation(value,
 						['GstName','RsrvChn','ChckIn','ChckOut', 'AptName','NetAmnt']);
 		
-		if(value.RsrvCncl && value.CnclFee===''){
+		if(value.pStatus==='Cancelled' && value.CnclFee===''){
 			setRedValid(true);
 			setSnackbar( {open:true, msg: 'Cancellation amount is missing', variant: 'warning'});
 			return};
@@ -259,8 +259,8 @@ const OrdersModal = (props) =>{
 					await delData(uidCollection, 'expenses', dateFormat(newObj.ChckIn,'yyyy'),ChnlTRex); //delete commission from server
 
 				}	
-				//update management commission only if the reservaion is confirmed
-				if(newObj.Confirmed){
+				//update management commission only if the reservaion is confirmed or cancelled
+				if(newObj.pStatus!=='Tentative'){
 					let tmpMngCmsnVal = MngCmsnObj(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn )
 					await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpMngCmsnVal)
 				}
@@ -271,7 +271,7 @@ const OrdersModal = (props) =>{
 						newObj.ChnlTRex = 'EX'.concat( await getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4()); //create new commission transaction
 					}
 
-					if(newObj.Confirmed)updateCommissionExpense(newObj.ChnlTRex, newObj.MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,
+					if(newObj.pStatus!=='Tentative')updateCommissionExpense(newObj.ChnlTRex, newObj.MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,
 										tmpMngCmsnAddVatYesNo)
 			}
 			
@@ -279,7 +279,7 @@ const OrdersModal = (props) =>{
 			setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(newObj.ChckIn,'yyyy'), newObj)), msg: 'Order has been updated!',
 						  variant: 'success'});
 			
-			if(!value.RsrvCncl){ //Reservation is active
+			if(value.pStatus!=='Tentative'){ //Reservation is active
 				//in case apt is changed, find the previous apt
 				let oldApt = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0]['AptName'];
 				updateSlots(uidCollection, oldApt, value.AptName,value.Transaction, value.ChckIn,value.ChckOut, startDold , endDold)
@@ -318,7 +318,8 @@ const OrdersModal = (props) =>{
 						setRcDataPrp(tmpArrAdd);
 					}
 
-					if(tmpObj.Confirmed)createCommissionExpense(false, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
+					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(false, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn,
+																			tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
 					//do nothing for channel commission , managemnt transaction, management commisson, include or not include vat
 				}else{
 					ChnlTRex = await 'EX'.concat( await  getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4()); //value.tmpChanneCommissionTR;  //channel Advance Commission transaction
@@ -339,12 +340,13 @@ const OrdersModal = (props) =>{
 						setRcDataPrp(tmpArrAdd);
 					}
 
-					if(tmpObj.Confirmed)createCommissionExpense(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
+					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,
+																			tmpMngCmsnAddVatYesNo); 
 					//channel transacton, managemnt transaction, management commisson, include or not include vat
 
 				}
 			
-			if(!value.RsrvCncl){ //Reservation is active
+			if(value.pStatus!=='Tentative'){ //Reservation is active
 				addSlots(uidCollection, value.AptName,value.Transaction, value.ChckIn,value.ChckOut)
 			}
 			
