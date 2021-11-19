@@ -62,8 +62,6 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 	}else if (column.field==='Fund') {
 		tmp = scrSize !== 'xs' ? showItem(rowData, column, settings.funds): <> <span className="p-column-title">{column.header}
 		</span>{showItem(rowData, column, settings.funds)} </>
-	}else if (column.field==='Confirmed' ) {
-		tmp = scrSize !== 'xs' ? showStatusReservation(rowData, column) : <> <span className="p-column-title">{column.header}</span>{showStatusReservation(rowData, column)} </>
 	}else{
 		tmp = scrSize !== 'xs' ? rowData[column.field]: <> <span className="p-column-title">{column.header}</span>{rowData[column.field]} </>
 	}
@@ -124,9 +122,6 @@ const SetRedGreen=(rowData, column)=>{
 		
 };
 
-const showStatusReservation=(rowData, column)=>{
-	return rowData.Confirmed==null ? 'Confirmed': rowData.Confirmed ? 'Confirmed': 'Tentative'
-}
 
 const lineThrough = (rowData, column) =>{
 	return !rowData.show ? <span style={{textDecoration: 'line-through'}}>{rowData['item']}</span>:

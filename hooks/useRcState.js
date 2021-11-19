@@ -111,13 +111,15 @@ return {
 			setValue({...value, [e.target.name]:settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'] });	
 			
 			//load slots of the current year
-			let slotsData = await readDataSlots(uidCollection, 'slots', new Date().getFullYear(), null, settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'])
+			let slotsData = await readDataSlots(uidCollection, 'slots', new Date().getFullYear(), null,
+												settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'])
 			setSlotsTable(slotsData.dates);
 			setRcTable(slotsData.rc);
 			
 		
 			let availORnotavail = (value.ChckIn!==null && value.ChckOut !==null && e.target.value!=='') ?
-				await checkAvailableSlot(uidCollection, settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'], value.Transaction, value.ChckIn, value.ChckOut)	:null;
+				await checkAvailableSlot(uidCollection, settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'],
+										 value.Transaction, value.ChckIn, value.ChckOut)	:null;
 	
 				if(availORnotavail){
 					setSnackbar( {open:true, msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
@@ -125,6 +127,19 @@ return {
 				
 				setIsSlotAvailable(!availORnotavail);
 			
+			
+		}else if(e.target.name==='pStatus'){    //name==='RsrvCncl'
+	
+			setValue({ ...value, [e.target.name]: e.target.value,
+							'RsrvAmnt': e.target.value!=='Cancelled' ? +value.NetAmnt : +value.CnclFee,
+							'BlncRsrv': e.target.value==='Cancelled' ? +(value.CnclFee-value.TtlPmnt) :  +(value.NetAmnt-value.TtlPmnt),
+							'PmntStts': e.target.value==='Cancelled' ? paymentStatus(value.TtlPmnt, +value.CnclFee) : 
+									paymentStatus(value.TtlPmnt, +value.NetAmnt),
+							'TtlRsrvWthtoutVat': e.target.value!=='Cancelled' ? (value.Vat===false  ?  +value.NetAmnt :
+								 +value.NetAmnt/(1+parseFloat(settings.vat)/100) ) : ( value.Vat===false ? +value.CnclFee : 
+													  +value.CnclFee/(1+parseFloat(settings.vat)/100) )
+						});	 
+	
 		} else {
 			
 			setValue({...value, [e.target.name]:e.target.value });
@@ -169,7 +184,8 @@ return {
 
 			let availORnotavail = (value.ChckIn!==null && name==='ChckOut' && value.AptName!=='') ?
 				await checkAvailableSlot(uidCollection, value.AptName, value.Transaction, value.ChckIn, val) :
-				(value.ChckOut!==null && name==='ChckIn' && value.AptName!=='') ? await checkAvailableSlot(uidCollection, value.AptName,value.Transaction, val, value.ChckOut):null
+				(value.ChckOut!==null && name==='ChckIn' && value.AptName!=='') ? await checkAvailableSlot(uidCollection, 
+																			value.AptName,value.Transaction, val, value.ChckOut):null
 		
 				if(availORnotavail){
 					setSnackbar( {open:true, msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
@@ -199,19 +215,9 @@ return {
 		if(name==='Vat'){
    	 		setValue({ ...value, [name]: e.target.checked,
 			 		'TtlRsrvWthtoutVat': 
-			 		e.target.checked===false ? (!value.RsrvCncl ?  +value.NetAmnt : +value.CnclFee ) :
-			 		( !value.RsrvCncl ?	+value.NetAmnt/(1+parseFloat(vat)/100) : +value.CnclFee/(1+parseFloat(vat)/100) )
+			 		e.target.checked===false ? (value.pStatus!=='Cancelled' ?  +value.NetAmnt : +value.CnclFee ) :
+			 		( value.pStatus!=='Cancelled' ?	+value.NetAmnt/(1+parseFloat(vat)/100) : +value.CnclFee/(1+parseFloat(vat)/100) )
 			 	 });
-		}else if(name==='RsrvCncl'){    //name==='RsrvCncl'
-			setValue({ ...value, [name]: e.target.checked,
-								'RsrvAmnt': e.target.checked===false ? +value.NetAmnt : +value.CnclFee,
-								'BlncRsrv': e.target.checked ? +(value.CnclFee-value.TtlPmnt) :  +(value.NetAmnt-value.TtlPmnt),
-								'PmntStts': e.target.checked ? paymentStatus(value.TtlPmnt, +value.CnclFee) : paymentStatus(value.TtlPmnt, +value.NetAmnt),
-								'TtlRsrvWthtoutVat': 
-								e.target.checked===false ? (value.Vat===false  ?  +value.NetAmnt :  +value.NetAmnt/(1+parseFloat(vat)/100) ) : 
-								( value.Vat===false ? +value.CnclFee : +value.CnclFee/(1+parseFloat(vat)/100) )
-					});	 
-
 		}else{
 			setValue({ ...value, [name]: e.target.checked})
 		}	

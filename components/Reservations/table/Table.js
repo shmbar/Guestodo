@@ -101,6 +101,8 @@ const Table =() =>{
 	
 	 const createEmptyObj = () =>{
 		 
+		const tmpArrApts=settings.apartments.filter(x=> x.PrpName===propertySlct)
+		 
         let tmpObj={};
         tableCols.map(k =>k.field).map(q =>{
 		return tmpObj[q]= (q==='ChckIn' || q==='ChckOut' ) ? null: '';
@@ -115,6 +117,7 @@ const Table =() =>{
 		 tmpObj.NetAmnt='';
 		 tmpObj.pStatus='Confirmed';
 		 tmpObj.CnclFee='';
+		 tmpObj.AptName= tmpArrApts.length===1 ? tmpArrApts[0].id : '';
 		 tmpObj.dtls = {adlts: '', chldrn:'', Passport:'', email:'', mobile: '',
 			phone: '', addrss:'', cntry:''};
 		

@@ -109,9 +109,9 @@ export default function PaperSheet() {
 		
 
 			for(let i=0; i<rcDataPrp.length;i++){
-				nightsNum+= rcDataPrp[i].Transaction!=null ? (!rcDataPrp[i].Confirmed ? 0 : +rcDataPrp[i].NigthsNum) : 0;
-				reservs+= (!rcDataPrp[i].Confirmed ? 0 : +rcDataPrp[i].RsrvAmnt);
-				blnxrsrv+= (!rcDataPrp[i].Confirmed ? 0 : +rcDataPrp[i].BlncRsrv);
+				nightsNum+= rcDataPrp[i].Transaction!=null ? (rcDataPrp[i].pStatus==='Tentative' ? 0 : +rcDataPrp[i].NigthsNum) : 0;
+				reservs+= (rcDataPrp[i].pStatus==='Tentative' ? 0 : +rcDataPrp[i].RsrvAmnt);
+				blnxrsrv+= (rcDataPrp[i].pStatus==='Tentative' ? 0 : +rcDataPrp[i].BlncRsrv);
 			}
 		
 		setPnldata({avg:reservs!==0 ?addCommas(reservs/nightsNum): 0,

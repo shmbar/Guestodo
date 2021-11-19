@@ -194,7 +194,7 @@ export default function PaperSheet() {
 			for (let i = 0; i < listDataRC.length; i++) {  //Income
 				let ChckIn = dateFormat(listDataRC[i].ChckIn, "yyyy-mm");
 
-				if (ChckIn >= From && ChckIn <= To && (listDataRC[i].Confirmed==null || listDataRC[i].Confirmed)) {
+				if (ChckIn >= From && ChckIn <= To && listDataRC[i].pStatus!=='Tentative') {
 					tableArr.push(RC(listDataRC[i]));
 				}
 			}

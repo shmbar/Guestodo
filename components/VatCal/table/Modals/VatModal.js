@@ -149,7 +149,7 @@ const VatModal = () =>{
 			let ChckIn = dateFormat(listDataRC[i].ChckIn, "yyyy-mm");
 			let val=listDataRC[i];
 			
-			if(ChckIn>=From && ChckIn<=To && (val.Confirmed==null || val.Confirmed)){
+			if(ChckIn>=From && ChckIn<=To && val.pStatus!=='Tentative' ){
 				valueVatTmp = pushArr(valueVatTmp,val /*,Yahas*/);
 			}
 		}
