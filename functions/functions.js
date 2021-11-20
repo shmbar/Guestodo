@@ -596,12 +596,13 @@ export const deleteSlots = async(uidCollection, apt, transaction, startD, endD) 
 	let tmppDate = new Date(endD);
 	let prevDay = tmppDate.setDate(tmppDate.getDate() - 1);
 	
+
 	for (let y = dateFormat(startD,"yyyy"); y <= dateFormat(prevDay,"yyyy"); y++) {
 
 	await db.collection(uidCollection).doc('slots').collection(y.toString()).doc(apt).get()
 		
 	.then(async(doc) => {
-		
+	
 				//Delete the slots. 
 				let batch = db.batch();
 				let path = db.collection(uidCollection).doc('slots').collection(y.toString()).doc(apt);

@@ -243,7 +243,8 @@ const OrdersModal = (props) =>{
 		let oldVal = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0];
 		let startDold;
 		let endDold;
-		if(oldVal===null){
+		
+		if(oldVal!=null){
 			startDold = oldVal.ChckIn
 			endDold = oldVal.ChckOut
 		}
@@ -279,11 +280,12 @@ const OrdersModal = (props) =>{
 			setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(newObj.ChckIn,'yyyy'), newObj)), msg: 'Order has been updated!',
 						  variant: 'success'});
 			
-			if(value.pStatus!=='Tentative'){ //Reservation is active
+			if(value.pStatus==='Confirmed'){ //Reservation is active
 				//in case apt is changed, find the previous apt
+				
 				let oldApt = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0]['AptName'];
 				updateSlots(uidCollection, oldApt, value.AptName,value.Transaction, value.ChckIn,value.ChckOut, startDold , endDold)
-			}else{
+			}else if(value.pStatus==='Cancelled'){
 				deleteSlots(uidCollection, value.AptName , value.Transaction, value.ChckIn, value.ChckOut)
 			}
 			
@@ -291,8 +293,8 @@ const OrdersModal = (props) =>{
 			
 			
 			let pmtnsObj = value.Payments.map(x=>{
-					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date), 'Transaction': value.Transaction,
-							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'], ChnPrcnt: value.ChnPrcnt, Vat: value.Vat, 
+					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date), 'Transaction': newObj.Transaction,
+							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'], ChnPrcnt: newObj.ChnPrcnt, Vat: newObj.Vat, 
 							ChnlTRex: !tmpChnlCmsn ? '': newObj.ChnlTRex}
 			})
 			let olPayments = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0]['Payments'];
@@ -346,7 +348,7 @@ const OrdersModal = (props) =>{
 
 				}
 			
-			if(value.pStatus!=='Tentative'){ //Reservation is active
+			if(value.pStatus!=='Cancelled'){ //Reservation is active
 				addSlots(uidCollection, value.AptName,value.Transaction, value.ChckIn,value.ChckOut)
 			}
 			

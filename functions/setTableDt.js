@@ -91,7 +91,7 @@ const showCommas=(rowData, column, cur)=>{
 
 function addCommas(x) {
 	//var parts = Math.round(x).toString().split('.');
-	return Num2(x)//parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+	return Num2(+x)//parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 }
 
 const brandTemplate = (rowData)=> {

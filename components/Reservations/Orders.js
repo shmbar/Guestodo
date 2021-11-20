@@ -93,10 +93,10 @@ export default function PaperSheet() {
 				setRcDataPrp(listDataRC);
 			setLoading(false);
 		}
-		
-		
+	
+	
 		(propertySlct!=null ||  multiPropertySlct.length!==0) && loadData()
-		
+	
 
   },[setLoading, setRcDataPrp, date, uidCollection, propertySlct, multiPropertySlct, calendarView, settings]);
 	

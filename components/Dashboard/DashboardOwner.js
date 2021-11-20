@@ -263,7 +263,7 @@ const Dashboard = () => {
 	const runAA=async()=>{
 		console.log('start run Id')
 	//await	setID(uidCollection, 'vatcalCompany_2021')
-	
+		
 	//await setPmnt(uidCollection, 'vatcalCompany_2021', settings, 'paymentsCompany')
 	//	await setNewRsrvCncl(uidCollection, 'reservations_2022')
    

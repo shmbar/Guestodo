@@ -200,11 +200,11 @@ export default function DatesRangePicker(props) {
 	
 	const laotData=async(yr)=>{
 		let slotsData = await readDataSlots(uidCollection, 'slots',yr, null, value.AptName)
-		
-		slotsData=[...slotsTable, ...slotsData.dates]
-		setSlotsTable(slotsData);
-		
+	
+
+		setSlotsTable([...slotsTable, ...slotsData.dates]);
 		let rcData=[...rcTable, ...slotsData.rc]
+
 		setRcTable(rcData);
 	}
 	

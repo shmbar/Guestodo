@@ -23,6 +23,7 @@ import EditDel from '../../Subcomponents/EditDel'
 import '../../Subcomponents/tablecomponents/Table.css';
 //import '../../Subcomponents/tablecomponents/Table1.scss';
 
+const dateFormat = require('dateformat');
 const tableCols = [
             {field: 'LstSave', header: 'Last Created ', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'pStatus', header: 'Status ', showcol: true, s:['xs','sm','md','lg', 'xl']},
@@ -154,7 +155,7 @@ const Table =() =>{
 					{...rowData,'Transaction' : await  getNewTR(uidCollection, 'lastTR', 'lastTR', 'RC') };
 		selectValue(tmp)
 		
-		let slotsData = await readDataSlots(uidCollection, 'slots', new Date().getFullYear(), null, tmp.AptName)
+		let slotsData = await readDataSlots(uidCollection, 'slots', dateFormat(tmp.ChckIn, 'yyyy'), null, tmp.AptName)
 		setSlotsTable(slotsData.dates);
 		setRcTable(slotsData.rc)
 	}

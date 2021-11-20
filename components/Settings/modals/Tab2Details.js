@@ -218,7 +218,7 @@ const Tab2Details = (props) => {
 				)}
 			</Grid>
 
-			<Grid item xs={12} style={{ paddingBottom: '12px' }}>
+			<Grid item xs={12} style={{ padding: '20px 0'}}>
 				<Divider style={{ marginBottom: '10px' }} />
 				Management Commission Settings
 			</Grid>
@@ -303,7 +303,7 @@ const Tab2Details = (props) => {
 						</FormControl>
 				</Grid>
 			</Grid>
-			<Grid container direction="row" spacing={3}>
+			{/*<Grid container direction="row" spacing={3}>
 				<Grid item xs={12} md={6}>
 					<TextField
 							value={valueSettings.ExtraRevCommission}
@@ -316,7 +316,7 @@ const Tab2Details = (props) => {
 							}}
 					/>
 				</Grid>
-			</Grid>
+			</Grid> */}
 		</div>
 	);
 };
