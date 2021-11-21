@@ -174,11 +174,16 @@ const OrdersModal = (props) =>{
 	
 		//validation
 		let validation = formValidation(value,
-						['GstName','RsrvChn','ChckIn','ChckOut', 'AptName','NetAmnt']);
+						['GstName','RsrvChn','ChckIn','ChckOut', 'AptName']);
 		
 		if(value.pStatus==='Cancelled' && value.CnclFee===''){
 			setRedValid(true);
 			setSnackbar( {open:true, msg: 'Cancellation amount is missing', variant: 'warning'});
+			return};
+		
+		if(value.pStatus!=='Cancelled' && value.NetAmnt===''){
+			setRedValid(true);
+			setSnackbar( {open:true, msg: 'Reservation amount is missing', variant: 'warning'});
 			return};
 
 		if(settings.vat==null){

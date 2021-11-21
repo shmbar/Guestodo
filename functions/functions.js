@@ -133,9 +133,9 @@ export const readDataPerPropertyDates = (uidCollection, collection, property, ye
 
 /////////////////////////////////////////////////////////
 
-export const readDataMultiPropertyDates = (uidCollection, collection, properties, year, month)=>{   //read reservations and expenses
+export const readDataMultiPropertyDates = async(uidCollection, collection, properties, year, month)=>{   //read reservations and expenses
 	
-	return 	db.collection(uidCollection).doc('alldata').collection(collection + '_' + year).where('PrpName', 'in', properties)
+	return 	await db.collection(uidCollection).doc('alldata').collection(collection + '_' + year).where('PrpName', 'in', properties)
 			.where('m', '==', dateFormat(new Date(year, month, 1), "mm")).get()
 			.then(snapshot => {
 					snapshot.empty && console.log('No matching documents');

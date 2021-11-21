@@ -34,7 +34,7 @@ const Calendar = () => {
 	const [tableObj, setTableObj] = useState([]);
 	
      useEffect(() => {
-		 
+		
 				let rsrcs = settings.apartments != null ? settings.apartments
 						.filter((x) => multiPropertySlct.includes(x.PrpName))
 						.map((y) => ({ name: y.AptName, id: y.id })) : [];

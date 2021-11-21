@@ -86,7 +86,7 @@ const Main =(props) =>{
 	const {loading, displayVat, settings, setOwnerList, setPropertyList, setFundList, openMenu,
 		 setOpenMenu,setSettings, setSettingsShows,setCshFlowTableCompany} = useContext(SettingsContext);
 	const {admn, uid, uidCollection, user, stuff}  = useContext(AuthContext);
-	const {setValueOwner, setPropertySlct, setFundSlct, page, setPage, setCheckedCalendar} = useContext(SelectContext);
+	const {setValueOwner, setPropertySlct, setFundSlct, page, setPage, setCheckedCalendar, setMultiPropertySlct} = useContext(SelectContext);
 	
 	
 	const useStyles = makeStyles(theme => ({
@@ -186,6 +186,7 @@ const Main =(props) =>{
 				setPropertyList(properties);
 			}else{
 				setPropertySlct(sets.properties.filter(x=> x.PrpName===properties[0])[0]['id']);
+				setMultiPropertySlct([sets.properties.filter(x=> x.PrpName===properties[0])[0]['id']])
 				setFundSlct(	sets.funds.filter(y=> y.Owner===sets.properties.filter(x=> x.PrpName===properties[0])[0]['Owner'])[0]['id']	);
 			}
 			
@@ -200,7 +201,8 @@ const Main =(props) =>{
 
 			setPage(/*'Permissions' */  'DashboardOwner'  /*'Reservations'*/)
 		
-	},[ admn, stuff, setSettingsShows, uid, uidCollection ,setFundSlct, setFundList, setPage, setPropertyList, setPropertySlct, setCheckedCalendar])
+	},[ admn, stuff, setSettingsShows, uid, uidCollection ,setFundSlct, setFundList, setPage, setPropertyList, setPropertySlct,
+	   setMultiPropertySlct, setCheckedCalendar])
 		
 		
 	

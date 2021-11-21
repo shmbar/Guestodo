@@ -18,10 +18,9 @@ export default function OwnerSelect() {
 
 	useEffect(()=>{
 		
-		if(multiPropertySlct.length===0 && propertySlct){
+		if(multiPropertySlct.length<=1 && propertySlct){
 			const propName = settings.properties.filter(x=> x.id===propertySlct)[0]['PrpName']
 			setCheckedCalendar({...propertyList.reduce((o, key) => ({ ...o, [key]: false}), {}), 'All' :false, [propName] : true}		)
-			
 		} 
 
 	},[setCheckedCalendar, propertyList, propertySlct, settings, multiPropertySlct])
@@ -67,7 +66,7 @@ export default function OwnerSelect() {
 							tmp = key;
 						}
 			}
-			
+		
 			return tmp;
 		}else if(checkedCalendar['All']){
 			return Object.values(checkedCalendar).filter((value) => value).length-1 + ' Properties selected'
@@ -135,7 +134,8 @@ export default function OwnerSelect() {
 											{option}
 										</MenuItem>
 									))}
-									<Divider variant="middle" />
+								{propertyList.length!==0 && <Divider variant="middle" /> }
+								{propertyList.length!==0 &&
 									<div>
 										<Checkbox
 											checked={checkedCalendar['All']}
@@ -146,13 +146,14 @@ export default function OwnerSelect() {
 											onChange={(event) => handleMenuItemClick(event, 'All')}
 										/>
 										All
-									</div>
-									<div style={{width:'100%', textAlign: 'center'}}>
-										<Button variant="outlined" color="primary" style={{marginTop: '15px', width: '135px'}} onClick={loadData}>
-										Apply
-								  	</Button>
-									</div>
-									
+									</div> }
+									{propertyList.length!==0 &&
+										<div style={{width:'100%', textAlign: 'center'}}>
+											<Button variant="outlined" color="primary" style={{marginTop: '15px', width: '135px'}} onClick={loadData}>
+												Apply
+								  			</Button>
+										</div> 
+									 }
 								</MenuList>
 							</ClickAwayListener>
 						</Paper>

@@ -68,11 +68,11 @@ export default function PaperSheet() {
 			let listDataRC=[];
 			setLoading(true);
 				
-				if(!calendarView){ //calendar
+				if(!calendarView){ 
 					
 				 listDataRC = await readDataPerPropertyDates(uidCollection, 'reservations', propertySlct, date.year, date.month);
 				
-				}else{
+				}else{ //calendar
 				
 				 listDataRC = await readDataMultiPropertyDates(uidCollection, 'reservations', multiPropertySlct, date.year, date.month);
 				 let aptList = settings.apartments.filter(x=> multiPropertySlct.includes(x.PrpName)).map(y=> y.id);
@@ -94,9 +94,9 @@ export default function PaperSheet() {
 			setLoading(false);
 		}
 	
-	
+		
 		(propertySlct!=null ||  multiPropertySlct.length!==0) && loadData()
-	
+
 
   },[setLoading, setRcDataPrp, date, uidCollection, propertySlct, multiPropertySlct, calendarView, settings]);
 	
