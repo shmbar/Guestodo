@@ -148,7 +148,7 @@ export default function CashFlowTable(props) {
 				})
 				
 				let BalancedShauli = setBalance(shauli, settings.funds.filter(x=> x.id===fundSlct)[0]['IntCshFlBnce']);
-			
+		
 				BalancedShauli = convId2Item(BalancedShauli, ['ExpInc','VendChnnl'], settings)
 			
 				setTableData(BalancedShauli);

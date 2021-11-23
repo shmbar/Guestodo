@@ -107,6 +107,7 @@ const showDatesMonth=(rowData, column)=>{
 
 const SetGreen=(rowData, column)=>{
 	let tmp = addCommas(rowData[column.field]);	
+
 	 return <span style={{color: 'green'}}>{tmp!=='0'? tmp: ''}</span>; 
 };
 

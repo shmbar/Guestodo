@@ -262,10 +262,10 @@ const Dashboard = () => {
 	
 	const runAA=async()=>{
 		console.log('start run Id')
-	//await	setID(uidCollection, 'vatcalCompany_2021')
+	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
 		
-	//await setPmnt(uidCollection, 'vatcalCompany_2021', settings, 'paymentsCompany')
-	//	await setNewRsrvCncl(uidCollection, 'reservations_2022')
+	await setPmnt(uidCollection, 'incomeCompany_2021', settings, 'paymentsCompany') //paymentsCompany
+	//	await setNewRsrvCncl('3dd6714a-5777-43d1-b87b-67eee361d6e4', 'reservations_2021')
    
 	}
 
@@ -323,7 +323,7 @@ const Dashboard = () => {
 					</Paper>
 		  		</Grid>
 		  	</Grid>
-						<button style={{width: '50px', height: '50px'}}onClick={runAA}></button>
+			{<button style={{width: '50px', height: '50px'}}onClick={runAA}></button> }
 	</div>
 	)
 	

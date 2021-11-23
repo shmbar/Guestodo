@@ -731,31 +731,49 @@ export const paymentStatus = (payments, amount ) =>{
 export const setID=async(uidCollection, collection)=>{
 	
 	let batch = db.batch();
+	let arr = [];
 	
 	var citiesRef = db.collection(uidCollection).doc('alldata').collection(collection);
 		console.log('running Id')
+	
 	await  citiesRef.get().then((querySnapshot) => {
         querySnapshot.forEach(async(doc) => {
-			
-          	let Payments =  doc.data().Payments;
-			
+			let Payments =  doc.data().Payments;
 				if(Payments!==undefined){
-					for (let i in Payments){
+					arr.push(doc.data())
+				}
+				
+		});
+    });
+	
+	console.log(arr.length)
+	
+	
+	for(let i in arr){
+	//for(let i=0; i<=450; i++ ){
+	//for(let i=450; i<=arr.length-1; i++ ){
+	//	for(let i=900; i<=arr.length-1; i++ ){
+	//		for(let i=1350; i<=1800; i++ ){
+	//			for(let i=1800; i<=2250; i++ ){
+	//				for(let i=2250; i<=arr.length-1; i++ ){
+	
+	
+		let Payments =  arr[i].Payments;
+		
+		if(Payments!==undefined){
+					for (let k in Payments){
 
-						if(Payments[i].id===undefined){
-							let pmnt = {...Payments[i], 'id': uuidv4()}
-							Payments[i] = pmnt
+						if(Payments[k].id===undefined){
+							let pmnt = {...Payments[k], 'id': uuidv4()}
+							Payments[k] = pmnt
 						}
 					}
 
-				 let docRef = await db.collection(uidCollection).doc('alldata').collection(collection).doc(doc.data().Transaction);
+				 let docRef = await db.collection(uidCollection).doc('alldata').collection(collection).doc(arr[i].Transaction);
 				 await batch.update(docRef, { 'Payments': Payments });
-				
-				}
 			
-		
-        });
-    });
+				}
+	}
 	
 	
 	// Commit the batch
@@ -780,36 +798,37 @@ export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
 					for (let i in Payments){
 
 						if(Payments[i].P!==''){
-							 //Payments Owner
+							 //--------//Payments Owner
 							//RC 
-							/*let pmnt ={...Payments[i], 'RsrvChn': doc.data().RsrvChn, 'Date': new Date(Payments[i].Date), 'Transaction': doc.data().Transaction,
-								'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund'], ChnPrcnt: doc.data().ChnPrcnt, Vat: doc.data().Vat,
-									   ChnlTRex: doc.data().ChnlTRex!==undefined ? doc.data().ChnlTRex : ''}   	
+						//	let pmnt ={...Payments[i], 'RsrvChn': doc.data().RsrvChn, 'Date': new Date(Payments[i].Date), 'Transaction': doc.data().Transaction,
+						//		'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund'], ChnPrcnt: doc.data().ChnPrcnt || '0', Vat: doc.data().Vat,
+						//			   ChnlTRex: doc.data().ChnlTRex!==undefined ? doc.data().ChnlTRex : ''}   	
+						
 							//EX
-							let pmnt = {...Payments[i], 'ExpInc': doc.data().ExpType,  'VendChnnl': doc.data().vendor, 'Date': new Date(Payments[i].Date), 
-										'Transaction': doc.data().Transaction,	'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund']}		
+						//	let pmnt = {...Payments[i], 'ExpInc': doc.data().ExpType,  'VendChnnl': doc.data().vendor, 'Date': new Date(Payments[i].Date), 
+						//				'Transaction': doc.data().Transaction,	'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund']}		
 						
 							//IO
 							
-							let pmnt = {...Payments[i], 'ExpInc': 'Extra Revenue',  VendChnnl: doc.data().incType, 'Date': new Date(Payments[i].Date),
-										'Transaction': doc.data().Transaction,	'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund']}
+						//	let pmnt = {...Payments[i], 'ExpInc': 'Extra Revenue',  VendChnnl: doc.data().incType, 'Date': new Date(Payments[i].Date),
+						//				'Transaction': doc.data().Transaction,	'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund']}
 								
 							//VaT
 							
-							let pmnt = {...Payments[i], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[i].Date),
-									'Transaction': doc.data().Transaction,	'Fund':doc.data().Fund, VatPayRtrn: doc.data().VatPayRtrn}
+						//	let pmnt = {...Payments[i], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[i].Date),
+						//			'Transaction': doc.data().Transaction,	'Fund':doc.data().Fund, VatPayRtrn: doc.data().VatPayRtrn}
 					
 							
 							// Company Income
-							let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl': settings.CompDtls.cpmName, 'Date': new Date(Payments[i].Date),
-							'Transaction': doc.data().Transaction, 'Fund': settings.properties.filter(x=> x.id===doc.data().PrpName)[0]['Fund']}
-					*/
+						//	let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl': settings.CompDtls.cpmName, 'Date': new Date(Payments[i].Date),
+						//	'Transaction': doc.data().Transaction, 'Fund': settings.properties.filter(x=> x.id===doc.data().PrpName)[0]['Fund']}
+					
 							
-							//Company
+							//------------//Company
 							
 							// Company Income
-						//	let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl':  doc.data().PrpName, 'Date': new Date(Payments[i].Date),
-						//	'Transaction': doc.data().Transaction}
+							let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl':  doc.data().PrpName, 'Date': new Date(Payments[i].Date),
+							'Transaction': doc.data().Transaction}
 							
 							//EX
 							
@@ -823,8 +842,8 @@ export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
 								
 							//VaT
 							
-							let pmnt = {...Payments[i], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[i].Date),
-									'Transaction': doc.data().Transaction, VatPayRtrn: doc.data().VatPayRtrn}
+						//	let pmnt = {...Payments[i], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[i].Date),
+						//			'Transaction': doc.data().Transaction, VatPayRtrn: doc.data().VatPayRtrn}
 					
 							
 							
@@ -863,16 +882,20 @@ export const setNewRsrvCncl = async(uidCollection, collection )=>{
 		});
     });
 	
+	console.log(arr.length)
+	
 	
 	for(let i in arr){
-		
+	//for(let i=0; i<=450; i++ ){
+	//for(let i=450; i<=arr.length-1; i++ ){
 		let docRef = await db.collection(uidCollection).doc('alldata').collection(collection).doc(arr[i].Transaction);
 		let newObj = {...arr[i], pStatus: !arr[i].RsrvCncl ? 'Confirmed': 'Cancelled'}
 		delete newObj.RsrvCncl
+		
 		await batch.set(docRef, newObj);
 	}
+ 	
 	
-  
 	// Commit the batch
 	 await batch.commit().then(() => {
     	console.log('Done')
