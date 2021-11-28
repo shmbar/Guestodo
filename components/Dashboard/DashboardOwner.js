@@ -264,7 +264,7 @@ const Dashboard = () => {
 		console.log('start run Id')
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
 		
-	await setPmnt(uidCollection, 'incomeCompany_2021', settings, 'paymentsCompany') //paymentsCompany
+	await setPmnt(uidCollection, 'reservations_2022', settings, 'payments') //paymentsCompany
 	//	await setNewRsrvCncl('3dd6714a-5777-43d1-b87b-67eee361d6e4', 'reservations_2021')
    
 	}

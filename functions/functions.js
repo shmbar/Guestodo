@@ -787,26 +787,42 @@ export const setID=async(uidCollection, collection)=>{
 export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
 	
 	let batch = db.batch();
-	
-	var citiesRef = db.collection(uidCollection).doc('alldata').collection(collection);
 	let arr = [];
+	let arr1 = [];
+	var citiesRef = db.collection(uidCollection).doc('alldata').collection(collection);
+	
 	await  citiesRef.get().then((querySnapshot) => {
         querySnapshot.forEach(async(doc) => {
-          	let Payments =  doc.data().Payments;
+				arr.push(doc.data())
+		});
+	});		
 			
+			
+		console.log(arr.length)
+	
+	
+	for(let i in arr){	
+	
+		let Payments =  arr[i].Payments;
+		
 			if(Payments!==undefined){
-					for (let i in Payments){
+					for (let k in Payments){
 
-						if(Payments[i].P!==''){
+						if(Payments[k].P!==''){
 							 //--------//Payments Owner
 							//RC 
-						//	let pmnt ={...Payments[i], 'RsrvChn': doc.data().RsrvChn, 'Date': new Date(Payments[i].Date), 'Transaction': doc.data().Transaction,
-						//		'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund'], ChnPrcnt: doc.data().ChnPrcnt || '0', Vat: doc.data().Vat,
-						//			   ChnlTRex: doc.data().ChnlTRex!==undefined ? doc.data().ChnlTRex : ''}   	
+							let pmnt ={...Payments[k], 'RsrvChn': arr[i].RsrvChn, 'Date': new Date(Payments[k].Date), 'Transaction': arr[i].Transaction,
+								'Fund': settings.properties.filter(x=>x.id===arr[i].PrpName)[0]['Fund'], ChnPrcnt: arr[i].ChnPrcnt || '0', Vat: arr[i].Vat,
+									   ChnlTRex: arr[i].ChnlTRex!==undefined ? arr[i].ChnlTRex : ''}   	
 						
 							//EX
-						//	let pmnt = {...Payments[i], 'ExpInc': doc.data().ExpType,  'VendChnnl': doc.data().vendor, 'Date': new Date(Payments[i].Date), 
-						//				'Transaction': doc.data().Transaction,	'Fund': settings.properties.filter(x=>x.id===doc.data().PrpName)[0]['Fund']}		
+							
+							
+					//		let tmp1 = settings.properties.filter(x=>x.id===arr[i].PrpName).length===0 ? '':
+						//	settings.properties.filter(x=>x.id===arr[i].PrpName)[0]['Fund']
+							
+					//		let pmnt = {...Payments[k], 'ExpInc': arr[i].ExpType,  'VendChnnl': arr[i].vendor, 'Date': new Date(Payments[k].Date), 
+					//					'Transaction': arr[i].Transaction,	'Fund': tmp1}		
 						
 							//IO
 							
@@ -815,20 +831,20 @@ export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
 								
 							//VaT
 							
-						//	let pmnt = {...Payments[i], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[i].Date),
-						//			'Transaction': doc.data().Transaction,	'Fund':doc.data().Fund, VatPayRtrn: doc.data().VatPayRtrn}
+						//	let pmnt = {...Payments[k], ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(Payments[k].Date),
+						//			'Transaction': arr[i].Transaction,	'Fund':arr[i].Fund, VatPayRtrn: arr[i].VatPayRtrn}
 					
 							
 							// Company Income
-						//	let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl': settings.CompDtls.cpmName, 'Date': new Date(Payments[i].Date),
-						//	'Transaction': doc.data().Transaction, 'Fund': settings.properties.filter(x=> x.id===doc.data().PrpName)[0]['Fund']}
+						//	let pmnt = {...Payments[k], ExpType: 'Management commission',  'VendChnnl': settings.CompDtls.cpmName, 'Date': new Date(Payments[k].Date),
+						//	'Transaction': arr[i].Transaction, 'Fund': settings.properties.filter(x=> x.id===arr[i].PrpName)[0]['Fund']}
 					
 							
 							//------------//Company
 							
 							// Company Income
-							let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl':  doc.data().PrpName, 'Date': new Date(Payments[i].Date),
-							'Transaction': doc.data().Transaction}
+						//	let pmnt = {...Payments[i], ExpType: 'Management commission',  'VendChnnl':  doc.data().PrpName, 'Date': new Date(Payments[i].Date),
+						//	'Transaction': doc.data().Transaction}
 							
 							//EX
 							
@@ -849,25 +865,34 @@ export const setPmnt = async(uidCollection, collection, settings, pmntEnt)=>{
 							
 							
 							
-							arr.push(pmnt)
+							arr1.push(pmnt)
 						}
 					}
-			}
-		});
-    });
+			};
+		}
+   
+	console.log(arr1.length)
 	
-	for(let i in arr){
-		let year = dateFormat(arr[i].Date, 'yyyy')
-		let docRef = await db.collection(uidCollection).doc('alldata').collection(pmntEnt + '_' + year).doc(arr[i].id);
-		await batch.set(docRef, arr[i]);
+	
+	for(let i in arr1){
+	//		for(let i=0; i<=450; i++ ){
+	//for(let i=450; i<=arr1.length-1; i++ ){
+	//	for(let i=900; i<=arr1.length-1; i++ ){
+	//		for(let i=1350; i<=arr1.length-1; i++ ){
+	
+		let year = dateFormat(arr1[i].Date, 'yyyy')
+		let docRef = await db.collection(uidCollection).doc('alldata').collection(pmntEnt + '_' + year).doc(arr1[i].id);
+		await batch.set(docRef, arr1[i]);
 	}
 	
   
 	// Commit the batch
 	 await batch.commit().then(() => {
     	console.log('Done')
-	}) 
+	})    
 }
+
+//////////////////////////////////////////////////////
 
 export const setNewRsrvCncl = async(uidCollection, collection )=>{
 	

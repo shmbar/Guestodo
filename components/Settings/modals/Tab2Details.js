@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Grid, Divider, TextField } from '@material-ui/core';
+import { Grid, Divider, TextField, Tooltip } from '@material-ui/core';
 import DateFnsUtils from '@date-io/date-fns';
 import { MuiPickersUtilsProvider, KeyboardDatePicker } from '@material-ui/pickers';
 import { SettingsContext } from '../../../contexts/useSettingsContext';
@@ -8,7 +8,11 @@ import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { SelectContext } from '../../../contexts/useSelectContext';
 import { idToItem } from '../../../functions/functions.js';
-import Tooltip from '@material-ui/core/Tooltip';
+
+
+import Tab2Dtls from './PrpTabs/Tab2Dtls'
+import Tab2Fees from './PrpTabs/Tab2Fees'
+import Tab2Vat from './PrpTabs/Tab2Vat'
 
 const dateFormat = require('dateformat');
 function nextDay(date) {
@@ -105,120 +109,22 @@ const Tab2Details = (props) => {
 
 	return (
 		<div>
-			<Grid container spacing={3}>
-				<Grid item xs={12} md={7}>
-					<FormControl className={classes.formControl}>
-						<InputLabel
-							htmlFor="Owner"
-							error={valueSettings.Owner === '' && redValid ? true : false}
-						>
-							Owner Name
-						</InputLabel>
-						<Select
-							value={idToItem(settings.owners, valueSettings.Owner, 'item')}
-							onChange={props.handleChange}
-							fullWidth
-							inputProps={{
-								name: 'Owner',
-							}}
-							error={valueSettings.Owner === '' && redValid ? true : false}
-						>
-							{ownersMenu}
-						</Select>
-					</FormControl>
-				</Grid>
-				<Grid item xs={12} md={5}>
-					<TextField
-						value={valueSettings.PrpName}
-						onChange={props.handleChange}
-						name="PrpName"
-						label="Property Name"
-						fullWidth
-						error={valueSettings.PrpName === '' && redValid ? true : false}
-					/>
-				</Grid>
-				<Grid item xs={12} md={4}>
-					<Tooltip title={valueSettings.Owner === '' ? 'Select owner first' : ''} arrow>
-						<FormControl className={classes.formControl}>
-							<InputLabel
-								htmlFor="Fund"
-								error={valueSettings.Fund === '' && redValid ? true : false}
-							>
-								Fund
-							</InputLabel>
-							<Select
-								value={idToItem(settings.funds, valueSettings.Fund, 'item')}
-								onChange={props.handleChange}
-								fullWidth
-								disabled={valueSettings.Owner === ''}
-								inputProps={{
-									name: 'Fund',
-								}}
-								error={valueSettings.Fund === '' && redValid ? true : false}
-							>
-								{fundsArrMenu}
-							</Select>
-						</FormControl>
-					</Tooltip>
-				</Grid>
-				<MuiPickersUtilsProvider utils={DateFnsUtils}>
-					<Grid item xs={12} md={4}>
-						<KeyboardDatePicker
-							autoOk
-							disableToolbar
-							okLabel={false}
-							clearable
-							label="Start Date"
-							value={valueSettings.StartDate}
-							onChange={(date) => props.handleChangeD('StartDate', date)}
-							maxDate={
-								valueSettings.EndDate === null
-									? '2999-12-12'
-									: lastDay(valueSettings.EndDate)
-							}
-							initialFocusedDate={
-								new Date(dateFormat(valueSettings.StartDate, 'yyyy-mm-dd'))
-							}
-							format="dd-MMM-yyyy"
-							fullWidth
-							InputProps={{
-								readOnly: true,
-							}}
-							error={valueSettings.StartDate === null && redValid ? true : false}
-						/>
-					</Grid>
-				</MuiPickersUtilsProvider>
-				{settingsShows[valueSettings.id] && (
-					<MuiPickersUtilsProvider utils={DateFnsUtils}>
-						<Grid item xs={12} md={4}>
-							<KeyboardDatePicker
-								autoOk
-								disableToolbar
-								okLabel={false}
-								clearable
-								format="dd-MMM-yyyy"
-								label="End Date"
-								value={valueSettings.EndDate}
-								onChange={(date) => props.handleChangeD('EndDate', date)}
-								minDate={
-									valueSettings.StartDate !== null &&
-									nextDay(valueSettings.StartDate)
-								}
-								initialFocusedDate={
-									new Date(dateFormat(valueSettings.StartDate, 'yyyy-mm-dd'))
-								}
-								fullWidth
-								InputProps={{
-									readOnly: true,
-								}}
-								//		error={valueSettings.EndDate===null && redValid ? true: false}
-							/>
-						</Grid>
-					</MuiPickersUtilsProvider>
-				)}
-			</Grid>
+		
+			{props.valueTab===0 && <Tab2Dtls />	}
+			{props.valueTab===1 && <Tab2Fees />	}
+			{props.valueTab===2 && <Tab2Vat />	}
+			
+			
+			
+		</div>
+	);
+};
 
-			<Grid item xs={12} style={{ padding: '20px 0'}}>
+export default Tab2Details;
+
+/*
+
+	<Grid item xs={12} style={{ padding: '20px 0'}}>
 				<Divider style={{ marginBottom: '10px' }} />
 				Management Commission Settings
 			</Grid>
@@ -316,9 +222,8 @@ const Tab2Details = (props) => {
 							}}
 					/>
 				</Grid>
-			</Grid> */}
-		</div>
-	);
-};
+			</Grid> */
 
-export default Tab2Details;
+
+
+

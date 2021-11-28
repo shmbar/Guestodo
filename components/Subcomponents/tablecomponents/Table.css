@@ -30,7 +30,7 @@ body .p-datatable .p-datatable-header, .p-treetable {
 
 p {
     margin-top: 0;
-    margin-bottom: 5px!important;
+  /*  margin-bottom: 5px!important; */
 }
 
 body .p-datatable .p-datatable-tbody > tr {

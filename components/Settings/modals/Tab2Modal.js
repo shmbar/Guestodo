@@ -1,4 +1,4 @@
-import React, {useContext} from 'react';
+import React, {useContext, useState} from 'react';
 import Button from '@material-ui/core/Button';
 import Tab2Details from './Tab2Details';
 import { withStyles } from '@material-ui/core/styles';
@@ -13,6 +13,11 @@ import Typography from '@material-ui/core/Typography';
 import {addDataSettings, updateField, itemToId} from '../../../functions/functions.js';
 import {AuthContext} from '../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
+
+
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+
 
 const dateFormat = require('dateformat');
  
@@ -65,6 +70,7 @@ const Tab2Modal = (props) =>{
 	const {settings,settingsShows, setSettingsShows,   selectValueSettings, displayDialogSettings,
 		  setDisplayDialogSettings, valueSettings, setRedValid, updtShows, setPropertyList, setSettings} = useContext(SettingsContext);
 	const {uidCollection} = useContext(AuthContext);
+	const [valueTab, setValueTab] = useState(0);
 	
 	const closeDialog = () => {
 		setRedValid(false);
@@ -197,6 +203,11 @@ const Tab2Modal = (props) =>{
 				<Button className='myFont' variant="contained" type='submit' onClick={handleSave}  color="primary">Save</Button> 
 			</div>;
  
+	const handleChangeTabs = (event, newValue) => {
+   		 	setValueTab(newValue);
+  	};
+	
+	
 	return (
 		
 		
@@ -205,11 +216,23 @@ const Tab2Modal = (props) =>{
           <DialogTitle  onClose={closeDialog} >
            <span style={{color: '#193e6d'}}>Property Details</span>
           </DialogTitle>
-			  <DialogContent dividers>
+			
+				
+  
+  <Tabs value={valueTab} onChange={handleChangeTabs} aria-label="simple tabs example">
+    <Tab label="Details"  style={{width: '100px', minWidth: 0}}/>
+    <Tab label="Fees"  style={{width: '100px', minWidth: 0}}/>
+    <Tab label="Vat"  style={{width: '100px', minWidth: 0}}/>
+	<Tab label="Taxes"  style={{width: '100px', minWidth: 0}}/>
+	<Tab label="Commission"  style={{width: '100px', minWidth: 0}}/>
+  </Tabs>
+
+  <DialogContent dividers>
 				<Tab2Details 
 							 handleChange={handleChange}
 							 handleChangeD={handleChangeD}
 							 runFromOrders={props.runFromOrders}
+							valueTab={valueTab}
 				/>
 			  </DialogContent>
           <DialogActions>
