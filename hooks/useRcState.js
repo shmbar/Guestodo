@@ -57,6 +57,7 @@ return {
 	//	let ChnItem= value.RsrvChn!==''? settings.channels.filter(x => value.RsrvChn===x.id)[0] : ''
 	//	let CmsnDescription = value.RsrvChn!==''? ChnItem['MngCmsn'] : '';
 	//	let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
+	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
 		if (e.target.name==='NetAmnt') {
 		
@@ -71,7 +72,7 @@ return {
 					  			'PmntStts': paymentStatus(value.TtlPmnt, +e.target.value),
 								'TtlRsrvWthtoutVat': 
 								value.Vat===false ?  +e.target.value:
-								+e.target.value/(1 + parseFloat(settings.vat)/100)
+								+e.target.value/(1 + parseFloat(vat)/100)
 						 }); 
 		} else if (e.target.name==='CnclFee') {
 			
@@ -87,7 +88,7 @@ return {
 					  				'PmntStts': paymentStatus(value.TtlPmnt, +e.target.value),
 						 			'TtlRsrvWthtoutVat': 
 						 			value.Vat===false ?  +(e.target.value):
-						 			+e.target.value/(1+parseFloat(settings.vat)/100)
+						 			+e.target.value/(1+parseFloat(vat)/100)
 						 });
 		} else if (e.target.name==='Passport' || e.target.name==='email' || e.target.name==='mobile' || e.target.name==='phone'
 				  || e.target.name==='addrss' || e.target.name==='cntry') {
@@ -105,7 +106,7 @@ return {
 										'PmntStts': paymentStatus(value.TtlPmnt, value.NetAmnt),
 										'TtlRsrvWthtoutVat': 
 										value.Vat===false ?  +value.NetAmnt:
-										+value.NetAmnt/(1+parseFloat(settings.vat)/100)
+										+value.NetAmnt/(1+parseFloat(vat)/100)
 				}) : setValue({...value, [e.target.name]: ChnItem['id']});	
 		}else if (e.target.name==='AptName'){	
 			setValue({...value, [e.target.name]:settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'] });	
@@ -136,8 +137,8 @@ return {
 							'PmntStts': e.target.value==='Cancelled' ? paymentStatus(value.TtlPmnt, +value.CnclFee) : 
 									paymentStatus(value.TtlPmnt, +value.NetAmnt),
 							'TtlRsrvWthtoutVat': e.target.value!=='Cancelled' ? (value.Vat===false  ?  +value.NetAmnt :
-								 +value.NetAmnt/(1+parseFloat(settings.vat)/100) ) : ( value.Vat===false ? +value.CnclFee : 
-													  +value.CnclFee/(1+parseFloat(settings.vat)/100) )
+								 +value.NetAmnt/(1+parseFloat(vat)/100) ) : ( value.Vat===false ? +value.CnclFee : 
+													  +value.CnclFee/(1+parseFloat(vat)/100) )
 						});	 
 	
 		} else {

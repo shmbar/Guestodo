@@ -107,8 +107,9 @@ export default function CashFlowTable(props) {
 							if(tmpChnlCmsnPrcntg!==''){  //payment commission
 								let channelCommision = parseFloat(settings.channels
 									  .filter(x => x.id===AgrArr[i].RsrvChn)[0]['ChnCmsn'])/100;
-								channelCommision  = AgrArr[i].ChnPrcnt!=null? AgrArr[i].ChnPrcnt*1/100 : channelCommision;
-								let tmpChannelPayment = ChnnlPmnt (AgrArr[i], channelCommision, settings.vat, settings.pmntMethods );
+								channelCommision  = AgrArr[i].ChnPrcnt!=null? AgrArr[i].ChnPrcnt*1/100 : channelCommision;	
+								let tmpVT = AgrArr[i].PrpName!=null? settings.properties.filter(x=> x.id===AgrArr[i].PrpName)[0]['VAT']: settings.vat	
+								let tmpChannelPayment = ChnnlPmnt (AgrArr[i], channelCommision, tmpVT, settings.pmntMethods );
 								tableArr.push(tmpChannelPayment);
 							} 
 						}

@@ -88,7 +88,7 @@ const VatModal = (props) =>{
 		
 		
 		setSnackbar( {open: (await addDataSettings(uidCollection, 'settings', 'vat', {'vat':valueSettings.vat.concat('%')})),
-		  			  	msg: 'Vat has been updated!', variant: 'success'});	
+		  			  	msg: 'VAT has been updated!', variant: 'success'});	
 	//	setDisplayVat(false);
 		updtSettings('vat',valueSettings.vat.concat('%'));
 		

@@ -28,30 +28,30 @@ const Dates = (props) =>{
 						> Calculate Vat</Button>
 				</Grid> }
 				<Grid item xs={12} md={6} style={{paddingTop:'20px', paddingBottom:'24px'}}>
-					<RowOut name='Revenue Amount (Before Vat)'
+					<RowOut name='Revenue Amount (Before VAT)'
 						value='' st={true}
 						pad='10' />
-					<RowOut name='Amount including Vat'
+					<RowOut name='Amount including VAT'
 						value={value.valueInc.withoutVat!=='' ? `${cur} ${Num2(value.valueInc.withoutVat)}`: `${cur} 0`} 
 						pad='10' />
-					<RowOut name='Amount Excluding Vat' 
+					<RowOut name='Amount Excluding VAT' 
 						value={value.valueInc.withVat!=='' ? `${cur} ${Num2(value.valueInc.withVat)}`: `${cur} 0`} 
 						pad='10' />
-					<RowOut name='Output Vat'
+					<RowOut name='Output VAT'
 						value={value.valueInc.Vat!=='' ? `${cur} ${Num2(value.valueInc.Vat)}`: `${cur} 0`}
 						st={true} pad='10' />
 				</Grid>
 				<Grid item xs={12} md={6} style={{paddingTop:'20px', paddingBottom:'24px'}}>
-					<RowOut name='Expenses Amount (Before Vat)'
+					<RowOut name='Expenses Amount (Before VAT)'
 						value='' st={true}
 						pad='10' />
-					<RowOut name='Amount including Vat'
+					<RowOut name='Amount including VAT'
 							value={value.valuex.withoutVat!=='' ? `${cur} ${Num2(value.valuex.withoutVat)}`: `${cur} 0`} 
 							pad='10' />
-					<RowOut name='Amount Excluding Vat' 
+					<RowOut name='Amount Excluding VAT' 
 						value={value.valuex.withVat!=='' ? `${cur} ${Num2(value.valuex.withVat)}`: `${cur} 0`} 
 						pad='10' /> 
-					<RowOut name='Input Vat'
+					<RowOut name='Input VAT'
 						value={value.valuex.Vat!=='' ? `${cur} ${Num2(value.valuex.Vat)}`: `${cur} 0 `}
 						st={true} pad='10' />
 				</Grid>

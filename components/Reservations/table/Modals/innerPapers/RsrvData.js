@@ -48,9 +48,10 @@ const RsrvAmounts = () =>{
 	const {value, handleChange, handleChangeTrueFalse, redValid, rcDataPrp} = useContext(RcContext);
 	const {settings, selectValueSettings, setRunTab, selectValueSettingsApt,
 		   chnnlslogo} = useContext(SettingsContext);
-	const {apartments, channels, vat} =  settings;
+	const {apartments, channels} =  settings;
 	const {write, uidCollection} = useContext(AuthContext);					 						 				 
 	
+	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
 	const GreenCheckbox = withStyles({
 		  root: {
@@ -256,8 +257,8 @@ const RsrvAmounts = () =>{
 								value="Tax"
 							  />
 							}
-							label={`Include ${vat} Vat`}
-							disabled={!write}
+							label={`${vat}% VAT included`}
+							disabled={!write || vat===0}
 							labelPlacement="end"
       					/>	
 						</FormControl>

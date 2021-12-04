@@ -99,7 +99,7 @@ export default function PaperSheet() {
       	<div style={{paddingTop: '60px'}}>
 		  	<Paper className={classes.root}>
 				<div style={{width:'100%',display: 'inline-flex'}}>
-				  	<h4 className='ttlClr'>Vat</h4>
+				  	<h4 className='ttlClr'>VAT</h4>
 					<Grid container  spacing={2} justifyContent="flex-end">
 						<Grid item style={{padding: '15px'}}>	
 							<YearSelect />

@@ -30,7 +30,7 @@ import MFund from '../../logos/main/MFund.svg';
 						 	{txt: 'Extra Revenue  ', img: ExtraRevenue, width:'24px'},
 							{txt: 'P&L', img: Pl, width:'20px'}	];
 
- const   LogoCashTable =  [ {txt: 'Vat', img: Vatp, width:'24px'},
+ const   LogoCashTable =  [ {txt: 'VAT', img: Vatp, width:'24px'},
 						   {txt: 'Money Transfer', img: Montrnsf, width:'20px'},
 						   {txt: 'Cash Flow', img: Cashtable, width:'24px'}  	];
 
@@ -39,7 +39,7 @@ const   LogoCompany =  [ 	 {txt: 'Dashboard ', img: Dashbrd, width:'24px'},
 							{txt: 'Expenses ', img: Exp, width:'24px'},
 						   {txt: 'Money Transfer ', img: Montrnsf, width:'20px'},
 						   {txt: 'Extra Revenue ', img: ExtraRevenue, width:'24px'},
-					   		{txt: 'Vat ', img: Vatp, width:'24px'},
+					   		{txt: 'VAT ', img: Vatp, width:'24px'},
 					   		{txt: 'P&L ', img: Pl, width:'20px'},
 					   		{txt: 'Cash Flow ', img: Cashtable, width:'24px'} ];
 

@@ -38,7 +38,7 @@ const tableCols = [
 			{field: 'TtlPmnt', header: 'Total Payment', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'BlncRsrv', header: 'Balance Due', showcol: true, s:['lg', 'xl']},	
 			{field: 'PmntStts', header: 'Payment Status', showcol: true, s:['md','lg', 'xl']},	
-        	{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before Vat', showcol: false, s:['xs','sm','md','lg', 'xl']},	
+        	{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
 			{field: 'RsrvAmnt', header: 'Reservation Amount', showcol: true, s:['md','lg', 'xl']},	
 			{field: 'el' , header: '', el: 'el', showcol: true, s:['xs','sm','md','lg', 'xl']} 
 ];
@@ -101,9 +101,9 @@ const Table =() =>{
 		};
 	
 	 const createEmptyObj = () =>{
-		 
+	
 		const tmpArrApts=settings.apartments.filter(x=> x.PrpName===propertySlct)
-		 
+		
         let tmpObj={};
         tableCols.map(k =>k.field).map(q =>{
 		return tmpObj[q]= (q==='ChckIn' || q==='ChckOut' ) ? null: '';
@@ -111,7 +111,7 @@ const Table =() =>{
 		 delete tmpObj.el;
 		 tmpObj.Transaction = '';
 		 tmpObj.Payments=[{P:'', Date:null, PM:'', 'id': uuidv4()}];	
-		 tmpObj.Vat=true;
+		 tmpObj.Vat=+settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']===0? false :true;
 		 tmpObj.PrpName=propertySlct;
 	//	 tmpObj.RsrvCncl=false;
 		 tmpObj.RsrvChn='';		/////////////////////

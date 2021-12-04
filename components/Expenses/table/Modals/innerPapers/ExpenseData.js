@@ -13,7 +13,6 @@ import NumberFormatCustom from '../../../../Subcomponents/NumberFormatCustom';
 import MonthPicker  from '../../../../Subcomponents/MonthPicker';
 import  RecurringMonthPicker  from '../../../../Subcomponents/RecurringMonthPicker';
 import {SelectContext} from '../../../../../contexts/useSelectContext';
-import useWindowSize from '../../../../../hooks/useWindowSize';
 import './papersStyle.css';
 
 
@@ -32,18 +31,17 @@ const useStyles = makeStyles(theme => ({
 const ExpenseData = () =>{
 	const classes = useStyles();
 	const stl = {color:'purple', fontStyle: 'italic'};
-	const scrSize = useWindowSize();
 	const {value, handleChange, handleChangeD, handleChangeTrueFalse, redValid, recStart, setRecStart, recEnd, setRecEnd} = useContext(ExContext);
 	const {settings, selectValueSettings, setRunTab, setDisplayDialogSettings,
 		  selectValueSettingsApt} = useContext(SettingsContext);
-	const {exType, apartments, vat}=settings;
+	const {exType, apartments}=settings;
 	const {write} = useContext(AuthContext);					 						 				 
 	const {date} = useContext(SelectContext);
 	
 	let deletedExpens = exType ? exType.filter(x=>!x.show).map(x=>x.item) : [];
 	//let deletedVends = settings.vends.filter(x=>!x.show).map(x=>x.item);
 	let deletedApt = apartments ? apartments.filter(x=>!x.show).map(x=>x.AptName): [];
-	
+	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	const GreenCheckbox = withStyles({
 		  root: {
 			'&$checked': {
@@ -98,7 +96,7 @@ const ExpenseData = () =>{
 		setDisplayDialogSettings(true);
 		setRunTab(x);
 	}
-console.log(scrSize)
+
 	return (
 			<Grid container spacing={3}>
 				<Grid item xs={12} md={6} >
@@ -200,7 +198,7 @@ console.log(scrSize)
 				 	<Grid item xs={12} md={4}  style={{paddingTop: 0}}> 
 					  <TextField   
 						value={value.Amnt}    
-						onChange={e=> write && handleChange(e, settings.vat)}
+						onChange={e=> write && handleChange(e, vat)}
 						name="Amnt"
 						label="Amount"
 						InputProps={{inputComponent: NumberFormatCustom}}
@@ -214,11 +212,11 @@ console.log(scrSize)
 								  <GreenCheckbox
 									checked={value.Vat}
 									onChange={handleChangeTrueFalse('Vat', vat)}
-									value="Vat"
+									value="VAT"
 								  />
 									}
-								 label={`Include ${vat} Vat`}
-								disabled={!write}
+								 label={`${vat}% VAT included`}
+								disabled={!write || vat===0}
 								labelPlacement="end"
 								/>	
 					</Grid>

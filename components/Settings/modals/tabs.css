@@ -1,0 +1,26 @@
+.element-class {
+	position: relative;
+}
+
+.element-class:before, .element-class:after {
+    content: '';
+    display: block;
+    position: absolute;
+    background-color: transparent;
+    pointer-events: none;
+}
+
+.element-class:after {
+    top: 20%;
+    right: 0px;
+    bottom: 20%;
+   	border-right: 1px solid gray;
+}
+
+.tab{
+	width: 100px;
+	min-width: 0;
+}
+.tabText{
+	text-transform: capitalize!important;
+}

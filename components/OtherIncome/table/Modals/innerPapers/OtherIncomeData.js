@@ -1,6 +1,6 @@
 import React, {useContext} from 'react';
 import {Grid, TextField, FormControl, Select, MenuItem, InputLabel, Checkbox} from '@material-ui/core';
-
+import {AuthContext} from '../../../../../contexts/useAuthContext';
 import { makeStyles } from '@material-ui/core/styles';
 
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -31,9 +31,10 @@ const OtherIncomeData = () =>{
 	
 	const {value, handleChange, handleChangeD, handleChangeTrueFalse, redValid} = useContext(OiContext);
 	const {settings, setRunTab, setDisplayDialogSettings} = useContext(SettingsContext);
-	const {incType, vat}=settings;
+	const {incType}=settings;
 	const {date} = useContext(SelectContext);
-	
+	const {write} = useContext(AuthContext);
+	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
 	let deletedIncomes = incType!=null  ? incType.filter(x=>!x.show).map(x=>x.item) : [];
 	
@@ -93,7 +94,7 @@ const OtherIncomeData = () =>{
 					<Grid item xs={12} md={6} > 
 					  <TextField   
 						value={value.Amnt}    
-						onChange={e=> handleChange(e, settings.vat)}
+						onChange={e=> write && handleChange(e, vat)}
 						name="Amnt"
 						label="Amount"
 						InputProps={{inputComponent: NumberFormatCustom}}
@@ -109,18 +110,19 @@ const OtherIncomeData = () =>{
 								control={
 								  <GreenCheckbox
 									checked={value.Vat}
-									onChange={handleChangeTrueFalse('Vat', vat)}
-									value="Vat"
+									onChange={write && handleChangeTrueFalse('Vat', vat)}
+									value="VAT"
 								  />
 									}
-								 label={`Include ${vat} Vat`}
+								 label={`${vat}% VAT included`}
+								disabled={!write || vat===0}
 								labelPlacement="end"
 								/>	
 					</Grid>
 					<Grid item xs={12} md={8} > 
 						<TextField
 							value={value.Notes}   
-							onChange={e=>handleChange(e, vat )}
+							onChange={e=>write && handleChange(e, vat )}
 							label="Notes"
 							multiline
 							name = 'Notes'

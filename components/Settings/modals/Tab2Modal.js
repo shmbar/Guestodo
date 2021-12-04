@@ -14,10 +14,9 @@ import {addDataSettings, updateField, itemToId} from '../../../functions/functio
 import {AuthContext} from '../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 
-
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-
+import './tabs.css'
 
 const dateFormat = require('dateformat');
  
@@ -67,10 +66,12 @@ const DialogActions = withStyles(theme => ({
 
 const Tab2Modal = (props) =>{
 	
-	const {settings,settingsShows, setSettingsShows,   selectValueSettings, displayDialogSettings,
+	const {settings,settingsShows, setSettingsShows,  selectValueSettings, displayDialogSettings,
 		  setDisplayDialogSettings, valueSettings, setRedValid, updtShows, setPropertyList, setSettings} = useContext(SettingsContext);
 	const {uidCollection} = useContext(AuthContext);
 	const [valueTab, setValueTab] = useState(0);
+	const [feesRedValid, setFeesRedValid] = useState(false)
+	const [taxesRedValid, setTaxesRedValid] = useState(false)
 	
 	const closeDialog = () => {
 		setRedValid(false);
@@ -85,7 +86,7 @@ const Tab2Modal = (props) =>{
 		 	selectValueSettings({...valueSettings, [e.target.name]: itemToId(settings.owners, e.target.value), 'Fund': ''});
 		}else if(e.target.name === 'Fund'){
 		 	selectValueSettings({...valueSettings, [e.target.name]: itemToId(settings.funds, e.target.value)  });
-		}else{		 
+		}else {	
 		 	selectValueSettings({...valueSettings, [e.target.name]:tmp })
 		}	
 	 };
@@ -102,16 +103,52 @@ const Tab2Modal = (props) =>{
 	const handleSave= async(e) => { 
 		let indx = settings.properties!=null ? settings.properties.findIndex(x=>x.id===valueSettings.id) : -1;
 		let exstIntheList=false;
-		
+	
 		//validation
 		
-		let fields=['Owner','PrpName','StartDate','ManagCommission', 'Fund', 'inclVat', 'addVat'];
+		let fields=['Owner','PrpName','StartDate','Fund'/*'ManagCommission', , 'inclVat', 'addVat'*/];
+		let fields1=['ManagCommission', 'inclVat', 'addVat'];
+		let fields2=['FeeName', 'FeeType', 'FeeAmount','FeeModality'];
+		let fields3=['TaxName', 'TaxType', 'TaxAmount','TaxTypeDscrp','TaxModality'];
+		 
+		
 		let tmpTF=true;
 		for(let i=0; i<fields.length; i++){
 			if( valueSettings[fields[i]]==='' || valueSettings[fields[i]]===null || valueSettings[fields[i]]==null){
 				 tmpTF=false; break;
 			 }
 		}
+		
+		for(let i=0; i<fields1.length; i++){
+			if( valueSettings.Commissions[fields1[i]]==='' || valueSettings.Commissions[fields1[i]]===null || valueSettings.Commissions[fields1[i]]==null){
+				 tmpTF=false; break;
+			 }
+		}
+		
+		for(let k=0; k<valueSettings.Fees.length; k++){
+			for(let i=0; i<fields2.length; i++){
+				let tmpInit = valueSettings.Fees[k][fields2[0]]==='';
+				let tmpI = valueSettings.Fees[k][fields2[i]]==='';
+				if( tmpInit!== tmpI){
+					setFeesRedValid(true); 
+					tmpTF=false; break;
+				 }
+			}
+		}
+			
+		for(let k=0; k<valueSettings.Taxes.length; k++){
+			for(let i=0; i<fields3.length; i++){
+				let tmpInit = valueSettings.Taxes[k][fields3[0]]==='';
+				let tmpI = valueSettings.Taxes[k][fields3[i]]==='';
+				if( tmpInit!== tmpI){
+					setTaxesRedValid(true); 
+					tmpTF=false; break;
+					
+				 }
+			}
+		}
+		
+	
 		
 		if(	settings.funds.filter(x=> x.id===valueSettings.Fund)[0] == null ){
 			selectValueSettings({...valueSettings, 'Fund': '' });
@@ -163,13 +200,16 @@ const Tab2Modal = (props) =>{
 		if(newArr.length!==0){ //just an update
 			props.setSnackbar( {open: (await addDataSettings(uidCollection, 'settings', 'properties', {'properties':newArr})),
 		 			  	msg: `Property ${tmpValue.PrpName} has been updated!`, variant: 'success'}); 
+			closeDialog();
 			updtShows(uidCollection, tmpValue.Fund,true);
 		}else{
 			let tmpProperties = settings.properties!=null ? settings.properties: [];
 			newArr = [...tmpProperties, tmpValue];
 		 	props.setSnackbar( {open: (await addDataSettings(uidCollection, 'settings', 'properties', {'properties':newArr})),
 		 			  	msg: 'New property has been added!', variant: 'success'});	
-		
+			
+			closeDialog();
+			
 			let tmp = {...settingsShows, [tmpValue.id] : false, [tmpValue.Fund] : true};
 			setSettingsShows(tmp)
 		
@@ -179,7 +219,8 @@ const Tab2Modal = (props) =>{
 		    
 			///// Create automatically new apartment
 			
-				let aptObj={'StartDate': tmpValue.StartDate, 'EndDate':tmpValue.EndDate, id: uuidv4(), 'show' : true, 'PrpName' : tmpValue.id, 'AptName' : tmpValue.PrpName + "_apartment"}
+				let aptObj={'StartDate': tmpValue.StartDate, 'EndDate':tmpValue.EndDate, id: uuidv4(), 'show' : true, 'PrpName' : tmpValue.id,
+							'AptName' : tmpValue.PrpName + "_apartment"}
 
 				tmpApts = tmpApts!=null ? [...tmpApts, aptObj]: [aptObj];
 				updtShows(uidCollection, [tmpValue.id], false)
@@ -194,45 +235,45 @@ const Tab2Modal = (props) =>{
 	 	const properties =  newArr.filter(x=> x.show ).map(x=>x.PrpName);
 	 	setPropertyList(properties);
 
-	 	closeDialog();
+	 	
 		
 	};
 	
 	
-    const footer = <div>
-				<Button className='myFont' variant="contained" type='submit' onClick={handleSave}  color="primary">Save</Button> 
+    const footer = <div style={{width: '100%', textAlign: 'right'}}>
+				<Button className='myFont' variant="outlined" type='submit' onClick={handleSave}  color="primary">Save</Button> 
 			</div>;
  
 	const handleChangeTabs = (event, newValue) => {
    		 	setValueTab(newValue);
   	};
 	
-	
+	// , borderRight: '1px solid lightgrey'
 	return (
 		
-		
    <div>
-		  <Dialog  aria-labelledby="customized-dialog-title" open={displayDialogSettings}  >  
+		  <Dialog  aria-labelledby="customized-dialog-title" open={displayDialogSettings} fullWidth={true} maxWidth='md' >  
           <DialogTitle  onClose={closeDialog} >
            <span style={{color: '#193e6d'}}>Property Details</span>
           </DialogTitle>
 			
 				
-  
   <Tabs value={valueTab} onChange={handleChangeTabs} aria-label="simple tabs example">
-    <Tab label="Details"  style={{width: '100px', minWidth: 0}}/>
-    <Tab label="Fees"  style={{width: '100px', minWidth: 0}}/>
-    <Tab label="Vat"  style={{width: '100px', minWidth: 0}}/>
-	<Tab label="Taxes"  style={{width: '100px', minWidth: 0}}/>
-	<Tab label="Commission"  style={{width: '100px', minWidth: 0}}/>
+    <Tab label="Details"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
+    <Tab label="Fees"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
+    <Tab label="VAT"   className={['element-class', 'tab'].join(" ")}/>
+	<Tab label="Taxes"   className={['element-class', 'tab', 'tabText'].join(" ")}/> 
+	<Tab label="Commission"  className={['tab', 'tabText'].join(" ")}/>
   </Tabs>
 
-  <DialogContent dividers>
+  <DialogContent dividers style={{minHeight: '230px'}}>
 				<Tab2Details 
 							 handleChange={handleChange}
 							 handleChangeD={handleChangeD}
 							 runFromOrders={props.runFromOrders}
 							valueTab={valueTab}
+							feesRedValid={feesRedValid}
+							taxesRedValid={taxesRedValid}
 				/>
 			  </DialogContent>
           <DialogActions>

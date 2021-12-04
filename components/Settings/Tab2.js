@@ -22,6 +22,8 @@ import {addDataSettings, delField} from '../../functions/functions.js';
 import SnackBar from '../Subcomponents/SnackBar';
 import DelDialog from '../Subcomponents/DeleteDialog';
 
+
+
 const tableCols = [
             {field: 'Owner', header: 'Owner Name'},
 			{field: 'PrpName', header: 'Property Name'},
@@ -29,8 +31,8 @@ const tableCols = [
 			{field: 'EndDate', header: 'End Date'},
 			{field: 'ManagCommission', header: 'Management Commission'},
 		//	{field: 'ExtraRevCommission', header: 'Extra Commission'},
-			{field: 'inclVat', header: 'Management comission Include/Exclude Vat'},
-			{field: 'addVat', header: 'Add VAT to Comission amount'},
+		//	{field: 'inclVat', header: 'Management Comission Include/Exclude Vat'},
+		//	{field: 'addVat', header: 'Add VAT to Comission amount'},
 			{field: 'Fund', header: 'Fund'},	
         	{field: 'el' , header: '', el: 'el'},	
 ];
@@ -95,6 +97,10 @@ const Tab2 =() =>{
 		 delete tmpObj.el;
 		 tmpObj.id=uuidv4();
 		 tmpObj.show=true;
+		 tmpObj.VAT=0;
+		 tmpObj.Commissions={ManagCommission: 0, addVat:false, inclVat:false};
+		 tmpObj.Fees=[{FeeName:'', FeeType:'', FeeAmount: '', FeeModality: '', FeeDescription: '', 'id': uuidv4()}];
+		 tmpObj.Taxes=[{TaxName:'', TaxType:'', TaxAmount: '', TaxTypeDscrp: '', TaxModality: '', TaxDescription: '', 'id': uuidv4()}];
 		 return tmpObj;
     };
 	
@@ -144,6 +150,10 @@ const Tab2 =() =>{
 		return showDataTable(rowData, column, scrSize, settings);
 	}
 	
+	const dataTable1=(rowData, column)=>{
+		return `${rowData.Commissions.ManagCommission}%`
+	}
+	
 	const headerTemplate=(txt, tltip)=>{
 					return( 
 						<span>
@@ -158,12 +168,12 @@ const Tab2 =() =>{
 		
 	}		
 			
-	const vatIncluded = <>Commission on VAT Included - VAT (value added Tax) is a sales tax that applies to the purchase of most goods and services. Select Yes if you wish to charge the commision 		
-							percentage from property reservation revenue amount include VAT. Select No if you wish to charge the commision percentage from property reservation revenue before vat or if in 
-								the property’s region not charging  VAT by law.</>
+	//const vatIncluded = <>Commission on VAT Included - VAT (value added Tax) is a sales tax that applies to the purchase of most goods and services. Select Yes if you wish to charge the commision 		
+	//						percentage from property reservation revenue amount include VAT. Select No if you wish to charge the commision percentage from property reservation revenue before vat or if in 
+	//							the property’s region not charging  VAT by law.</>
 	
-	const vatAdded=<>Commission on VAT Added - VAT (value added Tax) is a sales tax that applies to the purchase of most goods and services. Select Yes if you wish to charge VAT on the commission you
-					collect	from the property owner Or select no if your region not charging  VAT by law.</>
+	//const vatAdded=<>Commission on VAT Added - VAT (value added Tax) is a sales tax that applies to the purchase of most goods and services. Select Yes if you wish to charge VAT on the commission you
+	//				collect	from the property owner Or select no if your region not charging  VAT by law.</>
 	
 	return(	
 		<div className="datatable-responsive-demo">
@@ -201,13 +211,13 @@ const Tab2 =() =>{
                         <Column field="PrpName" header="Property" body={dataTable} 
 							style={{textAlign:'center'/* , width: '100px' */}}/>
                         <Column field="StartDate" header={headerTemplate('Start Date', 'The date of property activation')} style={{textAlign:'center'/* , width: '100px' */}} body={dataTable}/>
-						<Column field="ManagCommission" header={headerTemplate('Rsrv. Comm.','Reservation Commission - Management  percentage  fee you collect from each property on reservation revenue')} body={dataTable}
+						<Column field="ManagCommission" header={headerTemplate('Rsrv. Comm.','Reservation Commission - Management  percentage  fee you collect from each property on reservation revenue')} body={dataTable1}
 							style={{textAlign:'center'/* , width: '100px' */}} />
 					
-						<Column field="inclVat" header={headerTemplate('VAT Included', vatIncluded)} body={dataTable}
-							style={{textAlign:'center'/* , width: '100px' */}} />
-						<Column field="addVat" header={headerTemplate('VAT Added', vatAdded)} body={dataTable}
-							style={{textAlign:'center'/* , width: '100px' */}} />
+				{/*		<Column field="inclVat" header={headerTemplate('VAT Included', vatIncluded)} body={dataTable}
+							style={{textAlign:'center'}} /> */}
+				{/*		<Column field="addVat" header={headerTemplate('VAT Added', vatAdded)} body={dataTable}
+							style={{textAlign:'center'}} />  */}
 						<Column field="Fund" header="Fund" body={dataTable}
 							style={{textAlign:'center'}} />
 						<Column field="el" header=""  el='el' body={actionTemplate}

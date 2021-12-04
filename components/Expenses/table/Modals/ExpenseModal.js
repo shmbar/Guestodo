@@ -120,11 +120,7 @@ const ExpenseModal = (props) =>{
 		
 		let validation = formValidation(value,
 						['ExpType','vendor', !value.recCost && 'AccDate', 'AptName','Amnt']);
-		
-		if(!settings.vat){
-			setSnackbar( {open:true, msg: 'Vat is missing', variant: 'warning'});
-			return};
-		
+	
 		if(settings.CompDtls==null){
 			setSnackbar( {open:true, msg: 'Company details are missing', variant: 'warning'});
 			return};
@@ -198,7 +194,7 @@ const ExpenseModal = (props) =>{
 					recEnd: recEnd===null? '25-Dec-2099':dateFormat(recEnd,"dd-mmm-yyyy"),
 					TtlPmnt: '', BlncExp: newObj.Amnt,
 					PmntStts: 'Unpaid',
-					Payments: [{P: '', Date: null, PM: ''}]
+					Payments: [{P: '', Date: null, PM: '', id:uuidv4() }]
 				}	
 				delete objTmp.AccDate  //complete on the server
 				delete objTmp.Transaction  //complete on the server

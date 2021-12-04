@@ -47,10 +47,23 @@ const ExpenseModalDetails=(props)=> {
 	<div  style={{padding: '10px', background:'#eee'}} >
 		<Grid container spacing={2}/*justify="center */ >
 			<Grid item xs={12} md={9} style={{padding:'16px'}}>
-					<Paper className={classes.root}>
-						<h4 className='ttlClr1'>Expense</h4>
-						<ExpenseData />
-					</Paper>
+				<Grid container direction='column'  justifyContent="space-evenly" alignItems="stretch">
+					<Grid item xs={12}>
+						<Paper className={classes.root}>
+							<h4 className='ttlClr1'>Expense</h4>
+							<ExpenseData />
+						</Paper>
+					</Grid>
+					<Grid item xs={12} style={{paddingTop: '30px'}}>
+						<Paper className={classes.root}>
+							<h4 className='ttlClr1'>Payments</h4>
+							<PaymentsPaper value={value}  setValue={setValue} 
+									handleChangePmnts={handleChangePmnts}
+									handleChangeDPmnts={handleChangeDPmnts} redValid={redValid}
+									blnc='BlncExp' amnt={value.Amnt} />
+						</Paper>
+					</Grid>
+				</Grid>
 			</Grid>
 			<Grid item xs={12} md={3} style={{padding:'16px'}}>
 					<Paper className={classes.root} style={{background: '#e7f3ff'}}>
@@ -59,18 +72,6 @@ const ExpenseModalDetails=(props)=> {
 							<DataSummary />
 					</Paper>
 			</Grid>		
-		</Grid>
-	  		
-		<Grid container spacing={2}/*justify="center */ >  
-		  	<Grid item xs={12} md={9} style={{padding:'16px'}}>
-					<Paper className={classes.root}>
-						<h4 className='ttlClr1'>Payments</h4>
-						<PaymentsPaper value={value}  setValue={setValue} 
-								handleChangePmnts={handleChangePmnts}
-								handleChangeDPmnts={handleChangeDPmnts} redValid={redValid}
-								blnc='BlncExp' amnt={value.Amnt} />
-					</Paper>
-		 	</Grid>	 
 		</Grid>
 	</div>
   );

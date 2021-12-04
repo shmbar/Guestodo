@@ -37,11 +37,11 @@ const RsrvAmounts = () =>{
 								`${cur} ${addComma(value.RsrvAmnt/value.NigthsNum)}` : ''} pad='0'/>
 					</Grid>*/}
 					<Grid item xs={12} style={{width:'100%'}}>
-						<RowOut name='Reservation Amount Before Vat' value={amountFilled ? 
+						<RowOut name='Reservation Amount Before VAT' value={amountFilled ? 
 							reservationAMountBeforeVat: ''} pad='0'/>
 					</Grid>
 					<Grid item xs={12} style={{width:'100%'}}>
-						<RowOut name='Vat' value={amountFilled ? vatAmount: ''} pad='0'/>
+						<RowOut name='VAT' value={amountFilled ? vatAmount: ''} pad='0'/>
 					</Grid>	
 					
 					<Grid item xs={12} style={{width:'100%'}}>

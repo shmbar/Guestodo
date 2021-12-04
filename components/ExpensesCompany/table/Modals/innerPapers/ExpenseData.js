@@ -115,7 +115,7 @@ const ExpenseData = () =>{
 					<Grid item xs={12} md={6} >
 						<MonthPicker date={date} handleChangeD={handleChangeD} value={value} redValid={redValid}/>
 					</Grid>
-					<Grid item xs={12} md={12} style={{paddingBottom: '0px'}} >
+			{/*<Grid item xs={12} md={12} style={{paddingBottom: '0px'}} >
 						<FormControl component="fieldset" className={classes.formControl}>
 							<RadioGroup
 							  aria-label="gender"
@@ -139,7 +139,7 @@ const ExpenseData = () =>{
 								  />
 							</RadioGroup>
 						  </FormControl>
-					</Grid>
+					</Grid> */}
 					<Grid item xs={12} md={6} > 
 					  <TextField   
 						value={value.Amnt}    
@@ -160,7 +160,7 @@ const ExpenseData = () =>{
 									value="Vat"
 								  />
 									}
-								 label={`Include ${vat} Vat`}
+								 label={`${vat} VAT included `}
 								labelPlacement="end"
 								/>	
 					</Grid>

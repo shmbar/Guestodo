@@ -727,7 +727,7 @@ export const paymentStatus = (payments, amount ) =>{
 }
 
 
-
+/*
 export const setID=async(uidCollection, collection)=>{
 	
 	let batch = db.batch();
@@ -926,4 +926,31 @@ export const setNewRsrvCncl = async(uidCollection, collection )=>{
     	console.log('Done')
 	}) 
 	
+}
+*/
+
+export const setSets=async(uidCollection)=>{
+	 const properties = await db.collection(uidCollection).doc('data').collection('settings').doc('properties').get()
+   	 const vt = await db.collection(uidCollection).doc('data').collection('settings').doc('vat').get()
+	let arr =[]
+	let propsArr = properties.data().properties
+	
+	
+	for(let i in propsArr){
+		
+		let fees = {FeeName:'', FeeType:'', FeeAmount: '', FeeModality: '', FeeDescription: '', 'id': uuidv4()}
+		let taxes = {TaxName:'', TaxType:'', TaxAmount: '', TaxTypeDscrp: '', TaxModality: '', TaxDescription: '', 'id': uuidv4()};
+		let Commissions={ManagCommission: propsArr[i].ManagCommission, addVat:propsArr[i].addVat==='Yes' ? true: false, inclVat:propsArr[i].inclVat==='Yes' 
+						 ? true: false};
+		let newObj = {...propsArr[i], 'Fees':[fees], 'Taxes': [taxes], 'Commissions': Commissions, 'VAT': vt.data().vat }
+		delete newObj.ManagCommission
+		delete newObj.addVat
+		delete newObj.inclVat
+		arr.push(newObj)
+	}	
+	
+	
+	console.log(arr)
+	await db.collection(uidCollection).doc('data').collection('settings').doc('properties').set( {properties: arr})
+	console.log('done')
 }

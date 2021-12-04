@@ -47,7 +47,7 @@ const VatModalDetails=(props)=> {
 		<Grid container spacing={2}>
 			<Grid item xs={12} md={8} style={{padding:'16px'}}>
 				<Paper className={classes.root}>
-					<h4 className='ttlClr1'>Vat Calculation</h4>
+					<h4 className='ttlClr1'>VAT Calculation</h4>
 					<Dates Calculate={props.Calculate}/>
 				</Paper>
 			</Grid>

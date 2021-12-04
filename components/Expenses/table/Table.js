@@ -29,8 +29,8 @@ const tableCols = [
 			{field: 'AccDate', header: 'Accounting Date', showcol: true,s:['xs','sm','md','lg', 'xl']},
 		//	{field: 'PrpName', header: 'Property', showcol: true,initial: 4},
 			{field: 'AptName', header: 'Apartment', showcol: true,s:['sm','md','lg', 'xl']},
-			{field: 'ExpAmntWthtoutVat', header: 'Expense Amount Before Vat', showcol: true,s:['lg', 'xl']},
-			{field: 'VatAmnt', header: 'Vat', showcol: true,s:['lg', 'xl']},
+			{field: 'ExpAmntWthtoutVat', header: 'Expense Amount Before VAT', showcol: true,s:['lg', 'xl']},
+			{field: 'VatAmnt', header: 'VAT', showcol: true,s:['lg', 'xl']},
 			{field: 'Amnt', header: 'Amount', showcol: true,s:['xs','sm','md','lg', 'xl']},
 			{field: 'TtlPmnt', header: 'Total Payment', showcol: true,s:['lg', 'xl']},
 			{field: 'BlncExp', header: 'Balance Due', showcol: true,s:['lg', 'xl']},
@@ -98,7 +98,7 @@ const Table =(props) =>{
         tableCols.map(k =>k.field).map(q =>{
 		return tmpObj[q]= q==='AccDate'  ? null: '';
 		});
-		 tmpObj.Vat=false;
+		 tmpObj.Vat=+settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']===0? false :true;
 		 delete tmpObj.el;
 		 tmpObj.Transaction = '';
 		 tmpObj.Payments=[{P:'', Date:null, PM:'', id: uuidv4()}];	

@@ -8,7 +8,7 @@ import {ExpCompare, RevenueCompare, PLCompare, ExpenseGroup, PieChart, OccupPrcn
 import PannelData from './SubComponents/PannelData';
 import { makeStyles } from '@material-ui/core/styles';
 //import 'chartjs-plugin-datalabels';
-import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,setID,setPmnt, setNewRsrvCncl} from '../../functions/functions.js';
+import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots, setSets } from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 
 import Rsrv from '../../logos/pics/balancedue.svg';
@@ -261,10 +261,12 @@ const Dashboard = () => {
 	},[  date, settings , uidCollection, expOwner,admn, propertySlct, setLoading])
 	
 	const runAA=async()=>{
-		console.log('start run Id')
+		
+	//	await setSets(uidCollection)
+		
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
 		
-	await setPmnt(uidCollection, 'reservations_2022', settings, 'payments') //paymentsCompany
+	//await setPmnt(uidCollection, 'reservations_2022', settings, 'payments') //paymentsCompany
 	//	await setNewRsrvCncl('3dd6714a-5777-43d1-b87b-67eee361d6e4', 'reservations_2021')
    
 	}

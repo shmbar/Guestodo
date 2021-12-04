@@ -21,9 +21,9 @@ import { v4 as uuidv4 } from 'uuid';
 //import Grid from '@material-ui/core/Grid';
 const dateFormat = require('dateformat');	
 
-const logos = [{txt: 'Commission Before Vat', img: cmsn, width:'50px'},
-				 	{txt: 'Reservation Amount Include Vat', img: Income, width:'50px'},
-				 	{txt: 'Reservation Amount  Excluding Vat', img: Expense, width:'50px'},
+const logos = [{txt: 'Commission Before VAT', img: cmsn, width:'50px'},
+				 	{txt: 'Reservation Amount Include VAT', img: Income, width:'50px'},
+				 	{txt: 'Reservation Amount  Excluding VAT', img: Expense, width:'50px'},
 			   {txt: 'Balance Due', img: balancedue, width:'50px'},
 				 
 			  ];
@@ -71,8 +71,9 @@ export default function PaperSheet() {
 			setLoading(true)
 			
 			let tmpData = await readDataIncomeCompany(uidCollection,'expenses', From, To );
+			
 			tmpData = tmpData.filter(x=> +x.Amnt!==0);
-		
+	
 			tmpData = tmpData.map(x=> ({...x, 'tmpCol': x.PrpName.concat(dateFormat(x.AccDate, "mmm-yyyy")), 'date' :
 						dateFormat(x.AccDate, "mmm-yyyy"), 'PrpName': settings.properties.filter(y=>y.id===x.PrpName)[0]['PrpName'],
 						'Owner':	idToItem(settings.owners,settings.properties.filter(y=>y.id===x.PrpName)[0]['Owner'], 'item')   }))

@@ -26,12 +26,12 @@ const tableCols = [
 			{field: 'Transaction', header: 'Transaction', showcol: true,s:['xs','sm','md','lg', 'xl']},
 			{field: 'From', header: 'From', showcol: true,s:['xs','sm','md','lg', 'xl']},
 			{field: 'To', header: 'To', showcol: true,s:['xs','sm','md','lg', 'xl']},
-			{field: 'VatPayRtrn', header: 'Vat Pay/Return', showcol: true,s:['xs','sm','md','lg', 'xl']},
+			{field: 'VatPayRtrn', header: 'VAT Pay/Return', showcol: true,s:['xs','sm','md','lg', 'xl']},
 			{field: 'TtlPmnt', header: 'Total Payment', showcol: true,s:['xs','sm','md','lg', 'xl']},
 			{field: 'BlncVat', header: 'Balance Due', showcol: true,s:['lg', 'xl']},
 			{field: 'PmntStts', header: 'Payment Status', showcol: true,s:['md','lg', 'xl']},
-			{field: 'IncWithVat', header: 'Revenue Amount Incl Vat', showcol: false,s:['xs','sm','md','lg', 'xl']},	
-			{field: 'ExpWithVat', header: 'Expense Amount Incl Vat', showcol: false,s:['xs','sm','md','lg', 'xl']},	
+			{field: 'IncWithVat', header: 'Revenue Amount Incl VAT', showcol: false,s:['xs','sm','md','lg', 'xl']},	
+			{field: 'ExpWithVat', header: 'Expense Amount Incl VAT', showcol: false,s:['xs','sm','md','lg', 'xl']},	
 			{field: 'el' , header: '', el: 'el', showcol: true,s:['xs','sm','md','lg', 'xl']}
 ];
       

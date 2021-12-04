@@ -74,7 +74,7 @@ const VatModal = () =>{
 	
 		let tmp = {...valueVatTmp};
 		let newTmp='';
-		
+	
 		if(val.Vat===false){
 					newTmp = ({...tmp, 'withVat': +((+tmp.withVat) + (+val.RsrvAmnt/* * Yahas*/)).toFixed(2)});
 				}else{
@@ -141,7 +141,7 @@ const VatModal = () =>{
 		let listDataRC = await readDataPropsDatesRange(uidCollection, 'reservations', ListOfProperties, From, To);
 		let listDataEX = await readDataPropsDatesRange(uidCollection, 'expenses', ListOfProperties, From, To);
 		let listDataOI = await readDataPropsDatesRange(uidCollection, 'otherIncome', ListOfProperties, From, To);
-			
+		
 		let valueVatTmp={withVat:'', withoutVat:'', Vat:''};
 		let valueVatTmpEx={withVat:'', withoutVat:'', Vat:''};
 		
@@ -150,7 +150,7 @@ const VatModal = () =>{
 			let val=listDataRC[i];
 			
 			if(ChckIn>=From && ChckIn<=To && val.pStatus!=='Tentative' ){
-				valueVatTmp = pushArr(valueVatTmp,val /*,Yahas*/);
+				valueVatTmp = pushArr(valueVatTmp, val /*,Yahas*/);
 			}
 		}
 		

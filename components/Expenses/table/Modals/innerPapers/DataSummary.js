@@ -28,7 +28,7 @@ const DataSummary = () =>{
 						<RowOut name='Expense Amount Before Vat' value={value.Amnt!=='' ? ExpenseAmountBeforeVat: ''} pad='0' />
 					</Grid>	
 					<Grid item sm={12} style={{width:'100%'}}>
-						<RowOut name='Vat' value={value.Amnt!=='' ? Vat: ''} pad='0'/>
+						<RowOut name='VAT' value={value.Amnt!=='' ? Vat: ''} pad='0'/>
 					</Grid>
 					<Grid item xs={12} >
 						<RowOut name='Expense Amount' value={value.Amnt!=='' ? ExpenseAmount: ''} pad='0'  />

@@ -117,13 +117,14 @@ const ExpenseModal = (props) =>{
 		///////////////////
 		let newPmnts = delEmptyPaymentS(value.Payments);
 		let indx = exDataC.findIndex(x=>x.Transaction===value.Transaction);
-		let newObj = {...value, 'LstSave': dateFormat(Date(),'dd-mmm-yyyy'), 'Payments': newPmnts, 'VatAmnt': +(+value.Amnt - +value.ExpAmntWthtoutVat).toFixed(2), 'm': dateFormat(value.AccDate,'mm')};
+		let newObj = {...value, 'LstSave': dateFormat(Date(),'dd-mmm-yyyy'), 'Payments': newPmnts, 'VatAmnt': +(+value.Amnt - +value.ExpAmntWthtoutVat).toFixed(2),
+					  'm': dateFormat(value.AccDate,'mm')};
 			
 	 	if(indx!==-1){ //Update the table
 			const tmpArr = exDataC.map(k =>
 	 		   		k.Transaction===value.Transaction ? newObj : k  );
-			setSnackbar( {open: (await addData(uidCollection, 'expensesCompany', dateFormat(newObj.AccDate,'yyyy'), newObj)), msg: 'Expense has been updated!', variant:
-						  'success'});
+			setSnackbar( {open: (await addData(uidCollection, 'expensesCompany', dateFormat(newObj.AccDate,'yyyy'), newObj)), msg: 'Expense has been updated!',
+						  variant: 'success'});
 			updateSettingsShows();
 			setExDataC(tmpArr);
 			
@@ -138,8 +139,8 @@ const ExpenseModal = (props) =>{
 			
 		}else{ //add new data
 			
-			setSnackbar( {open: (await addData(uidCollection, 'expensesCompany',dateFormat(newObj.AccDate,'yyyy'), newObj)), msg: 'New Expense has been added!', variant:
-						  'success'});
+			setSnackbar( {open: (await addData(uidCollection, 'expensesCompany',dateFormat(newObj.AccDate,'yyyy'), newObj)), msg: 'New Expense has been added!',
+						  variant: 'success'});
 			
 			updateSettingsShows()
 			if(	(date.month!==12	&& dateFormat(String(date.year).concat('-').concat(date.month+1),'yyyy-mm') === dateFormat(newObj.AccDate,'yyyy-mm')) ||

@@ -83,7 +83,7 @@ export default function PaperSheet() {
 	  <>
 	  <div className={classes.paddingSmall}>
 		  <Grid container spacing={7} justifyContent="space-evenly"  >  
-			 <PannelData clsNum='1' txt={pnldata.Vat<0 ? 'Total Vat To Be Returned': 'Total Vat To Be Paid'} ttl={`Total ${date.year}`}
+			 <PannelData clsNum='1' txt={pnldata.Vat<0 ? 'Total VAT To Be Returned': 'Total VAT To Be Paid'} ttl={`Total ${date.year}`}
 				 num={addCommas(Math.abs(pnldata.Vat))}	img={pnldata.Vat<0 ? logos[0] : logos[1]} />
 			<PannelData clsNum='3' txt='Balance Due' ttl={`Total ${date.year}`} num={pnldata.Blnc} 
 				 img={logos[2]} />
@@ -95,7 +95,7 @@ export default function PaperSheet() {
 		  	<Paper className={classes.root}>
 				<Grid  container  spacing={2}>
 					<Grid item sm={5}>
-						<h4 className='ttlClr'>Company Vat</h4>
+						<h4 className='ttlClr'>Company VAT</h4>
 					</Grid>	
 					<Grid item sm={7} >
 						<Grid  container  spacing={2} justifyContent='flex-end' alignItems="center" style={{margin:"auto"}}>

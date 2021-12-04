@@ -102,7 +102,7 @@ const OtherIncomeData = () =>{
 									value="Vat"
 								  />
 									}
-								 label={`Include ${vat} Vat`}
+								 label={`${vat} VAT included`}
 								labelPlacement="end"
 								/>	
 					</Grid>

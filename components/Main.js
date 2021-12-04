@@ -311,7 +311,7 @@ const Main =(props) =>{
 				{(page==='DashboardOwner' || (page==='Reservations' && !calendarView) || page==='Expenses' ) && <PropertySelect />}
 				{(page==='Reservations' && calendarView) && 	<PropertySelectAll /> }
 				{(page==='P&L' || page==='Extra Revenue  ') && <PropertySelect /> }
-				{(page==='Money Transfer' || page==='Cash Flow' || page==='Vat') && <FundSelect />}
+				{(page==='Money Transfer' || page==='Cash Flow' || page==='VAT') && <FundSelect />}
 				<SMenu/>
 				
 				<Button color="inherit" onClick={logOut}style={{color: '#193E6D'}}>
@@ -361,7 +361,7 @@ const Main =(props) =>{
       		{page==='Reservations' && <Reservations /> }
 		  	{page==='Expenses' && <Expenses />}
 		  	{page==='Money Transfer' && <CashFlow />}
-		  	{page==='Vat' && <Vat />}
+		  	{page==='VAT' && <Vat />}
 		  	{page==='Cash Flow' && <CashFlowTable />}
 		  	{page==='P&L' && <PL />}
 		  	{page==='Owners' && <Tab1 />}
@@ -379,7 +379,7 @@ const Main =(props) =>{
 		  	{page==='Extra Revenue' && <Tab10OtherIncome />}
 		  	{page==='Extra Revenue  ' && <OtherIncome />}
 		    {page==='Commissions' && <CompanyIncome />}
-		  	{page==='Vat ' && <VatCompany />}
+		  	{page==='VAT ' && <VatCompany />}
 		  	{page==='P&L ' && <PLCompany />}
 		  	{page==='Company Details' && <CompanyDetails />}
 		  	{page==='Cash Flow ' && <CashFlowTableCompany />}

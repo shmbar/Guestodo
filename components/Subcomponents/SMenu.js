@@ -54,7 +54,7 @@ const companyMenuOptions = [ {txt: 'Company Details', img: CompanyDetails, width
 
 
 const financeMenuOptions = [ {txt: 'Payment Methods', img: PmntMethods, width:'24px'},
-					 {txt: 'Vat', img: Vatpsttngs, width:'24px'}];
+					 {txt: 'VAT', img: Vatpsttngs, width:'24px'}];
 
 
 const SMenu=(props)=> {
@@ -94,7 +94,7 @@ const SMenu=(props)=> {
   }
 	
 	const setPageAndCloseMenu=(x)=>{
-		if(x==='Vat'){
+		if(x==='VAT'){
 			setValueSettings({vat: settings.vat!=null ? settings.vat.substr(0, settings.vat.length - 1) : ''})
 			setDisplayVat(true)
 		}else{

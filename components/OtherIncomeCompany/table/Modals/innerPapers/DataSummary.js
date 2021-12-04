@@ -23,10 +23,10 @@ const DataSummary = () =>{
 						<RowOut name='Transaction' value={showTR(value.Transaction)} pad='20'/>
 					</Grid>
 					<Grid item xs={12} >
-						<RowOut name='Income Amount Before Vat' value={value.Amnt!=='' ? IncomeAmountBeforeVat: ''} pad='0' />
+						<RowOut name='Income Amount Before VAT' value={value.Amnt!=='' ? IncomeAmountBeforeVat: ''} pad='0' />
 					</Grid>	
 					<Grid item sm={12} style={{width:'100%'}}>
-						<RowOut name='Vat' value={value.Amnt!=='' ? Vat: ''} pad='0'/>
+						<RowOut name='VAT' value={value.Amnt!=='' ? Vat: ''} pad='0'/>
 					</Grid>
 					<Grid item xs={12} >
 						<RowOut name='Income Amount' value={value.Amnt!=='' ? IncomeAmount : ''} pad='0'  />

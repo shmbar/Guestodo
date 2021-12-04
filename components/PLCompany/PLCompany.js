@@ -36,16 +36,14 @@ function addComma(x) {
 	const MngmIncome = (val, d)=>{
 	
 			let newObj={ExpInc: d.type, VendChnnl: val.PrpName, AccDate:val.AccDate,
-					   Transaction: '', Income: +d.Cmsn,
-						Expense:''}    
+					   Transaction: '', Income: +d.Cmsn, Expense:''}    
 			return newObj;
 	}
 
 	const othrInc = (val)=>{
 
 			let newObj={ExpInc: 'Extra Revenue', VendChnnl: val.incType, AccDate:val.AccDate,
-					   Transaction: val.Transaction, Income: +val.IncAmntWthtoutVat,
-						Expense:''}    
+					   Transaction: val.Transaction, Income: +val.IncAmntWthtoutVat, Expense:''}    
 			return newObj;
 	}
 	
