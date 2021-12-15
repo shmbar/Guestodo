@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {MenuItem, InputLabel, Select, FormControl, TextField,
-		Grid, ListItemIcon}  from '@material-ui/core';
+		Grid, ListItemIcon, Typography}  from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -17,6 +17,12 @@ import {idToItem} from '../../../../../functions/functions.js';
 import NumberFormatCustom from '../../../../Subcomponents/NumberFormatCustom';
 import CustomDatePicker from './datePicker';
 
+
+import TreeView from '@material-ui/lab/TreeView';
+import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
+import ChevronRightIcon from '@material-ui/icons/ChevronRight';
+import TreeItem from '@material-ui/lab/TreeItem';
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -26,6 +32,22 @@ const useStyles = makeStyles(theme => ({
 	width: '100%',
     minWidth: 120,
   },
+  treeview: {
+    flexGrow: 1,
+    maxWidth: 400,
+  },
+  labelRoot: {
+    display: 'flex',
+   // padding: theme.spacing(0.5, 3),
+	justifyContent: 'space-between',
+  },
+  labelText: {
+    fontWeight: 'inherit',
+  },
+ GreenCheckboxFeesTaxes:{
+	marginLeft: '20px',
+	marginRight: 0,
+}
 }));
 
 /*
@@ -40,24 +62,39 @@ const useStyles = makeStyles(theme => ({
 	}
 */
 
+
+
+
 const RsrvAmounts = () =>{
 	const classes = useStyles();
 	const stl = {color:'purple', fontStyle: 'italic'};
 
 	
-	const {value, handleChange, handleChangeTrueFalse, redValid, rcDataPrp} = useContext(RcContext);
+	const {value, handleChange, handleChangeTrueFalse, redValid,
+		   rcDataPrp,handleChangeTrueFalseFeesTaxes, getFees} = useContext(RcContext);
 	const {settings, selectValueSettings, setRunTab, selectValueSettingsApt,
 		   chnnlslogo} = useContext(SettingsContext);
 	const {apartments, channels} =  settings;
 	const {write, uidCollection} = useContext(AuthContext);					 						 				 
+	const  cur = settings.CompDtls.currency;
 	
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
 	const GreenCheckbox = withStyles({
 		  root: {
 			'&$checked': {
+				color: green[600],	
+			},
+		  },
+		  checked: {},
+	})(props => <Checkbox color="default" {...props} />);
+	
+	const GreenCheckboxFeesTaxes = withStyles({
+		  root: {
+			'&$checked': {
 			  color: green[600],
 			},
+		  padding: '0px',
 		  },
 		  checked: {},
 	})(props => <Checkbox color="default" {...props} />);
@@ -144,6 +181,80 @@ const RsrvAmounts = () =>{
 		tab!=='TabApt' ? selectValueSettings(obj):selectValueSettingsApt(obj);
 		setRunTab(tab)
 	}
+	
+	const fees = value.Fees!=null ? value.Fees.map((x,i)=>{
+		return  <div className={classes.labelRoot} key={i}>
+          			<Typography variant="body1" className={classes.labelText}
+						style={{marginLeft: '20px'}}>
+            			{x.FeeName}
+          			</Typography>
+					{x.FeeType==='Percent' && 
+						<Typography variant="body1" className={classes.labelText}>
+            				({  x.FeeAmount + '%' })
+          				</Typography>
+			 		}
+					{x.FeeAmount !=='' &&
+						<Typography variant="body1" className={classes.labelText}>
+            				{	x.FeeType==='Percent' ? +value.NetAmnt *x.FeeAmount/100 + cur : 
+								x.FeeType==='Flat' && x.FeeModality==='Per Stay'  ? x.FeeAmount + cur:
+								x.FeeType==='Flat' && x.FeeModality==='Per Night'  ? x.FeeAmount*value.NigthsNum + cur:
+								x.FeeType==='Flat' && x.FeeModality==='Per Person'  ? x.FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn) + cur:
+								x.FeeType==='Flat' && x.FeeModality==='Per Person/Per Night'  ?
+								x.FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum + cur: ''
+						}
+						<FormControlLabel
+							control={
+								  <GreenCheckboxFeesTaxes
+									checked={x.show}
+									onChange={handleChangeTrueFalseFeesTaxes('Fees', i)}
+								  />
+							}
+						disabled={!write}
+						labelPlacement="end"
+						className={classes.GreenCheckboxFeesTaxes}
+						
+      					/>	
+          				</Typography> 
+					}
+        		</div> 
+		}) : [];
+	
+	
+	const taxes = value.Taxes!=null ? value.Taxes.map((x,i)=>{
+		return  	<div className={classes.labelRoot} key={i}>
+						<Typography variant="body1" className={classes.labelText}
+							style={{marginLeft: '20px'}}>
+							{x.TaxName}
+						</Typography>
+						{x.TaxType==='Percent' && 
+							<Typography variant="body1" className={classes.labelText}>
+								({ x.TaxAmount + '%' })
+							</Typography>
+						}
+						{x.TaxAmount !=='' &&
+							<Typography variant="body1" className={classes.labelText}>
+								{	x.TaxType==='Percent' ? (+value.NetAmnt + +getFees(value, +value.NetAmnt ))*x.TaxAmount/100 + cur : 
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? x.TaxAmount + cur:
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? x.TaxAmount*value.NigthsNum + cur:
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? x.TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn) + cur:
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Person/Per Night'  ?
+								 	x.TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum + cur: ''
+							 }
+							<FormControlLabel
+								control={
+									  <GreenCheckboxFeesTaxes
+										checked={x.show}
+										onChange={handleChangeTrueFalseFeesTaxes('Taxes', i)}
+									  />
+								}
+								disabled={!write}
+								labelPlacement="end"
+								className={classes.GreenCheckboxFeesTaxes}
+      					/>	
+							</Typography>
+						}
+					</div>
+		}): [];
 	
 	
 	return (
@@ -234,12 +345,11 @@ const RsrvAmounts = () =>{
 					 }
 					
 					<Grid item xs={12} md={6} style={{alignSelf: 'normal'}}>
-						
 							  <TextField   
 								value={value.NetAmnt}    
 								onChange={e=>write && handleChange(uidCollection, e,settings)}
 								name="NetAmnt"
-								label="Amount"
+								label="Base Charge"
 								disabled={value.pStatus==='Cancelled'}
 								InputProps={{inputComponent: NumberFormatCustom}}
 								fullWidth
@@ -247,7 +357,7 @@ const RsrvAmounts = () =>{
 							  />
 					
 					</Grid>
-					<Grid item xs={12} md={3}>
+					<Grid item xs={12} md={4}>
 						<FormControl >
 							<FormControlLabel
 							control={
@@ -258,12 +368,29 @@ const RsrvAmounts = () =>{
 							  />
 							}
 							label={`${vat}% VAT included`}
-							disabled={!write || vat===0}
+							disabled={!write || +vat===0}
 							labelPlacement="end"
       					/>	
 						</FormControl>
 					</Grid>
+					<Grid item xs={12}>
+						 <TreeView  className={classes.treeview} defaultCollapseIcon={<ExpandMoreIcon />}  defaultExpandIcon={<ChevronRightIcon />}>
+							  {fees}
+							  {taxes}
+						</TreeView>
+					</Grid>
+					<Grid item xs={12} md={6} style={{alignSelf: 'normal'}}>
+							  <TextField   
+								value={value.RsrvAmnt}    
+								//onChange={e=>write && handleChange(uidCollection, e,settings)}
+								name="NetAmnt"
+								label="Total Amount Paid by Guest"
+								InputProps={{inputComponent: NumberFormatCustom, readOnly: true,}}
+								fullWidth
+								 error={value.NetAmnt==='' && redValid ? true: false}
+							  />
 					
+					</Grid>
 					<Grid item xs={12} md={8} > 
 						<TextField
 							value={value.Notes}   
@@ -281,86 +408,4 @@ const RsrvAmounts = () =>{
 
 export default RsrvAmounts;
 
-/*
-
-	<Grid item xs={12} md={6} >
-						<FormControl className={classes.formControl}>
-						<InputLabel htmlFor="PrpName"
-									error={value.PrpName==='' && redValid ? true: false}
-							>Property Name</InputLabel>
-							<Select
-								value={value.PrpName}  
-								onChange={e=> write && (e.target.value!=='Add new property'? handleChange(e,channels, vat): Add(ObjProperty, 'Tab2'))
-										 }
-								inputProps={{
-									name: 'PrpName'
-								}}
-								fullWidth
-								error={value.PrpName==='' && redValid ? true: false}
-								>
-								{propertyMenu}
-							</Select>
-						</FormControl>
-					</Grid>	
-					
-	let deletedPrprty = settings.properties.filter(x=>!x.show).map(x=>x.PrpName);
-	
-	let propertiesArr = ['Add new property'].concat([...new Set(properties.filter(x=>
-							 x.OwnerName===valueOwner.owner).map(x => x.PrpName))]);
-	let propertyMenu = propertiesArr.map((s,i)=>{
-				return <MenuItem key={s} value={s} disabled={deletedPrprty.includes(s)}
-						   className={deletedPrprty.includes(s) ? 
-						'dltItem': null} style={i===0? stl : null}>{s}</MenuItem>
-		});
-
-		let ObjProperty={id:uuid(), OwnerName: valueOwner.owner ,PrpName: '' , StartDate: null, EndDate : null, ManagCommission : '',
-		IntCshFlBnce: '', BAccNum: '', show:true};
-		
-		
-		
-		
-		{/*	<MuiPickersUtilsProvider utils={DateFnsUtils}>
-						<Grid item xs={12} md={6} >
-						<KeyboardDatePicker 
-								autoOk
-								disableToolbar
-								okLabel={false}
-								clearable
-								label="Check In"
-								value={value.ChckIn}
-								maxDate={value.ChckOut===null? '2999-12-12': lastDay(value.ChckOut)}
-								initialFocusedDate={new Date(dateFormat(value.ChckIn, "yyyy-mm-dd"))}
-								onChange={date=>write && handleChangeD('ChckIn',date, uidCollection)}
-								format="dd-MMM-yyyy"
-								fullWidth
-								InputProps={{
-									readOnly: true,
-								}}
-								error={value.ChckIn===null && redValid ? true: false}
-							/>
-						</Grid>
-					</MuiPickersUtilsProvider>
-					<MuiPickersUtilsProvider utils={DateFnsUtils}>
-						<Grid item xs={12} md={6}>
-							<KeyboardDatePicker
-								autoOk
-								disableToolbar
-								okLabel={false}
-								clearable
-							  	format="dd-MMM-yyyy"
-								minDate={value.ChckIn!==null && nextDay(value.ChckIn)}
-							  	label="Check Out"
-								initialFocusedDate={new Date(dateFormat(value.ChckIn, "yyyy-mm-dd"))}
-							  	value={value.ChckOut}
-							  	onChange={date=> write && handleChangeD('ChckOut',date, uidCollection)}
-								fullWidth
-								InputProps={{
-									readOnly: true,
-								}}
-								error={value.ChckOut===null && redValid ? true: false}
-							/>
-						</Grid>
-					</MuiPickersUtilsProvider>
-					*/
-		
 		

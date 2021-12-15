@@ -229,6 +229,7 @@ const Tab2Modal = (props) =>{
 			//////////////////////////////
 		
 		}
+	
 		let tmp ={...settings, 'properties': newArr, 'apartments': tmpApts};
 		setSettings(tmp);
  		 

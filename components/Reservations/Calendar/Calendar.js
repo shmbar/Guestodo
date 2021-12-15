@@ -190,11 +190,19 @@ const Calendar = () => {
 	
 		
 		let tmpObj = {ChckIn : dateFormat(strt, 'dd-mmm-yyyy'),  ChckOut: dateFormat(end,'dd-mmm-yyyy'),
-					  'Transaction':  'RC'.concat(tmpRC).concat('_' + uuidv4()), Payments:[{P:'', Date:null, PM:'', 'id' : uuidv4()}], Vat:true,
-					 				  	PrpName: settings.apartments.filter(x=> x.id===AptNAme)[0]['PrpName'],	RsrvChn:'', NetAmnt:'', CnclFee:'', 
-					  					NigthsNum: getNights(dateFormat(end,'dd-mmm-yyyy'), dateFormat(strt, 'dd-mmm-yyyy')), 
-						  				RsrvAmnt:'', TtlPmnt:'', BlncRsrv:'', GstName:'', AptName:	AptNAme, pStatus: 'Confirmed',
-					 				  	dtls : {adlts: '', chldrn:'', Passport:'', email:'', mobile: '', phone: '', addrss:'', cntry:''} }
+					  'Transaction':  'RC'.concat(tmpRC).concat('_' + uuidv4()), Payments:[{P:'', Date:null,
+						PM:'', 'id' : uuidv4()}],
+						Vat:+settings.properties.filter(x=> x.id===settings.apartments
+						.filter(x=> x.id===AptNAme)[0]['PrpName'])[0]['VAT']===0? false :true,
+						PrpName: settings.apartments.filter(x=> x.id===AptNAme)[0]['PrpName'],
+					  RsrvChn:'', NetAmnt:'', CnclFee:'', 
+			Fees:settings.properties.filter(x=> x.id===settings.apartments
+					.filter(x=> x.id===AptNAme)[0]['PrpName'])[0]['Fees'].map(x=>({...x, show : true})),
+			Taxes:settings.properties.filter(x=> x.id===settings.apartments
+					.filter(x=> x.id===AptNAme)[0]['PrpName'])[0]['Taxes'].map(x=>({...x, show : true})),
+				NigthsNum: getNights(dateFormat(end,'dd-mmm-yyyy'), dateFormat(strt, 'dd-mmm-yyyy')), 
+				RsrvAmnt:'', TtlPmnt:'', BlncRsrv:'', GstName:'', AptName:	AptNAme, pStatus: 'Confirmed',
+				dtls : {adlts: '', chldrn:'', Passport:'', email:'', mobile: '', phone: '', addrss:'', cntry:''} }
 		
 		selectValueOrder(tmpObj);
 		setSlctdCell({ xFrst: 0, xScnd: 0, y: 0 });
@@ -204,7 +212,7 @@ const Calendar = () => {
         return resources.map((rs, i) => {
             return (
                 <tr key={i}>
-                    <td /* style={{ height: celltHeight }} */>{rs.name}</td>
+                    <td className='resources-overflow'>{rs.name}</td>
                 </tr>
             );
         });
@@ -230,6 +238,7 @@ const Calendar = () => {
                             {schdl.map((x, i) => (
                                 <th
                                     key={i}
+									
                                 /*   style={{
                                     //    fontSize: timeFrameOptions.indexOf(tfValue) >= 2 ? '12px' : '14px',
                                     minWidth: getCellWidth(container, date),

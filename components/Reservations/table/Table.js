@@ -87,14 +87,21 @@ const Table =() =>{
 	
 	},[scrSize, screenSize, cols])
 
-		const addOrder= ()=>{
+		const addOrder= async()=>{
 
 		if(propertySlct===null){
 			setSnackbar({open: true, msg: 'Choose property',
 						 variant: 'warning'});
 			return;
 		}else{
-			selectValue(createEmptyObj());
+			let valObj=createEmptyObj();
+			selectValue(valObj);
+			if(valObj.AptName!==''){
+				let slotsData = await readDataSlots(uidCollection, 'slots',date.year,null, valObj.AptName)
+				setSlotsTable(slotsData.dates);
+				setRcTable(slotsData.rc);
+			}
+			
 			setDisplayDialog(true);
 		}
 		
@@ -103,7 +110,7 @@ const Table =() =>{
 	 const createEmptyObj = () =>{
 	
 		const tmpArrApts=settings.apartments.filter(x=> x.PrpName===propertySlct)
-		
+	
         let tmpObj={};
         tableCols.map(k =>k.field).map(q =>{
 		return tmpObj[q]= (q==='ChckIn' || q==='ChckOut' ) ? null: '';
@@ -118,6 +125,10 @@ const Table =() =>{
 		 tmpObj.NetAmnt='';
 		 tmpObj.pStatus='Confirmed';
 		 tmpObj.CnclFee='';
+		 tmpObj.Fees=settings.properties.filter(x=> x.id===propertySlct)[0]['Fees']
+			 	.map(x=>({...x, show : true}))
+		 tmpObj.Taxes=settings.properties.filter(x=> x.id===propertySlct)[0]['Taxes']
+			 	.map(x=>({...x, show : true}))
 		 tmpObj.AptName= tmpArrApts.length===1 ? tmpArrApts[0].id : '';
 		 tmpObj.dtls = {adlts: '', chldrn:'', Passport:'', email:'', mobile: '',
 			phone: '', addrss:'', cntry:''};

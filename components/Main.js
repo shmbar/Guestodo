@@ -199,7 +199,7 @@ const Main =(props) =>{
 				setFundSlct(itemToId(sets.funds,funds[0]));
 			}
 
-			setPage(/*'Permissions' */  'DashboardOwner'  /*'Reservations'*/)
+			setPage(/*'Permissions'   'DashboardOwner' */ 'Reservations')
 		
 	},[ admn, stuff, setSettingsShows, uid, uidCollection ,setFundSlct, setFundList, setPage, setPropertyList, setPropertySlct,
 	   setMultiPropertySlct, setCheckedCalendar])

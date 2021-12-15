@@ -31,6 +31,51 @@ import {checkAvailableSlot, paymentStatus, readDataSlots} from '../functions/fun
 		const diffTime = Math.abs(new Date(end).getTime() - new Date(start).getTime());
 		return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
 	};
+		
+	const getFees=(value, val )=>{
+		let totalFees=0;
+		for (let i in value.Fees){
+			if(value.Fees[i].show){
+				
+				if(value.Fees[i].FeeType==='Percent'){
+					totalFees += +val*value.Fees[i].FeeAmount/100
+				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Stay'){
+					totalFees += +value.Fees[i].FeeAmount
+				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Night'){
+					totalFees += +value.Fees[i].TFeeAmount*value.NigthsNum
+				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person'){
+					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)
+				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person/Per Night'){
+					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum
+				}
+			}
+		}
+		
+	return totalFees;
+	}	
+	
+	const getTaxes=(value, val)=>{
+		
+		let totalTaxes=0;
+		for (let i in value.Taxes){
+			if(value.Taxes[i].show){
+				
+				if(value.Taxes[i].TaxType==='Percent'){
+					totalTaxes += (+val + +getFees(value, val ))*value.Taxes[i].TaxAmount/100
+				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Stay'){
+					totalTaxes += +value.Taxes[i].TaxAmount
+				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Night'){
+					totalTaxes += +value.Taxes[i].TaxAmount*value.NigthsNum
+				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Person'){
+					totalTaxes += +value.Taxes[i].TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)
+				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Person/Per Night'){
+					totalTaxes += +value.Taxes[i].TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum
+				}
+			}
+		}	
+	
+		return totalTaxes;
+	}
 	
 		
 return {
@@ -52,6 +97,7 @@ return {
 	rcTable, setRcTable,
 	setIsSlotAvailable,
 	calendarView, setCalendarView,
+	getFees, getTaxes,
 	handleChange: async (uidCollection, e, settings) => {
 	
 	//	let ChnItem= value.RsrvChn!==''? settings.channels.filter(x => value.RsrvChn===x.id)[0] : ''
@@ -65,11 +111,13 @@ return {
 				setSnackbar( {open:true, msg: 'Choose channel first!', variant: 'warning'});
 				return;
 			}
-	
+			const RsrvAmount = +e.target.value + +getFees(value, e.target.value) +
+					  			+getTaxes(value, e.target.value);
+			
 			setValue({...value, [e.target.name]: e.target.value,
-					  			'RsrvAmnt': +e.target.value,
-					 			'BlncRsrv': +(e.target.value-value.TtlPmnt),
-					  			'PmntStts': paymentStatus(value.TtlPmnt, +e.target.value),
+					  			'RsrvAmnt': RsrvAmount,
+					 			'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
+					  			'PmntStts': paymentStatus(value.TtlPmnt, +RsrvAmount),
 								'TtlRsrvWthtoutVat': 
 								value.Vat===false ?  +e.target.value:
 								+e.target.value/(1 + parseFloat(vat)/100)
@@ -93,17 +141,18 @@ return {
 		} else if (e.target.name==='Passport' || e.target.name==='email' || e.target.name==='mobile' || e.target.name==='phone'
 				  || e.target.name==='addrss' || e.target.name==='cntry') {
 				let moshe={...value.dtls,[e.target.name]:e.target.value};
+			
 				setValue({...value,'dtls':moshe });
 		} else if (e.target.name==='RsrvChn'){	
 		
 			let ChnItem= settings.channels.filter(x => e.target.value===x.RsrvChn)[0];
 	//		let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
-			
+			const RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt);
 			
 			value.NetAmnt!=='' ?	setValue({...value, [e.target.name]: ChnItem['id'],
-										'RsrvAmnt': +value.NetAmnt,
 										'BlncRsrv': +(+value.NetAmnt-value.TtlPmnt),
-										'PmntStts': paymentStatus(value.TtlPmnt, value.NetAmnt),
+										'PmntStts': paymentStatus(value.TtlPmnt, RsrvAmount),
 										'TtlRsrvWthtoutVat': 
 										value.Vat===false ?  +value.NetAmnt:
 										+value.NetAmnt/(1+parseFloat(vat)/100)
@@ -172,7 +221,11 @@ return {
 		let tmp = (x==='add')? +value.dtls[y] +1 : +value.dtls[y] -1;
 		tmp=tmp<0?0:tmp;
 		let moshe={...value.dtls,[y]:tmp};
-		setValue({...value,'dtls':moshe });
+		const val = {...value, 'dtls' : moshe}
+		const RsrvAmount = +value.NetAmnt + +getFees(val, value.NetAmnt) +
+					  			+getTaxes(val, value.NetAmnt);
+		
+		setValue({...value,'dtls':moshe, 'RsrvAmnt': RsrvAmount });
 	},
 	handleChangeD: async (name,val, uidCollection) =>{
 		
@@ -216,13 +269,28 @@ return {
 		if(name==='Vat'){
    	 		setValue({ ...value, [name]: e.target.checked,
 			 		'TtlRsrvWthtoutVat': 
-			 		e.target.checked===false ? (value.pStatus!=='Cancelled' ?  +value.NetAmnt : +value.CnclFee ) :
-			 		( value.pStatus!=='Cancelled' ?	+value.NetAmnt/(1+parseFloat(vat)/100) : +value.CnclFee/(1+parseFloat(vat)/100) )
+			 		e.target.checked===false ?
+					  (value.pStatus!=='Cancelled' ?  +value.NetAmnt : +value.CnclFee ) :
+			 		( value.pStatus!=='Cancelled' ?
+					 +value.NetAmnt/(1+parseFloat(vat)/100) : +value.CnclFee/(1+parseFloat(vat)/100) )
 			 	 });
 		}else{
 			setValue({ ...value, [name]: e.target.checked})
 		}	
-  	}
+  	},
+	handleChangeTrueFalseFeesTaxes: (name,i) => e =>{
+		let tmp = value[name] 
+		tmp[i]={...tmp[i], show: !tmp[i].show}
+		
+		const RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt);
+			
+		setValue({...value, [name]: tmp, 
+					'RsrvAmnt': RsrvAmount,
+					'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
+					'PmntStts': paymentStatus(value.TtlPmnt, +RsrvAmount),
+			}); 
+	}
 	  
 };
 };

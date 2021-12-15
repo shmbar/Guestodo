@@ -76,6 +76,7 @@ export default function DatesRangePicker(props) {
 		
     }, [pDate , slotsTable, rcTable, value.Transaction]);
 
+
     const theme = useTheme();
     const fullScreen = useMediaQuery(theme.breakpoints.down('sm'));
 

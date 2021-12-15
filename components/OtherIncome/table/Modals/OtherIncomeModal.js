@@ -120,18 +120,8 @@ const OtherIncomeModal = (props) =>{
 					 'm': dateFormat(value.AccDate,'mm')};
 	
 	//	const tmpExtraCmsn = settings.properties.filter(x => value.PrpName===x.id)[0]['ExtraRevCommission']; //Management Commission
-		const tmpMngCmsnVatYesNo = settings.properties.filter(x => value.PrpName===x.id)[0]['inclVat']; 
-		if(tmpMngCmsnVatYesNo==null){
-			setSnackbar( {open:true, msg: 'Property management commission settings are not defined', variant: 'warning'});
-			return;
-		}
-		const tmpMngCmsnAddVatYesNo = settings.properties.filter(x=>value.PrpName===x.id)[0]['addVat'];
-		if(tmpMngCmsnAddVatYesNo==null){
-			setSnackbar( {open:true, msg: 'Property management commission settings are not defined', variant: 'warning'});
-			return;
-		}
-		
-		
+	//	const tmpMngCmsnVatYesNo = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']['inclVat']; 
+	//	const tmpMngCmsnAddVatYesNo = settings.properties.filter(x=>value.PrpName===x.id)[0]['Commissions']['addVat'];
 		
 		
 	 	if(indx!==-1){ //Update the table

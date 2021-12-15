@@ -12,7 +12,7 @@ export default function OwnerSelect() {
 	const [open, setOpen] = useState(false);
 	const { settings, propertyList } = useContext(SettingsContext);
 	const anchorRef = useRef(null);
-	const { propertySlct, setMultiPropertySlct,  setFundSlct, checkedCalendar,setCheckedCalendar, multiPropertySlct } = useContext(SelectContext);
+	const { propertySlct, setMultiPropertySlct,  setFundSlct, checkedCalendar,setCheckedCalendar, multiPropertySlct, setPropertySlct } = useContext(SelectContext);
 	const scrSize = useWindowSize();
 	
 
@@ -61,6 +61,7 @@ export default function OwnerSelect() {
 	const showButtonDetails=()=>{
 		if(Object.values(checkedCalendar).filter((value) => value).length===1){
 			let tmp;
+		
 			for (const key in checkedCalendar) {
 						if(checkedCalendar[key]){
 							tmp = key;
@@ -79,9 +80,10 @@ export default function OwnerSelect() {
 	const loadData=()=>{
 		setOpen(false);
 
-		const propertyList = Object.keys(checkedCalendar).filter((i) => checkedCalendar[i] === true && i!=='All').map(x=> 
-						 {return settings.properties.filter(z=> z.PrpName===x )[0]['id']});
-	
+		const propertyList = Object.keys(checkedCalendar).filter((i) => checkedCalendar[i] === true && 
+						i!=='All').map(x=> {return settings.properties.filter(z=> z.PrpName===x )[0]['id']});
+		
+		setPropertySlct(null)
 		setMultiPropertySlct(propertyList) 
 	
 	}
