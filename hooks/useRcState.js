@@ -1,5 +1,5 @@
 import {useState} from 'react';
-import {checkAvailableSlot, paymentStatus, readDataSlots} from '../functions/functions.js';
+import {checkAvailableSlot, paymentStatus, readDataSlots, getFees, getTaxes} from '../functions/functions.js';
 
 
 	/* const twoDig=(n) => {
@@ -32,50 +32,7 @@ import {checkAvailableSlot, paymentStatus, readDataSlots} from '../functions/fun
 		return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
 	};
 		
-	const getFees=(value, val )=>{
-		let totalFees=0;
-		for (let i in value.Fees){
-			if(value.Fees[i].show){
-				
-				if(value.Fees[i].FeeType==='Percent'){
-					totalFees += +val*value.Fees[i].FeeAmount/100
-				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Stay'){
-					totalFees += +value.Fees[i].FeeAmount
-				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Night'){
-					totalFees += +value.Fees[i].TFeeAmount*value.NigthsNum
-				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person'){
-					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)
-				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person/Per Night'){
-					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum
-				}
-			}
-		}
-		
-	return totalFees;
-	}	
 	
-	const getTaxes=(value, val)=>{
-		
-		let totalTaxes=0;
-		for (let i in value.Taxes){
-			if(value.Taxes[i].show){
-				
-				if(value.Taxes[i].TaxType==='Percent'){
-					totalTaxes += (+val + +getFees(value, val ))*value.Taxes[i].TaxAmount/100
-				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Stay'){
-					totalTaxes += +value.Taxes[i].TaxAmount
-				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Night'){
-					totalTaxes += +value.Taxes[i].TaxAmount*value.NigthsNum
-				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Person'){
-					totalTaxes += +value.Taxes[i].TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)
-				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Person/Per Night'){
-					totalTaxes += +value.Taxes[i].TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum
-				}
-			}
-		}	
-	
-		return totalTaxes;
-	}
 	
 		
 return {

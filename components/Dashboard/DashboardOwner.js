@@ -18,6 +18,8 @@ import Income from '../../logos/pics/Inc.png';
 import Expense from '../../logos/pics/Exp.png';
 import {AuthContext} from '../../contexts/useAuthContext';
 
+import firebase from "firebase/app";
+import 'firebase/functions';
 //import {obj} from './obj';
 //
 
@@ -261,6 +263,14 @@ const Dashboard = () => {
 	},[  date, settings , uidCollection, expOwner,admn, propertySlct, setLoading])
 	
 	const runAA=async()=>{
+		
+		
+			let getServers = firebase.functions().httpsCallable('getServers');
+			getServers().then((result) => {
+			
+				console.log(JSON.parse(result.data.data))
+		  })
+		
 		
 	//	await setSets(uidCollection)
 		

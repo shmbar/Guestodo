@@ -6,7 +6,7 @@ import {SettingsContext} from '../../../../../contexts/useSettingsContext';
 import {Num2} from '../../../../../functions/functions.js';
 
 
-const RsrvAmounts = () =>{
+const RsrvAmounts = ({rcDataPrp}) =>{
 
 	const {value, getFees, getTaxes} = useContext(RcContext);
 	const {settings} = useContext(SettingsContext);
@@ -29,10 +29,20 @@ const RsrvAmounts = () =>{
 	const ReservationAmount = cur + Array(1).fill('\xa0').join('') + Num2(+value.RsrvAmnt);
 	
 	
-	const ChnCmsn = value.RsrvChn!=='' ? chnls.filter(x=> x.id===value.RsrvChn)[0]['ChnCmsn'] : '';
-	
-	const ChnPrcnt = value.ChnPrcnt==null? ChnCmsn : value.ChnPrcnt;
-	
+	const NewChnCmsn = value.RsrvChn!=='' ? chnls.filter(x=> x.id===value.RsrvChn)[0]['ChnCmsn'] : '';
+	const ExistedChnCmsn = value.LstSave!=='' ? rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]['RsrvChn'] : '';
+	let ChnPrcnt;
+
+	if(value.ChnPrcnt==null){ //new reservation
+		ChnPrcnt=''
+	}else if(value.RsrvChn!==ExistedChnCmsn){ //choose new Channel
+		ChnPrcnt = NewChnCmsn
+	}else if(value.ChnPrcnt==='' && value.RsrvChn!==''){
+		ChnPrcnt = NewChnCmsn
+	}else if(value.ChnPrcnt!=='' && ExistedChnCmsn!==''){
+		ChnPrcnt = value.ChnPrcnt
+	}
+
 	let amountFilled = value.NetAmnt!=='' || value.CnclFee!=='';
 
 	return (
@@ -70,7 +80,7 @@ const RsrvAmounts = () =>{
 					<Grid item sm={12} style={{width:'100%'}}>
 						<RowOut name={`Channel Service Fee (${ChnPrcnt}%)`}
 							value={amountFilled ? `-${cur} ${Num2((value.TtlRsrvWthtoutVat + 
-						+getFees(value, value.NetAmnt )/(1 + parseFloat(vat)/100))*ChnPrcnt/100)}` :''}
+						+getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1))*ChnPrcnt/100)}` :''}
 							pad='0' />
 					</Grid>
 					}

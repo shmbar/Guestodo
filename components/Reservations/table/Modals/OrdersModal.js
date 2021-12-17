@@ -18,7 +18,8 @@ import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import SnackBar from '../../../Subcomponents/SnackBar';
 import {formValidation, checkDates, delEmptyPaymentS} from '../../../../functions/formValidation';
-import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch} from '../../../../functions/functions.js';
+import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,
+				getFees} from '../../../../functions/functions.js';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridLoader from 'react-spinners/GridLoader';  // //https://www.react-spinners.com/
@@ -72,7 +73,7 @@ const OrdersModal = (props) =>{
 	let scrSize = (scr==='xs' || scr==='sm');
 
 	const {rcDataPrp, setRcDataPrp,value,setValue,displayDialog, setDisplayDialog,
-		   	setRedValid, snackbar, setSnackbar, isSlotAvailable, getFees} = useContext(RcContext);
+		   	setRedValid, snackbar, setSnackbar, isSlotAvailable} = useContext(RcContext);
 	const {displayDialogSettings, runTab, settings, updtSettings,
 		   settingsShows, setSettingsShows, displayDialogSettingsApt, setLoading, loading} = useContext(SettingsContext);
 	const {write, uidCollection} = useContext(AuthContext);					 						 				 
@@ -138,29 +139,30 @@ const OrdersModal = (props) =>{
 	const createCmsnObj=(ChnlTRex, tmpChnlCmsnPrcntg)=>{
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 		
+		const Amnt = +((+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1))*tmpChnlCmsnPrcntg/100).toFixed(2)
+		
 		return {'LstSave' : dateFormat(Date(),'dd-mmm-yyyy'), 'ExpType': 'Channel advance commission',
 					 'vendor': value.RsrvChn, 'Transaction': ChnlTRex, 'AccDate': value.ChckIn,
 					 'PrpName': value.PrpName, 'AptName': value.AptName, 'CostType': 'Variable Cost',
-					 'TtlPmnt': value.Vat ? (+value.TtlPmnt/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100) : //omit the Vat from payment
-					  ((+value.TtlPmnt)*tmpChnlCmsnPrcntg/100).toFixed(2),
-					 'Amnt': +(+value.TtlRsrvWthtoutVat*tmpChnlCmsnPrcntg/100).toFixed(2), 'BlncExp': '', 'RC': value.Transaction, 'VatAmnt': 0,
-					'ExpAmntWthtoutVat' : +(+value.TtlRsrvWthtoutVat*tmpChnlCmsnPrcntg/100).toFixed(2), 'GstName' : value.GstName,
+					 'TtlPmnt': value.Vat ? +(+value.NetAmnt + +getFees(value, value.NetAmnt ))/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100 : 
+				//omit the Vat from payment
+					  ((+value.NetAmnt + +getFees(value, value.NetAmnt ))*tmpChnlCmsnPrcntg/100).toFixed(2),
+					 'Amnt': Amnt, 'BlncExp': '', 'RC': value.Transaction, 'VatAmnt': 0,
+					'ExpAmntWthtoutVat' : Amnt, 'GstName' : value.GstName,
 					'm': dateFormat(value.ChckIn,'mm')}
 	}
 	
 	const MngCmsnObj=(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn )=>{
 		
-		const vt = settings.vat.substring(0, settings.vat.length - 1)/100; //should be company vat
-		const vatReservation = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT'];
-		const feetWithoutVat = getFees(value, value.NetAmnt )/(1 + parseFloat(vatReservation)/100)
+		const vatCompany = settings.vat.substring(0, settings.vat.length - 1)/100; //should be company vat
+		const vatProperty = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']/100;
+		const feetWithoutVat = getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vatProperty)) : 1)
 		
 		//Include VAT: YES or NO
 		const baseAmnt = tmpMngCmsnVatYesNo ? (+value.NetAmnt + +getFees(value, value.NetAmnt )) : (+value.TtlRsrvWthtoutVat + +feetWithoutVat); 
-		const commissionAmount = tmpMngCmsnAddVatYesNo ? +(baseAmnt*tmpMngCmsn/100).toFixed(2) + +(vatReservation*baseAmnt*tmpMngCmsn/100).toFixed(2):(+baseAmnt*tmpMngCmsn/100).toFixed(2);
+		const commissionAmount = tmpMngCmsnAddVatYesNo ? +(baseAmnt*tmpMngCmsn/100*(1 + +vatCompany)).toFixed(2) : (+baseAmnt*tmpMngCmsn/100).toFixed(2);
 		//For expense Table
-
-		
-		
+	
 		return {'LstSave' : dateFormat(Date(),'dd-mmm-yyyy'), 'ExpType': 'Management commission',
 					'vendor': settings.CompDtls.cpmName, 'Transaction': MngTRexCmsn,
 					'AccDate': value.ChckIn,'PrpName': value.PrpName, 'AptName': value.AptName,
@@ -170,10 +172,10 @@ const OrdersModal = (props) =>{
 					'RC': value.Transaction,	'RsrvAmnt': baseAmnt,
 					'RsrvAmntDesc': !value.Vat || tmpMngCmsnVatYesNo===false ? 'NoVat': 'YesVat',
 					'Vat': tmpMngCmsnAddVatYesNo? true:false,
-					'VatAmnt': tmpMngCmsnAddVatYesNo ? +(vt*baseAmnt*tmpMngCmsn/100).toFixed(2):0,
+					'VatAmnt': tmpMngCmsnAddVatYesNo ? +(vatCompany*baseAmnt*tmpMngCmsn/100).toFixed(2):0,
 				//for Company Revenue table
 					'CmsnVat': +(+baseAmnt*tmpMngCmsn/100).toFixed(2) + +(tmpMngCmsnAddVatYesNo ?
-					(vt*baseAmnt*tmpMngCmsn/100).toFixed(2):''),
+					(vatCompany*baseAmnt*tmpMngCmsn/100).toFixed(2):''),
 					'ExpAmntWthtoutVat' : (+baseAmnt*tmpMngCmsn/100).toFixed(2), 'GstName' : value.GstName,
 					'm': dateFormat(value.ChckIn,'mm')}
 	}

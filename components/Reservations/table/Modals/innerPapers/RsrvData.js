@@ -236,9 +236,9 @@ const RsrvAmounts = () =>{
 								{	x.TaxType==='Percent' ? (+value.NetAmnt + +getFees(value, +value.NetAmnt ))*x.TaxAmount/100 + cur : 
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? x.TaxAmount + cur:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? x.TaxAmount*value.NigthsNum + cur:
-							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? x.TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn) + cur:
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? x.TaxAmount*( +value.dtls.adlts) + cur:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Person/Per Night'  ?
-								 	x.TaxAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum + cur: ''
+								 	x.TaxAmount*( +value.dtls.adlts )*value.NigthsNum + cur: ''
 							 }
 							<FormControlLabel
 								control={

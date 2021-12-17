@@ -41,7 +41,7 @@ const useStyles = makeStyles(theme => ({
 const OrderModalDetails=(props)=> {
 
   const classes = useStyles();
-	const {value, setValue, handleChangePmnts,handleChangeDPmnts, redValid} = useContext(RcContext);
+	const {value, setValue, handleChangePmnts,handleChangeDPmnts, redValid, rcDataPrp} = useContext(RcContext);
 	
   return (
 	<div style={{padding: '10px', background:'#eee'}}>
@@ -79,7 +79,7 @@ const OrderModalDetails=(props)=> {
 				<Paper className={classes.root} style={{background: '#e7f3ff'}}>
 					<h4 className='ttlClr1'>Summary</h4>
 					<Divider style={{marginBottom: '25px'}}/>
-					<RsrvAmounts />
+					<RsrvAmounts rcDataPrp={rcDataPrp}/>
 				</Paper>
 		</Grid>
 		</Grid>

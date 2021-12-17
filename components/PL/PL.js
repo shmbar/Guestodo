@@ -7,7 +7,7 @@ import { SelectContext } from '../../contexts/useSelectContext';
 import SnackBar from '../Subcomponents/SnackBar';
 import PannelData from '../Subcomponents/PannelData';
 import MRangePickerPL from '../Subcomponents/MRangePickerPL'
-import { convId2Item, readDataPropsDatesRange, addCommas } from '../../functions/functions.js';
+import { convId2Item, readDataPropsDatesRange, addCommas, getFees } from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 import { AuthContext } from '../../contexts/useAuthContext';
 import { Chart } from 'primereact/chart';
@@ -31,11 +31,13 @@ const logos = [{ txt: 'Gross', img: Gross, width: '50px' },
 
 
 
-const RC = (x) => {
+const RC = (x, vatProperty) => {
 
+	const Income = +(+x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
+	
 	let newObj = {
 		ExpInc: 'Guest Payment', VendChnnl: x.RsrvChn, PrpName: x.PrpName, AccDate: x.ChckIn,
-		Transaction: x.Transaction, Income: +(+x.TtlRsrvWthtoutVat).toFixed(2), Expense: ''
+		Transaction: x.Transaction, Income: Income, Expense: ''
 	}
 	return newObj;
 }
@@ -77,10 +79,9 @@ export default function PaperSheet() {
 	const [open, setOpen] = React.useState(false);
 	const [currentData, setCurrentData] = useState([]);
 	const [showCols, setShowCols] = useState('');
-	
+	const [vatProperty, setVatProperty] = useState(null);
 	
 	let cur = settings.length === 0 ? "Currency" : settings.CompDtls.currency;
-
 	const useStyles = makeStyles(theme => ({
 		root: {
 			padding: scrSize === 'xs' ? theme.spacing(1, 1, 5, 1) : theme.spacing(1, 4, 5, 4),
@@ -152,7 +153,9 @@ export default function PaperSheet() {
 		const setCheckedLstFirstTime = () => {
 
 			let owner = settings.properties.filter(z => z.id === propertySlct)[0]['Owner']
-
+			
+			const vatTmp= settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']
+			setVatProperty(vatTmp)
 			let propertiesArr = settings.properties ? settings.properties.filter(x => x.Owner === owner) : [];
 			let newArr = propertiesArr.map(q => ({
 				'id': q.id, 'PrpName': q.PrpName, 'slcted': q.id === propertySlct
@@ -195,12 +198,13 @@ export default function PaperSheet() {
 				let ChckIn = dateFormat(listDataRC[i].ChckIn, "yyyy-mm");
 
 				if (ChckIn >= From && ChckIn <= To && listDataRC[i].pStatus!=='Tentative') {
-					tableArr.push(RC(listDataRC[i]));
+					tableArr.push(RC(listDataRC[i], vatProperty));
 				}
 			}
 
 			for (let i = 0; i < listDataEX.length; i++) {  //Expense
-				if (listDataEX[i].ExpType === 'Management commission' && (+listDataEX[i].Amnt === 0 || listDataEX[i].Amnt === '')) { continue; }  //remove empty amounts
+				if (listDataEX[i].ExpType === 'Management commission' && (+listDataEX[i].Amnt === 0 || listDataEX[i].Amnt === '')) { continue; }
+						//remove empty amounts
 				let AccDate = dateFormat(listDataEX[i].AccDate, "yyyy-mm");
 				if (AccDate >= From && AccDate <= To) tableArr.push(EX(listDataEX[i]));
 			}
@@ -234,7 +238,7 @@ export default function PaperSheet() {
 			loadData()
 		}
 
-	}, [uidCollection, valuePL, setPlData, settings, setFilteredData, setLoading, checked])
+	}, [uidCollection, valuePL, setPlData, settings, setFilteredData, setLoading, checked, vatProperty])
 
 
 	const handleClose = () => {
