@@ -17,23 +17,28 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 	const showTR = (x) => x.indexOf("_") === -1 ? x : x.substring(0, x.indexOf("_"));
 	const chnls= settings.channels ? settings.channels: [];
 	const  cur = settings.CompDtls.currency;
+	
+	const tmpAmnt = value.pStatus!=='Cancelled' ? +value.NetAmnt : +value.CnclFee;
 	const fees = cur + Array(1).fill('\xa0').join('') + 
-		  Num2(getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1));
-	const taxes = cur + Array(1).fill('\xa0').join('') + Num2(getTaxes(value, value.NetAmnt ));
+		  Num2(getFees(value, tmpAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1));
+	const taxes = cur + Array(1).fill('\xa0').join('') + Num2(getTaxes(value, tmpAmnt ));
 	let reservationAMountBeforeVat = cur + Array(1).fill('\xa0').join('') + Num2(+value.TtlRsrvWthtoutVat);
-	let vatAmount = cur + Array(1).fill('\xa0').join('') + Num2(value.RsrvAmnt-value.TtlRsrvWthtoutVat -
-							getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100) :1) -
-												+getTaxes(value, value.NetAmnt ));
+	let vatAmount = cur + Array(1).fill('\xa0').join('') + 	
+		Num2(value.RsrvAmnt-value.TtlRsrvWthtoutVat -
+				getFees(value, tmpAmnt )/(value.Vat ? (1 + parseFloat(vat)/100) :1) -
+												+getTaxes(value, tmpAmnt ));
+	
 	const txt = cur + Array(1).fill('\xa0').join('') + 
 		  Num2(value.RsrvAmnt/value.NigthsNum);//cur.concat().concat().toString()
 	const ReservationAmount = cur + Array(1).fill('\xa0').join('') + Num2(+value.RsrvAmnt);
 	
 	
 	const NewChnCmsn = value.RsrvChn!=='' ? chnls.filter(x=> x.id===value.RsrvChn)[0]['ChnCmsn'] : '';
-	const ExistedChnCmsn = value.LstSave!=='' ? rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]['RsrvChn'] : '';
-	let ChnPrcnt;
-
-	if(value.ChnPrcnt==null){ //new reservation
+	const ExistedChnCmsn = value.LstSave!==undefined && value.LstSave!==''?
+			 rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]['RsrvChn'] : '';
+	let ChnPrcnt=null;
+		
+	if(value.ChnPrcnt==null && value.RsrvChn===''){ //new reservation
 		ChnPrcnt=''
 	}else if(value.RsrvChn!==ExistedChnCmsn){ //choose new Channel
 		ChnPrcnt = NewChnCmsn

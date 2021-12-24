@@ -13,10 +13,12 @@ import Login from './components/Auth/login';
 import SignUp from './components/Auth/signup';
 import Home from './components/LandingPage/home';
 import Contact from './components/LandingPage/contact';
+import Pricing from './components/LandingPage/pricing';
 import Terms from './components/LandingPage/termsofuse';
 import Privacy from './components/LandingPage/privacy';
 import Pmnt from './components/LandingPage/Pmnt';
 import Features from './components/LandingPage/features';
+import FreeDemo from './components/LandingPage/freedemo';
 import ResetPaswword from './components/Auth/passwordReset';
 import {Switch, Route} from 'react-router-dom';
 //import {AuthContext} from './contexts/useAuthContext';
@@ -47,11 +49,13 @@ const App = (props) => {
 								<Switch>
 									<Route exact path='/' render={()=> <Redirect to='/home' />} />
 									<Route path='/login' component={Login} />
-									<Route path='/signup' component={SignUp} />
+									<Route path='/signup123' component={SignUp} />
 									<Route path='/home' component={Home} />
 									<Route path="/contact"  component={Contact} />
 									<Route path="/features"  component={Features} />
+									<Route path="/freedemo"  component={FreeDemo} />
 									<Route path="/userdef"  component={ResetPaswword} />
+									<Route path="/pricing"  component={Pricing} />
 									<Route path="/terms"  component={Terms} />
 									<Route path="/privacy"  component={Privacy} />
 									<Route path="/pmnt"  component={Pmnt} />

@@ -16,12 +16,12 @@ import './papersStyle.css';
 import {idToItem} from '../../../../../functions/functions.js';
 import NumberFormatCustom from '../../../../Subcomponents/NumberFormatCustom';
 import CustomDatePicker from './datePicker';
-
+import {SelectContext} from '../../../../../contexts/useSelectContext';
 
 import TreeView from '@material-ui/lab/TreeView';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 import ChevronRightIcon from '@material-ui/icons/ChevronRight';
-import TreeItem from '@material-ui/lab/TreeItem';
+//import TreeItem from '@material-ui/lab/TreeItem';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -75,7 +75,8 @@ const RsrvAmounts = () =>{
 	const {settings, selectValueSettings, setRunTab, selectValueSettingsApt,
 		   chnnlslogo} = useContext(SettingsContext);
 	const {apartments, channels} =  settings;
-	const {write, uidCollection} = useContext(AuthContext);					 						 				 
+	const {write, uidCollection} = useContext(AuthContext);					 						 	 const {date} = useContext(SelectContext);
+	
 	const  cur = settings.CompDtls.currency;
 	
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
@@ -182,6 +183,7 @@ const RsrvAmounts = () =>{
 		setRunTab(tab)
 	}
 	
+	const tmpAmnt =  value.pStatus!=='Cancelled' ? +value.NetAmnt : +value.CnclFee
 	const fees = value.Fees!=null ? value.Fees.map((x,i)=>{
 		return  <div className={classes.labelRoot} key={i}>
           			<Typography variant="body1" className={classes.labelText}
@@ -195,7 +197,7 @@ const RsrvAmounts = () =>{
 			 		}
 					{x.FeeAmount !=='' &&
 						<Typography variant="body1" className={classes.labelText}>
-            				{	x.FeeType==='Percent' ? +value.NetAmnt *x.FeeAmount/100 + cur : 
+            				{	x.FeeType==='Percent' ? tmpAmnt*x.FeeAmount/100 + cur : 
 								x.FeeType==='Flat' && x.FeeModality==='Per Stay'  ? x.FeeAmount + cur:
 								x.FeeType==='Flat' && x.FeeModality==='Per Night'  ? x.FeeAmount*value.NigthsNum + cur:
 								x.FeeType==='Flat' && x.FeeModality==='Per Person'  ? x.FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn) + cur:
@@ -233,7 +235,7 @@ const RsrvAmounts = () =>{
 						}
 						{x.TaxAmount !=='' &&
 							<Typography variant="body1" className={classes.labelText}>
-								{	x.TaxType==='Percent' ? (+value.NetAmnt + +getFees(value, +value.NetAmnt ))*x.TaxAmount/100 + cur : 
+								{	x.TaxType==='Percent' ? (tmpAmnt + +getFees(value, tmpAmnt ))*x.TaxAmount/100 + cur : 
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? x.TaxAmount + cur:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? x.TaxAmount*value.NigthsNum + cur:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? x.TaxAmount*( +value.dtls.adlts) + cur:
@@ -294,7 +296,7 @@ const RsrvAmounts = () =>{
 									>Apartment</InputLabel>
 								<Select
 									value={idToItem(settings.apartments,value.AptName, 'AptName')}  
-									onChange={e=> write && (e.target.value!=='Add new apartment'? handleChange(uidCollection, e,settings): Add(ObjApt, 'TabApt'))
+									onChange={e=> write && (e.target.value!=='Add new apartment'? handleChange(uidCollection, e,settings, date): Add(ObjApt, 'TabApt'))
 										 }
 									inputProps={{
 										name: 'AptName'

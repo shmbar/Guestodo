@@ -29,14 +29,25 @@ return {
 	setSnackbar,
 	redValid,
 	setRedValid,
-	setValueIncEx: (valueVatTmp,valueVatTmpEx)=>{
+	setValueIncEx: (valueVatTmp, valExInput)=>{
 		let newVal=[...value.Payments];
 		let TotalPmnt = newVal.map(x=>+x.P).filter(x=> x>0)
 			.reduce((a, b) => a + b, 0);
 		
-		setValue({...value, 'valueInc': valueVatTmp, 'valuex': valueVatTmpEx, 'VatPayRtrn':
-				  +valueVatTmp.Vat - +valueVatTmpEx.Vat,
-				  'BlncVat': +valueVatTmp.Vat - +valueVatTmpEx.Vat-TotalPmnt});
+		setValue({...value, 'valueInc': valueVatTmp, /*'valuex': valueVatTmpEx,*/ 'VatPayRtrn':
+				  +valueVatTmp.Vat - +valExInput /*+valueVatTmpEx.Vat*/,
+				  'BlncVat': +(+valueVatTmp.Vat - +valExInput /*+valueVatTmpEx.Vat*/
+							   -TotalPmnt).toFixed(2)});
+		
+	},
+	handleChange: (e)=>{
+		let newVal=[...value.Payments];
+		let TotalPmnt = newVal.map(x=>+x.P).filter(x=> x>0)
+			.reduce((a, b) => a + b, 0);
+										
+		setValue({...value, inputVat: e.target.value, 'VatPayRtrn':
+				  +(+value.valueInc.Vat - +e.target.value).toFixed(2) ,
+				  'BlncVat': +(+value.valueInc.Vat - +e.target.value - TotalPmnt).toFixed(2)});
 	},
 	handleChangePmnts: (e, id, settings) => {
 			let rowNum=id;

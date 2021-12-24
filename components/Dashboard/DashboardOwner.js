@@ -8,7 +8,8 @@ import {ExpCompare, RevenueCompare, PLCompare, ExpenseGroup, PieChart, OccupPrcn
 import PannelData from './SubComponents/PannelData';
 import { makeStyles } from '@material-ui/core/styles';
 //import 'chartjs-plugin-datalabels';
-import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots, setSets } from '../../functions/functions.js';
+import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,
+		setSets, getFees } from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 
 import Rsrv from '../../logos/pics/balancedue.svg';
@@ -113,7 +114,8 @@ const Dashboard = () => {
 				}
 
 		
-				let tmpRcDataDsh = [...listDataRC, ...listDataRCprevYr]
+				let tmpRcDataDsh = [...listDataRC, ...listDataRCprevYr];
+				tmpRcDataDsh = tmpRcDataDsh.filter(x=> x.pStatus!=='Tentative') //filter the tentative reservations
 				let tmpExDataDsh = [...listDataEX, ...listDataEXprevYr]
 				let tmpOtherIncDsh = [...listDataOi, ...listDataOiprevYr]
 			
@@ -146,21 +148,24 @@ const Dashboard = () => {
 			
 				for(let i=0; i<tmpRcDataDsh.length;i++){
 					
-					
+					const vatProperty = settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']/100;
+					let val = +tmpRcDataDsh[i].TtlRsrvWthtoutVat + 
+							+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(1 + parseFloat(vatProperty));
+		
 					if(dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()){
 						nightsNum+= tmpRcDataDsh[i].NigthsNum;
 						reservs+= (+tmpRcDataDsh[i].RsrvAmnt);
-						revenue+= (+tmpRcDataDsh[i].TtlRsrvWthtoutVat);
+						revenue+= +val;
 						
 						let chn = tmpRcDataDsh[i].RsrvChn;
-						ChannelsListArray[chn] = +ChannelsListArray[chn] + +tmpRcDataDsh[i].TtlRsrvWthtoutVat;
+						ChannelsListArray[chn] = +ChannelsListArray[chn] + val;
 					}
 					
 					let Mn = dateFormat(tmpRcDataDsh[i].ChckIn,'m'); //Revenue comparison graph
 					if(	dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()	){
-						MonthsRevenewCurrentYear[Mn] = +MonthsRevenewCurrentYear[Mn] + +(+tmpRcDataDsh[i].TtlRsrvWthtoutVat).toFixed(2);
+						MonthsRevenewCurrentYear[Mn] = +MonthsRevenewCurrentYear[Mn] + +val.toFixed(2);
 					} else if(	dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===(date.year-1).toString() ){
-						MonthsRevenewPrevYear[Mn] = +MonthsRevenewPrevYear[Mn] + +(+tmpRcDataDsh[i].TtlRsrvWthtoutVat).toFixed(2);
+						MonthsRevenewPrevYear[Mn] = +MonthsRevenewPrevYear[Mn] + +val.toFixed(2);
 				 	}
 				}
 			

@@ -106,7 +106,7 @@ const CustomizedInputs = (props) => {
 		setValue({fName:'', email: '', sbjct : '', msg : ''})
 		async function Send() {
 			let Id = uuidv4();
-			props.setSnackbar({open: (await addMsg(Id, {...value, 'time': new Date(), 'id': Id})), msg: 'Your message was successfully sent', variant: 'success'}) ;
+			props.setSnackbar({open: (await addMsg('messages', Id, {...value, 'time': new Date(), 'id': Id})), msg: 'Your message was successfully sent', variant: 'success'}) ;
 		}
 		Send();
 		setSubmitting(false)

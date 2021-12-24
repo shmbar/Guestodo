@@ -161,7 +161,8 @@ const Calendar = () => {
 	
 	const selectValueOrder= async(slot)=>{
 		
-		let slotsData = await readDataSlots(uidCollection, 'slots', dateFormat(slot.ChckIn, 'yyyy'), null, slot.AptName)
+		let slotsData = await readDataSlots(uidCollection, 'slots', dateFormat(slot.ChckIn, 'yyyy'),
+						null, slot.AptName)
 		setSlotsTable(slotsData.dates);
 		
 		setRcTable(slotsData.rc);

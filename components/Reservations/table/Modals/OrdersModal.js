@@ -19,7 +19,7 @@ import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import SnackBar from '../../../Subcomponents/SnackBar';
 import {formValidation, checkDates, delEmptyPaymentS} from '../../../../functions/formValidation';
 import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,
-				getFees} from '../../../../functions/functions.js';
+				getFees, getTaxes} from '../../../../functions/functions.js';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridLoader from 'react-spinners/GridLoader';  // //https://www.react-spinners.com/
@@ -138,16 +138,21 @@ const OrdersModal = (props) =>{
 	
 	const createCmsnObj=(ChnlTRex, tmpChnlCmsnPrcntg)=>{
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
-		
+	
 		const Amnt = +((+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1))*tmpChnlCmsnPrcntg/100).toFixed(2)
 		
+		const tmp  = +value.TtlPmnt/(+value.NetAmnt + +getFees(value, value.NetAmnt) + 
+							+getTaxes(value, value.NetAmnt)) // calcuate ratio
+		const pmntRatio = tmp*(+value.NetAmnt + +getFees(value, value.NetAmnt))
+		const ttlPmnt = value.Vat ? 
+			  (pmntRatio/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100).toFixed(2) : 
+					  (pmntRatio*tmpChnlCmsnPrcntg/100).toFixed(2) //omit the Vat from payment
+	
 		return {'LstSave' : dateFormat(Date(),'dd-mmm-yyyy'), 'ExpType': 'Channel advance commission',
 					 'vendor': value.RsrvChn, 'Transaction': ChnlTRex, 'AccDate': value.ChckIn,
 					 'PrpName': value.PrpName, 'AptName': value.AptName, 'CostType': 'Variable Cost',
-					 'TtlPmnt': value.Vat ? +(+value.NetAmnt + +getFees(value, value.NetAmnt ))/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100 : 
-				//omit the Vat from payment
-					  ((+value.NetAmnt + +getFees(value, value.NetAmnt ))*tmpChnlCmsnPrcntg/100).toFixed(2),
-					 'Amnt': Amnt, 'BlncExp': '', 'RC': value.Transaction, 'VatAmnt': 0,
+					 'TtlPmnt': ttlPmnt,
+					 'Amnt': Amnt, 'BlncExp': Amnt - ttlPmnt, 'RC': value.Transaction, 'VatAmnt': 0,
 					'ExpAmntWthtoutVat' : Amnt, 'GstName' : value.GstName,
 					'm': dateFormat(value.ChckIn,'mm')}
 	}

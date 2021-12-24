@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {idToItem, Num2} from './functions.js';
+import {idToItem, Num2, getFees} from './functions.js';
 import Booking from '../logos/chnlsPics/Booking.png';
 import Airbnb from '../logos/chnlsPics/Airbnb.png';
 import Tripadvisor from '../logos/chnlsPics/Tripadvisor.png';
@@ -35,11 +35,15 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 		tmp = scrSize !== 'xs' ? showShortTR(rowData): <> <span className="p-column-title">{column.header}</span>{showShortTR(rowData)} </>
 	}else if (column.field==='PmntStts') {
 		tmp = scrSize !== 'xs' ? PmntClrStatus(rowData): <> <span className="p-column-title">{column.header}</span>{ PmntClrStatus(rowData)} </>
-	}else if(column.field==='RsrvAmnt' || column.field==='BlncRsrv' || column.field==='TtlPmnt' ||column.field==='TtlRsrvWthtoutVat' ||
+	}else if(column.field==='RsrvAmnt' || column.field==='BlncRsrv' || column.field==='TtlPmnt'  ||
 			column.field==='Blnc' || column.field==='IncAmntWthtoutVat' || column.field==='Amnt' || column.field==='VatAmnt' ||	
 			column.field==='VatPayRtrn' || column.field==='IncWithVat' || column.field==='ExpWithVat' ||
 			column.field==='BlncVat' || column.field==='BlncExp'||	column.field==='ExpAmntWthtoutVat'	|| column.field==='IntCshFlBnce') {		
-		tmp = scrSize !== 'xs' ? showCommas(rowData,column, cur ): <> <span className="p-column-title">{column.header}</span>{showCommas(rowData,column, cur )} </>
+		tmp = scrSize !== 'xs' ? showCommas(rowData,column, cur ): <> <span className="p-column-title">{column.header}</span>
+		{showCommas(rowData,column, cur )} </>
+	}else if (column.field==='TtlRsrvWthtoutVat') {
+		tmp = scrSize !== 'xs' ? showCommasNfees(rowData,column, cur , settings): <> <span className="p-column-title">{column.header}</span>
+		{showCommasNfees(rowData,column, cur, settings )} </>
 	}else if (column.field==='RsrvChn') {
 		tmp = scrSize !== 'xs' ? brandTemplate(rowData): <> <span className="p-column-title">{column.header}</span>{brandTemplate(rowData)} </>
 	}else if (column.field==='AccDate' || column.field==='From' || column.field==='To') {
@@ -87,6 +91,14 @@ const PmntClrStatus = (rowData) =>{
 
 const showCommas=(rowData, column, cur)=>{
 	return `${cur} ${addCommas(rowData[column.field]) }`;
+}
+
+const showCommasNfees=(rowData, column, cur, settings)=>{
+	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
+	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
+	let tmp = rowData[column.field] + +getFees(rowData, tmpAmnt )/(rowData.Vat ? (1 + parseFloat(vat)/100): 1)
+	
+	return `${cur} ${addCommas(tmp) }`;
 }
 
 function addCommas(x) {

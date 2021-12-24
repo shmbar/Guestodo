@@ -60,12 +60,13 @@ const Table =(props) =>{
 	const {write,uidCollection} = useContext(AuthContext);	
 	const {settings} = useContext(SettingsContext);
 	const [id, setId] = useState('');
-	
+
 	useEffect(()=>{
 	
 		let newArr = [...cols];
 		for(let col of cols){
-			 if(	(col.showcol && !(col.s).includes(scrSize)) || (!col.showcol &&  tableCols[cols.indexOf(col)].showcol  &&  (col.s).includes(scrSize)) ){
+			 if(	(col.showcol && !(col.s).includes(scrSize)) || (!col.showcol && 
+				tableCols[cols.indexOf(col)].showcol  &&  (col.s).includes(scrSize)) ){
 				let newObj = {...col, 'showcol': !col.showcol};
 				newArr[newArr.map(i => i.field).indexOf(col.field)] = newObj;
 			}
@@ -103,6 +104,7 @@ const Table =(props) =>{
 		  tmpObj.valuex= {withVat: '', withoutVat:'', Vat:''};
 		  tmpObj.TtlPmnt = '';
 		  tmpObj.BlncVat='';
+		  tmpObj.inputVat=0;
 		  tmpObj.VatPayRtrn='';
 		  tmpObj.PmntStts='Unpaid';
 		  tmpObj.Fund=fundSlct; 
@@ -134,7 +136,9 @@ const Table =(props) =>{
     };
 	
 	const actionTemplate = (rowData, column) => {
-      return <EditDel selectValueOrder={selectValue} rowData={rowData}  column={column}  delRow={delRow} />;
+		let tmp = rowData
+		tmp['inputVat'] = tmp.valuex.Vat!=='' && tmp.valuex.Vat!=='' ? tmp.valuex.Vat : tmp.inputVat 
+      return <EditDel selectValueOrder={selectValue} rowData={tmp}  column={column}  delRow={delRow} />;
     }
 	
 	const delRow = (rowData) =>{
@@ -146,10 +150,12 @@ const Table =(props) =>{
 		let newArr = vtData.filter(q=>q.Transaction!==id);
 			setVtData(newArr);
 			async function Snack() {
-				setSnackbar({open: ( await delData(uidCollection, 'vatcal', date.year, id)), msg: 'Vat transaction has been deleted!',
+				setSnackbar({open: ( await delData(uidCollection, 'vatcal', date.year, id)),
+							 msg: 'Vat transaction has been deleted!',
 							 variant: 'success'}) ; 
 				
-				await delDPaymentsBatch(uidCollection,'payments', vtData.filter(q=>q.Transaction===id)[0].Payments)
+				await delDPaymentsBatch(uidCollection,'payments', 
+										vtData.filter(q=>q.Transaction===id)[0].Payments)
 			}
 		Snack();
 		setOpen(false)
@@ -160,7 +166,8 @@ const Table =(props) =>{
 	}
 	
 	const showShortTR=(rowData, column) => {
-		return (rowData.Transaction).indexOf("_") === -1 ? rowData.Transaction : rowData.Transaction.substring(0, rowData.Transaction.indexOf("_"))
+		return (rowData.Transaction).indexOf("_") === -1 ? rowData.Transaction : 
+		rowData.Transaction.substring(0, rowData.Transaction.indexOf("_"))
 	}
 	
 	const dataTable=(rowData, column)=>{

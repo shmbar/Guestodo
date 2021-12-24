@@ -33,7 +33,8 @@ const logos = [{ txt: 'Gross', img: Gross, width: '50px' },
 
 const RC = (x, vatProperty) => {
 
-	const Income = +(+x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
+	const Income = +(+x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/(x.Vat ? 
+				(1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
 	
 	let newObj = {
 		ExpInc: 'Guest Payment', VendChnnl: x.RsrvChn, PrpName: x.PrpName, AccDate: x.ChckIn,

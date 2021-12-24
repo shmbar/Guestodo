@@ -206,7 +206,7 @@ const Features = () => {
 				The app tabulates and organizes data for your convenience. 
 			</Typography>
 		 	<div style={smScreen ? {} : { padding: '0 150px' }} >
-				<Link to={{ pathname: '/signup', state: reg }} className={classes.ftr} >
+				<Link to={{ pathname: '/freedemo', state: reg }} className={classes.ftr} >
 					<Button  variant="contained"  className={classes.button}  endIcon={<Icon>send</Icon>}>Start My Free Trial</Button>			 
 				</Link>
 			</div>
@@ -450,7 +450,7 @@ const Features = () => {
                 <Container maxWidth="sm" className={classes.tailorMadeDiv} > 
                     <div style={smScreen ? {paddingBottom: '20px'}: {}}>IT’S MONEY TIME!</div>
                     <div style={smScreen ? {} : { padding: '0 150px' }} >
-                        <Link to={{ pathname: '/signup', state: reg }} className={classes.ftr} >
+                        <Link to={{ pathname: '/freedemo', state: reg }} className={classes.ftr} >
 							<Button  variant="contained"  className={classes.button}  endIcon={<Icon>send</Icon>}>Start My Free Trial</Button>			 
 						</Link>
                     </div>

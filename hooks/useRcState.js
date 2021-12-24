@@ -33,8 +33,6 @@ import {checkAvailableSlot, paymentStatus, readDataSlots, getFees, getTaxes} fro
 	};
 		
 	
-	
-		
 return {
 	rcDataPrp, setRcDataPrp,
 	selectValue: rowData => { 
@@ -55,21 +53,23 @@ return {
 	setIsSlotAvailable,
 	calendarView, setCalendarView,
 	getFees, getTaxes,
-	handleChange: async (uidCollection, e, settings) => {
+	handleChange: async (uidCollection, e, settings, date) => {
 	
 	//	let ChnItem= value.RsrvChn!==''? settings.channels.filter(x => value.RsrvChn===x.id)[0] : ''
 	//	let CmsnDescription = value.RsrvChn!==''? ChnItem['MngCmsn'] : '';
 	//	let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
+	const RsrvAmount = +e.target.value + +getFees(value, e.target.value) +
+					  			+getTaxes(value, e.target.value);
+		
 		if (e.target.name==='NetAmnt') {
 		
 			if(value.RsrvChn===''){
 				setSnackbar( {open:true, msg: 'Choose channel first!', variant: 'warning'});
 				return;
 			}
-			const RsrvAmount = +e.target.value + +getFees(value, e.target.value) +
-					  			+getTaxes(value, e.target.value);
+			
 			
 			setValue({...value, [e.target.name]: e.target.value,
 					  			'RsrvAmnt': RsrvAmount,
@@ -88,9 +88,9 @@ return {
 			
 				setValue({...value, [e.target.name]: e.target.value,
 									//'NetAmnt': +e.target.value,  //save the original value of the reservation
-						 			'RsrvAmnt': +e.target.value,
-					 				'BlncRsrv': +(e.target.value-value.TtlPmnt),
-					  				'PmntStts': paymentStatus(value.TtlPmnt, +e.target.value),
+						 			'RsrvAmnt': RsrvAmount,
+					 				'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
+					  				'PmntStts': paymentStatus(value.TtlPmnt, +RsrvAmount),
 						 			'TtlRsrvWthtoutVat': 
 						 			value.Vat===false ?  +(e.target.value):
 						 			+e.target.value/(1+parseFloat(vat)/100)
@@ -114,19 +114,23 @@ return {
 										value.Vat===false ?  +value.NetAmnt:
 										+value.NetAmnt/(1+parseFloat(vat)/100)
 				}) : setValue({...value, [e.target.name]: ChnItem['id']});	
+		
 		}else if (e.target.name==='AptName'){	
 			setValue({...value, [e.target.name]:settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'] });	
 			
 			//load slots of the current year
-			let slotsData = await readDataSlots(uidCollection, 'slots', new Date().getFullYear(), null,
-												settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'])
+			let slotsData = await readDataSlots(uidCollection, 'slots', date.year,
+				null,settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'])
+
 			setSlotsTable(slotsData.dates);
 			setRcTable(slotsData.rc);
 			
 		
-			let availORnotavail = (value.ChckIn!==null && value.ChckOut !==null && e.target.value!=='') ?
-				await checkAvailableSlot(uidCollection, settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'],
-										 value.Transaction, value.ChckIn, value.ChckOut)	:null;
+			let availORnotavail = (value.ChckIn!==null && value.ChckOut !==null && 
+							   e.target.value!=='') ?
+				await checkAvailableSlot(uidCollection, settings.apartments.filter(x=> 
+							x.AptName===e.target.value)[0]['id'],
+							value.Transaction, value.ChckIn, value.ChckOut)	:null;
 	
 				if(availORnotavail){
 					setSnackbar( {open:true, msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
@@ -136,12 +140,15 @@ return {
 			
 			
 		}else if(e.target.name==='pStatus'){    //name==='RsrvCncl'
-	
+
+			const tmpAmnt = e.target.value!=='Cancelled' ? +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt) : +value.CnclFee + +getFees(value, value.CnclFee) +
+					  			+getTaxes(value, value.CnclFee)
+			
 			setValue({ ...value, [e.target.name]: e.target.value,
-							'RsrvAmnt': e.target.value!=='Cancelled' ? +value.NetAmnt : +value.CnclFee,
-							'BlncRsrv': e.target.value==='Cancelled' ? +(value.CnclFee-value.TtlPmnt) :  +(value.NetAmnt-value.TtlPmnt),
-							'PmntStts': e.target.value==='Cancelled' ? paymentStatus(value.TtlPmnt, +value.CnclFee) : 
-									paymentStatus(value.TtlPmnt, +value.NetAmnt),
+							'RsrvAmnt': +tmpAmnt,
+							'BlncRsrv': +(tmpAmnt-value.TtlPmnt),
+							'PmntStts': paymentStatus(value.TtlPmnt, +tmpAmnt), 
 							'TtlRsrvWthtoutVat': e.target.value!=='Cancelled' ? (value.Vat===false  ?  +value.NetAmnt :
 								 +value.NetAmnt/(1+parseFloat(vat)/100) ) : ( value.Vat===false ? +value.CnclFee : 
 													  +value.CnclFee/(1+parseFloat(vat)/100) )
@@ -239,9 +246,10 @@ return {
 		let tmp = value[name] 
 		tmp[i]={...tmp[i], show: !tmp[i].show}
 		
-		const RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt);
-			
+		const RsrvAmount = value.pStatus!=='Cancelled' ?  +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt) : +value.CnclFee + +getFees(value, value.CnclFee) +
+					  			+getTaxes(value, value.CnclFee);
+								
 		setValue({...value, [name]: tmp, 
 					'RsrvAmnt': RsrvAmount,
 					'BlncRsrv': +(RsrvAmount-value.TtlPmnt),

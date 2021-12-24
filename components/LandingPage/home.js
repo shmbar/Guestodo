@@ -464,7 +464,7 @@ overwhelming. GuesTodo was conceived for these reasons. The app offers a solutio
 							<input placeholder='Email' className={classes.inpt} value={reg.email} onChange={(e)=> setReg({...reg, 'email':e.target.value})}/>
 						</Grid>
 						<Grid item xs={12} md={4} id='ftr'>
-							<Link to={{pathname:'/signup', 'state': reg }}><button  className={classes.btnRegister}>Start My Free Trial</button></Link>
+							<Link to={{pathname:'/freedemo', 'state': reg }}><button  className={classes.btnRegister}>Start My Free Trial</button></Link>
 						</Grid>
 					</Grid>
 				</Container>

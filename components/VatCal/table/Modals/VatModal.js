@@ -14,7 +14,8 @@ import {VtContext} from '../../../../contexts/useVtContext';
 import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import {formValidation, delEmptyPaymentS} from '../../../../functions/formValidation';
-import {addData, getNewTR, readDataPropsDatesRange, addDPaymentsBatch, delDPaymentsBatch} from '../../../../functions/functions.js';
+import {addData, getNewTR, readDataPropsDatesRange, addDPaymentsBatch,
+		delDPaymentsBatch, getFees, getTaxes} from '../../../../functions/functions.js';
 import useWindowSize from '../../../../hooks/useWindowSize';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import {SelectContext} from '../../../../contexts/useSelectContext';
@@ -47,11 +48,10 @@ const VatModal = () =>{
 	const scr = useWindowSize();
 	let scrSize = (scr==='xs' || scr==='sm');
 	
-	const {vtData, setVtData, displayDialog, setDisplayDialog, value, setValue, setValueIncEx, setRedValid,
-		  setSnackbar} = useContext(VtContext);
+	const {vtData, setVtData, displayDialog, setDisplayDialog, value, setValue, setValueIncEx,
+		   setRedValid,  setSnackbar} = useContext(VtContext);
 	const {displayDialogSettings, runTab, settings, updtSettings} = useContext(SettingsContext);
-
-    const {write, uidCollection} = useContext(AuthContext);					 						 				 
+    const {write, uidCollection} = useContext(AuthContext);					 						 
 	const {fundSlct} = useContext(SelectContext);
 	
 	
@@ -70,18 +70,24 @@ const VatModal = () =>{
 		setDisplayDialog(false);
 	}
 	
-	const pushArr=(valueVatTmp, val/*, Yahas*/)=>{
+	const pushArr=(valueVatTmp, val)=>{
 	
 		let tmp = {...valueVatTmp};
 		let newTmp='';
-	
+		const vatProperty = settings.properties.filter(x=> x.id===val.PrpName)[0]['VAT'];
+		
 		if(val.Vat===false){
-					newTmp = ({...tmp, 'withVat': +((+tmp.withVat) + (+val.RsrvAmnt/* * Yahas*/)).toFixed(2)});
-				}else{
-					newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat + (+val.TtlRsrvWthtoutVat/**Yahas*/)).toFixed(2),
-								   'Vat': +(+tmp.Vat + (+val.RsrvAmnt - (+val.TtlRsrvWthtoutVat))).toFixed(2)
-							});
-				}
+			newTmp = ({...tmp, 'withVat': +(+tmp.withVat + (+val.NetAmnt + 
+								+getFees(val, val.NetAmnt ))).toFixed(2)});
+		}else{
+			newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat +
+				   (+val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/
+					(1 + parseFloat(vatProperty)/100))).toFixed(2),
+			   		'Vat': +(+tmp.Vat + (+val.RsrvAmnt - +val.TtlRsrvWthtoutVat -
+							getFees(val, val.NetAmnt )/(1 + parseFloat(vatProperty)/100) -
+							+getTaxes(val, val.NetAmnt ))).toFixed(2)
+			});
+		}
 		return newTmp;
 	};
 	
@@ -93,13 +99,14 @@ const VatModal = () =>{
 		if(val.ExpType==='Channel advance commission'){
 			newTmp = {...tmp, 'withVat': +((+tmp.withVat) + (+val.ExpAmntWthtoutVat)).toFixed(2)};
 		}else{
-				
 				if(val.Vat===false){
-					newTmp = ({...tmp, 'withVat': +((+tmp.withVat) + (+val.ExpAmntWthtoutVat)).toFixed(2)});
+					newTmp = ({...tmp, 'withVat': +((+tmp.withVat) +
+					(+val.ExpAmntWthtoutVat)).toFixed(2)});
 				}else{
-					newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat + (+val.ExpAmntWthtoutVat)).toFixed(2),
-							   'Vat': +tmp.Vat + +(val.VatAmnt).toFixed(2)		
-							});
+					newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat + 
+			  		 (+val.ExpAmntWthtoutVat)).toFixed(2),
+				   'Vat': +tmp.Vat + +(val.VatAmnt).toFixed(2)		
+						});
 				}
 		}
 		
@@ -138,9 +145,12 @@ const VatModal = () =>{
 		let ListOfProperties = settings.properties ? settings.properties.filter(x =>
 				x.Fund===fundSlct ? x :null).map(x=>x.id) :['nothing'];
 				
-		let listDataRC = await readDataPropsDatesRange(uidCollection, 'reservations', ListOfProperties, From, To);
-		let listDataEX = await readDataPropsDatesRange(uidCollection, 'expenses', ListOfProperties, From, To);
-		let listDataOI = await readDataPropsDatesRange(uidCollection, 'otherIncome', ListOfProperties, From, To);
+		let listDataRC = await readDataPropsDatesRange(uidCollection, 'reservations', 
+						   ListOfProperties, From, To);
+		let listDataEX =[]; //termportary 
+			//await readDataPropsDatesRange(uidCollection, 'expenses', ListOfProperties,From, To);
+		let listDataOI = await readDataPropsDatesRange(uidCollection, 'otherIncome',
+						   ListOfProperties, From, To);
 		
 		let valueVatTmp={withVat:'', withoutVat:'', Vat:''};
 		let valueVatTmpEx={withVat:'', withoutVat:'', Vat:''};
@@ -172,7 +182,7 @@ const VatModal = () =>{
 			}
 		}
 		
-		setValueIncEx(valueVatTmp,valueVatTmpEx);
+		setValueIncEx(valueVatTmp, value.inputVat);
 	};
 	
 	
@@ -191,21 +201,25 @@ const VatModal = () =>{
 			return;
 		}
 		///////////////////
-		let newPmnts = delEmptyPaymentS(value.Payments).map(x=> ({...x, 'P': (x.P==='') ? '' :	+(+x.P).toFixed(2) }));
+		let newPmnts = delEmptyPaymentS(value.Payments).map(x=> ({...x, 'P': (x.P==='') ? '' :	
+							  +(+x.P).toFixed(2) }));
 		let indx = vtData.findIndex(x=>x.Transaction===value.Transaction);
-		let newObj = {...value, 'LstSave': dateFormat(Date(),'dd-mmm-yyyy'), 'Payments': newPmnts, 'm': dateFormat(value.From,'mm')};
+		let newObj = {...value, 'LstSave': dateFormat(Date(),'dd-mmm-yyyy'), 'Payments': newPmnts,
+					  'm': dateFormat(value.From,'mm')};
 	
 	 	if(indx!==-1){ //Update the table
 			const tmpArr = vtData.map(k =>
 	 		   		k.Transaction===value.Transaction ? newObj : k  );
-			setSnackbar( {open: (await addData(uidCollection, 'vatcal', dateFormat(newObj.From,'yyyy'), newObj)), msg: 'Vat transaction has been updated!',
+			setSnackbar( {open: (await addData(uidCollection, 'vatcal', dateFormat(newObj.From,'yyyy'), 
+							   newObj)), msg: 'Vat transaction has been updated!',
 						  variant: 'success'});
 			setVtData(tmpArr);
 			
 	
 			let pmtnsObj = newObj.Payments.map(x=>{
-					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date), 'Transaction': newObj.Transaction,
-								'Fund':newObj.Fund, VatPayRtrn: newObj.VatPayRtrn}
+					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date),
+							'Transaction': newObj.Transaction,
+							'Fund':newObj.Fund, VatPayRtrn: newObj.VatPayRtrn}
 			})
 			
 			let olPayments = vtData.filter(k => k.Transaction===value.Transaction)[0]['Payments'];
@@ -218,16 +232,18 @@ const VatModal = () =>{
 			const tmpArr = [...vtData, newObj];
 			setSnackbar( {open: (await addData(uidCollection, 'vatcal', dateFormat(newObj.From,'yyyy'),  newObj)), msg: 'New Vat transaction has been added!',
 						  variant: 'success'});
-			
+
 			let tmp = tmpArr.map(x => //for another two columns
-			 		({...x, 'IncWithVat': x.valueInc.withVat , 'ExpWithVat': x.valuex.withVat})
+			 		({...x, 'IncWithVat': x.valueInc.withoutVat , 'ExpWithVat': x.valuex.withoutVat})
 					 )
+			
 			setVtData(tmp);
 			
 			
 			let pmtnsObj = newObj.Payments.map(x=>{
-					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date), 'Transaction': newObj.Transaction,
-								'Fund':newObj.Fund, VatPayRtrn: newObj.VatPayRtrn}
+					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date),
+							'Transaction': newObj.Transaction,
+							'Fund':newObj.Fund, VatPayRtrn: newObj.VatPayRtrn}
 			})
 			
 			await addDPaymentsBatch(uidCollection,'payments',pmtnsObj)
@@ -268,25 +284,6 @@ const VatModal = () =>{
 
 export default VatModal;
 
-      /*
-	  
-	  // //first case: the reservation inside the period
-			// if(ChckIn>=From && ChckOut<=To){
-			// 	let Yahas = +getNight(ChckOut, ChckIn) / +getNight(ChckOut,ChckIn);
-			// 	valueVatTmp = pushArr(valueVatTmp,i,Yahas);
-			// } else if(ChckIn<From && ChckOut>=From && ChckOut<To){ //second case: checkIn before start of period
-			// 	let Yahas = +getNight(ChckOut, From) / +getNight(ChckOut,ChckIn);
-			// 	valueVatTmp = pushArr(valueVatTmp,i,Yahas);
-			// } else if(ChckIn<=To && ChckOut>To && ChckIn>From){ //third case: checkIn after start of period and checkout after To
-			// 	let Yahas = +getNight(To, ChckIn) / +getNight(ChckOut,ChckIn);
-			// 	valueVatTmp = pushArr(valueVatTmp,i,Yahas);
-			// } else if(ChckIn<=From && ChckOut>=To){ //fourth case: period inside reservtion
-			// 	let Yahas = +getNight(To, From) / +getNight(ChckOut,ChckIn);
-			// 	valueVatTmp = pushArr(valueVatTmp, i,Yahas);
-			// }
-	  */
-	  
-	
-	  
+  
 	 
       

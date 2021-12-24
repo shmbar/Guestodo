@@ -1,5 +1,5 @@
 import React, {useContext, useState} from 'react';
-import Button from '@material-ui/core/Button';
+import {Button, Tooltip} from '@material-ui/core';
 import Tab2Details from './Tab2Details';
 import { withStyles } from '@material-ui/core/styles';
 import {SettingsContext} from '../../../contexts/useSettingsContext';
@@ -17,6 +17,13 @@ import { v4 as uuidv4 } from 'uuid';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import './tabs.css'
+
+
+const CustomToolTip = withStyles({
+	tooltip: {
+		fontSize: 13,
+	},
+})(Tooltip);
 
 const dateFormat = require('dateformat');
  
@@ -263,7 +270,9 @@ const Tab2Modal = (props) =>{
     <Tab label="Details"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
     <Tab label="Fees"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
     <Tab label="VAT"   className={['element-class', 'tab'].join(" ")}/>
-	<Tab label="Taxes"   className={['element-class', 'tab', 'tabText'].join(" ")}/> 
+	<CustomToolTip title="Applies to Adults only" placement="top">
+		<Tab label="Taxes"   className={['element-class', 'tab', 'tabText'].join(" ")}/> 
+	</CustomToolTip>
 	<Tab label="Commission"  className={['tab', 'tabText'].join(" ")}/>
   </Tabs>
 
@@ -286,16 +295,3 @@ const Tab2Modal = (props) =>{
     };
 
 export default Tab2Modal;
-
-
-
-
-
-/*
-                
-				
-				
-				
-               */
-      
-      

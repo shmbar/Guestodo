@@ -24,7 +24,8 @@ const DataSummary = () =>{
 				</Grid>
 				<Grid item sm={12} style={{width:'100%'}}>
 					<RowOut name={value.VatPayRtrn<0? 'VAT to be returned': 'VAT to be paid'}
-							value={value.VatPayRtrn!=='' ? `${cur} ${Num2(Math.abs(value.VatPayRtrn))}`: ''} 
+							value={value.VatPayRtrn!=='' ? `${cur} 
+							${Num2(Math.abs(value.VatPayRtrn))}`: ''} 
 							st={true}/>
 				</Grid>
 				<Grid item xs={12}> 

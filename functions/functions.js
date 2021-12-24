@@ -242,9 +242,11 @@ export const addData = (uidCollection, collection, year, data)=>{
 	}
 
 ///////////////////////////////////////////////
-export const addMsg = (doc, data)=>{
-	
-	return db.collection('messages').doc(doc).set(data)
+export const addMsg = (collecction, doc, data)=>{
+	console.log(collecction)
+	console.log(doc)
+	console.log(data)
+	return db.collection(collecction).doc(doc).set(data)
 		.then(()=> {
 		return true;
 		})

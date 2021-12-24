@@ -90,7 +90,18 @@ export default function Types() {
 				The use of the Application is for the sole purpose of asset management and not for
 				any other purpose.
 			</Typography>
-			<Typography variant="body1" gutterBottom>
+			<Typography variant="body1" style={{ paddingBottom: '15px' }}>
+				As part of your use of the service, You will define, upon each revenue or expense,
+				if the revenue or expenses statements include VAT or Sales Tax or other taxes with
+				respect to such asset.
+			</Typography>
+			<Typography variant="body1" style={{ paddingBottom: '15px' }}>
+				We may calculate estimated VAT or other tax payments as part of the data we provide,
+				however we can not guarantee that the VAT payment / refund or Tax Payment is
+				accurate and You should not rely on such calculations. You are requested to pay all
+				taxes that are applicable in your country.
+			</Typography>
+			<Typography variant="body1" gutterBottom style={{ paddingBottom: '15px' }}>
 				Note that we will not be responsible for the accuracy or completeness of the data
 				uploaded as part of your use of the Application or to any analysis that you will
 				produce as part of your use of the Application, including in case of bugs or
@@ -194,17 +205,7 @@ export default function Types() {
 				Terms of Service. You are aware that any inaccurate or untrue information provided
 				by You with respect to such payment methods, is considered a criminal offense.
 			</Typography>
-			<Typography variant="body1">
-				As part of your use of the service, You will define, upon each revenue or expense,
-				if the revenue or expenses statements include VAT or Sales Tax or other taxes with
-				respect to such asset.
-			</Typography>
-			<Typography variant="body1" style={{ paddingBottom: '15px' }}>
-				We may calculate estimated VAT or other tax payments as part of the data we provide,
-				however we can not guarantee that the VAT payment / refund or Tax Payment is
-				accurate and You should not rely on such calculations. You are requested to pay all
-				taxes that are applicable in your country.
-			</Typography>
+			
 			<Typography
 				variant="body1"
 				gutterBottom

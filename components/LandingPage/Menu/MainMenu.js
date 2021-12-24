@@ -115,8 +115,11 @@ const MainMenu=()=>{
 	const list = [{lnk:'home', ttl: 'Home'},
 				 {lnk:'features', ttl: 'Features'},
 				 {lnk:'contact', ttl: 'Contact'},
+				 {lnk:'pricing', ttl: 'Pricing'},
 				 {lnk:'login', ttl: 'Login'},
-				 {lnk:'signup', ttl: 'Register'},]
+				 {lnk:'freedemo', ttl: 'Book a Demo'},
+				// {lnk:'signup', ttl: 'Register'}
+				  ]
 	
  	const openSideBAr=()=>{
 		setVisibleLeft(!visibleLeft)
@@ -154,9 +157,12 @@ return (
 								<NavLink  exact activeClassName={classes.activeLink} to='/home' className={classes.fnt} underline='none'>Home</NavLink>
 								<NavLink  exact activeClassName={classes.activeLink} to='/features'  className={classes.fnt}>Features</NavLink>
 								<NavLink  exact activeClassName={classes.activeLink} to='/contact' className={classes.fnt}>Contact</NavLink>
+							    <NavLink  exact activeClassName={classes.activeLink} to='/pricing' className={classes.fnt}>Pricing</NavLink>
 								<NavLink  exact activeClassName={classes.activeLink} to='/login' className={classes.fnt}>Login</NavLink>
-								<NavLink  exact activeClassName={classes.activeLinkReg} to={{pathname:'/signup', 'state': reg }} 
-										className={clsx(classes.fnt, classes.reg)}	 >Register</NavLink>
+							 	<NavLink  exact activeClassName={classes.activeLinkReg} to={{pathname:'/freedemo', 'state': reg }} 
+										className={clsx(classes.fnt, classes.reg)}	 >Book a Demo</NavLink>
+							{/*	<NavLink  exact activeClassName={classes.activeLinkReg} to={{pathname:'/signup', 'state': reg }} 
+										className={clsx(classes.fnt, classes.reg)}	 >Register</NavLink> */}
 							</div>
 						}
 						
