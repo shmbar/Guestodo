@@ -31,7 +31,7 @@ import './App.css';
 import CD from './components/Subcomponents/cookiesDrawer';
 
 //firebase hosting:channel:deploy new-awesome-feature --expires 7d
-//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
+//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
 ///fsdfdsf
 const App = (props) => {
 	

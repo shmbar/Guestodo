@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Grid, TextField, Tooltip, Fab, Paper, Box, IconButton, InputAdornment} from '@material-ui/core';
+import { Grid, TextField, Tooltip, Fab, Paper, Box, IconButton, InputAdornment, FormHelperText} from '@material-ui/core';
 import { SettingsContext } from '../../../../contexts/useSettingsContext';
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { makeStyles, withStyles } from '@material-ui/core/styles';
@@ -212,6 +212,10 @@ const Tab2Taxes = (props) => {
 										>
 											{valueSettings.Taxes[i].TaxType!=='Percent' ? Modality:ModalityOnlyPerStay}
 										</Select>
+										<FormHelperText style={{color: 'red'}}>
+										{(valueSettings.Taxes[i].TaxModality === 'Per Person' ||
+										valueSettings.Taxes[i].TaxModality ==='Per Person/Per Night') && 'Adults only'}
+										</FormHelperText>
 									</FormControl>
 							</Grid>
 							<Grid item xs={12} md={6}>

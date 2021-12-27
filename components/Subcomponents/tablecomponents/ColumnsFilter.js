@@ -6,12 +6,14 @@ import ListItemText from '@material-ui/core/ListItemText';
 import ListItem from '@material-ui/core/ListItem';
 import Checkbox from '@material-ui/core/Checkbox';
 import Menu from '@material-ui/core/Menu';
+import useWindowSize from '../../../hooks/useWindowSize';
 import './headercss.css';
 
 const ColFilter =({cols,handleToggleCols }) =>{
    
     const [anchorEl, setAnchorEl] = useState(null);
-     
+	const scr = useWindowSize();
+
     const handleClick = event => {   setAnchorEl( event.currentTarget );    };
     //Open Menu
     const handleClose = () => { setAnchorEl(null);  };
@@ -35,7 +37,7 @@ const ColFilter =({cols,handleToggleCols }) =>{
 			<Menu  anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={handleClose} className='colsFiltermenuTop'
 								 PaperProps={{
 						  			style: {
-											maxHeight: 500,
+											maxHeight: scr==='xl'? 500: 300,
 											width: '30ch',
 										  },
 									}}

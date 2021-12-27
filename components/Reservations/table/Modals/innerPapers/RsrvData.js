@@ -1,7 +1,7 @@
 import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {MenuItem, InputLabel, Select, FormControl, TextField,
-		Grid, ListItemIcon, Typography}  from '@material-ui/core';
+		Grid, ListItemIcon, Typography, FormHelperText }  from '@material-ui/core';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import Checkbox from '@material-ui/core/Checkbox';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
@@ -327,6 +327,9 @@ const RsrvAmounts = () =>{
 									>
 									{rsr}
 								</Select>
+								<FormHelperText style={{color: 'red'}}>
+									{value.pStatus==='Tentative' && 'Base amount will not be taken into revenue, expenses and channel fees'}
+								</FormHelperText>
 							</FormControl>
 					</Grid>
 					{value.pStatus==='Cancelled' ?

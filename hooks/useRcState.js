@@ -97,6 +97,7 @@ return {
 						 });
 		} else if (e.target.name==='Passport' || e.target.name==='email' || e.target.name==='mobile' || e.target.name==='phone'
 				  || e.target.name==='addrss' || e.target.name==='cntry') {
+				
 				let moshe={...value.dtls,[e.target.name]:e.target.value};
 			
 				setValue({...value,'dtls':moshe });
@@ -108,7 +109,7 @@ return {
 					  			+getTaxes(value, value.NetAmnt);
 			
 			value.NetAmnt!=='' ?	setValue({...value, [e.target.name]: ChnItem['id'],
-										'BlncRsrv': +(+value.NetAmnt-value.TtlPmnt),
+										'BlncRsrv': +(+RsrvAmount-value.TtlPmnt),
 										'PmntStts': paymentStatus(value.TtlPmnt, RsrvAmount),
 										'TtlRsrvWthtoutVat': 
 										value.Vat===false ?  +value.NetAmnt:
@@ -189,7 +190,7 @@ return {
 		const RsrvAmount = +value.NetAmnt + +getFees(val, value.NetAmnt) +
 					  			+getTaxes(val, value.NetAmnt);
 		
-		setValue({...value,'dtls':moshe, 'RsrvAmnt': RsrvAmount });
+		setValue({...value,'dtls':moshe, 'RsrvAmnt': RsrvAmount, 'BlncRsrv': +(+RsrvAmount-value.TtlPmnt), });
 	},
 	handleChangeD: async (name,val, uidCollection) =>{
 		

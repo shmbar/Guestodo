@@ -24,7 +24,7 @@ const marks = [
 	},
 ];
 
-const AnnualDiscount = '20%';
+const AnnualDiscount = '15%';
 const useStyles = makeStyles((theme) => ({
 	root: {
 		backgroundColor: '#193E6D',
@@ -131,6 +131,7 @@ const Pricing = () => {
 	const [numPrp, setNumPrp] = useState(5);
 	const [pricePerPrp, setPricePerPrp] = useState((29 / 5).toFixed(2));
 	const [ttlPrice, setTtlPrice] = useState(29);
+	const [maxPrp,setMaxPrp] = useState(5)
 
 	const backGround = (x) => {
 		return alignment === x ? { background: '#5EC198' } : { background: 'white' };
@@ -139,7 +140,7 @@ const Pricing = () => {
 		return alignment === x ? { color: 'white' } : { color: 'gray' };
 	};
 
-	const calc = (x, value, LeftRight) => {
+	const calc = (x, value, LeftRight,mxPrp) => {
 		if (LeftRight === 'left') {
 			setPricePerPrp((x / value).toFixed(2));
 			setTtlPrice(x);
@@ -147,6 +148,7 @@ const Pricing = () => {
 			setPricePerPrp(((x / value) * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
 			setTtlPrice((x * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
 		}
+		setMaxPrp(mxPrp)
 	};
 
 	function handleChange(e, value, LeftRight) {
@@ -154,19 +156,19 @@ const Pricing = () => {
 		setNumPrp(value);
 
 		if (value === 1) {
-			calc(9, value, tmp);
+			calc(9, value, tmp, 1);
 		} else if (value >= 2 && value <= 5) {
-			calc(29, value, tmp);
+			calc(29, value, tmp,5);
 		} else if (value >= 6 && value <= 10) {
-			calc(49, value, tmp);
+			calc(49, value, tmp,10);
 		} else if (value >= 11 && value <= 15) {
-			calc(69, value, tmp);
+			calc(69, value, tmp,15);
 		} else if (value >= 16 && value <= 20) {
-			calc(89, value, tmp);
+			calc(89, value, tmp,20);
 		} else if (value >= 21 && value <= 35) {
-			calc(149, value, tmp);
+			calc(149, value, tmp,35);
 		} else if (value >= 36 && value <= 50) {
-			calc(179, value, tmp);
+			calc(179, value, tmp,50);
 		}
 	}
 
@@ -181,7 +183,6 @@ const Pricing = () => {
 		{ txt: 'Set your own active channels.' },
 		{ txt: 'Super easy setup.' },
 		{ txt: '24/7 support.' },
-		{ txt: 'Zero double booking guarantee.' },
 		{ txt: 'Charts & Reports.' },
 		{ txt: 'Integration with channels.' },
 		{ txt: 'Unlimited users/owners.' },
@@ -191,7 +192,7 @@ const Pricing = () => {
 
 	const usg = [
 		{ txt: '30 Days Free Trial.' },
-		{ txt: 'No booking or usage fees.' },
+		{ txt: 'No booking fees.' },
 		{ txt: 'No credit card required.' },
 	];
 	
@@ -258,7 +259,7 @@ const Pricing = () => {
 								className={classes.fnt}
 								style={{ fontSize: '30px', textAlign: 'center' }}
 							>
-								How many properties you plan to manage?
+								How many properties do you plan to manage?
 							</div>
 							<div
 								className={classes.fnt}
@@ -276,17 +277,45 @@ const Pricing = () => {
 									Per property, per month
 								</span>
 							</div>
-
-							<div
-								className={classes.fnt}
-								style={{
-									fontSize: '25px',
-									textAlign: 'center',
-									paddingTop: '10px',
-								}}
-							>
-								{`$${ttlPrice} Total`}
-							</div>
+							<Container maxWidth="sm" style={{paddingTop: '5px'}}>
+								<Grid container >
+									<Grid item xs={12} md={6}>
+										<div
+											className={classes.fnt}
+											style={{
+												fontSize: '25px',
+												textAlign: 'center',
+												paddingTop: '10px',
+											}}
+										>
+										{`$${ttlPrice} Total`}
+										</div>
+										<p className={classes.fnt} style={{
+												fontSize: '15px',
+												textAlign: 'center',
+												paddingTop: '5px',
+											}}>{alignment==='left' ? 'With monthly payments': 'With yearly payments'}
+										</p>
+									</Grid>
+									<Grid item xs={12} md={6}>
+										<div
+											className={classes.fnt}
+											style={{
+												fontSize: '25px',
+												textAlign: 'center',
+												paddingTop: '10px',
+											}}
+										>
+										{maxPrp}
+										</div>
+										<p className={classes.fnt} style={{
+												fontSize: '15px',
+												textAlign: 'center',
+												paddingTop: '5px',
+											}}>Max properties</p>
+									</Grid>
+								</Grid>
+							</Container>
 							<Grid
 								container
 								style={{ display: 'inline-flex', paddingTop: '35px' }}

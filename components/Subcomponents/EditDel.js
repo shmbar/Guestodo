@@ -35,7 +35,7 @@ export const EditDel = (props) => {
 							</Tooltip> 
 							<Tooltip title="Delete" aria-label='Delete'>
 								<span>	
-									<IconButton aria-label='Delete' onClick={()=> delRow(rowData)}	  disabled={!write || rowData.NetAmnt==='' || dis || dsbl}>
+									<IconButton aria-label='Delete' onClick={()=> delRow(rowData)}	  disabled={!write || dis || dsbl}>
 										<DeleteIcon  />
 									</IconButton>
 								</span>
