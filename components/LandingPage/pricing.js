@@ -129,7 +129,7 @@ const Pricing = () => {
 	const classes = useStyles();
 	const [alignment, setAlignment] = useState('left');
 	const [numPrp, setNumPrp] = useState(5);
-	const [pricePerPrp, setPricePerPrp] = useState((29 / 5).toFixed(2));
+	//const [pricePerPrp, setPricePerPrp] = useState((29 / 5).toFixed(2));
 	const [ttlPrice, setTtlPrice] = useState(29);
 	const [maxPrp,setMaxPrp] = useState(5)
 
@@ -142,10 +142,10 @@ const Pricing = () => {
 
 	const calc = (x, value, LeftRight,mxPrp) => {
 		if (LeftRight === 'left') {
-			setPricePerPrp((x / value).toFixed(2));
+		//	setPricePerPrp((x / value).toFixed(2));
 			setTtlPrice(x);
 		} else {
-			setPricePerPrp(((x / value) * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
+		//	setPricePerPrp(((x / value) * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
 			setTtlPrice((x * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
 		}
 		setMaxPrp(mxPrp)
@@ -222,7 +222,7 @@ const Pricing = () => {
 					style={{ paddingTop: '30px' }}
 				>
 					<Grid item>
-						<div className={classes.txt}>Select your plan:</div>
+						<div className={classes.txt} style={{textAlign:'center'}}>Select your plan:</div>
 						<ToggleButtonGroup
 							value={alignment}
 							exclusive
@@ -261,7 +261,7 @@ const Pricing = () => {
 							>
 								How many properties do you plan to manage?
 							</div>
-							<div
+							{/*<div
 								className={classes.fnt}
 								style={{
 									fontSize: '45px',
@@ -276,19 +276,19 @@ const Pricing = () => {
 								>
 									Per property, per month
 								</span>
-							</div>
+							</div> */}
 							<Container maxWidth="sm" style={{paddingTop: '5px'}}>
 								<Grid container >
 									<Grid item xs={12} md={6}>
 										<div
 											className={classes.fnt}
 											style={{
-												fontSize: '25px',
+												fontSize: '35px',
 												textAlign: 'center',
 												paddingTop: '10px',
 											}}
 										>
-										{`$${ttlPrice} Total`}
+										{`$${ttlPrice}`}
 										</div>
 										<p className={classes.fnt} style={{
 												fontSize: '15px',
@@ -301,7 +301,7 @@ const Pricing = () => {
 										<div
 											className={classes.fnt}
 											style={{
-												fontSize: '25px',
+												fontSize: '35px',
 												textAlign: 'center',
 												paddingTop: '10px',
 											}}

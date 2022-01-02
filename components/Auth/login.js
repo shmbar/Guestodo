@@ -28,7 +28,7 @@ import FtrsLotie from '../LandingPage/Lotties/Features';
 import firebase from 'firebase/app';
 import SnackBar from '../Subcomponents/SnackBar';
 import Divider from '@material-ui/core/Divider';
-
+//import fetch from 'node-fetch';
 
 const defaultOptions = (x) => {
 	return {
@@ -49,7 +49,7 @@ export default function LoginToApp(props) {
 	const theme = useTheme();
 	let screenXS = useMediaQuery(theme.breakpoints.down('xs'));
 	const [snackbar, setSnackbar] = useState({ open: false, msg: '', variant: '' });
-	
+	 
 	const useStyles = makeStyles((theme) => ({
 		'@global': {
 			body: {
@@ -136,7 +136,10 @@ export default function LoginToApp(props) {
 			LogoutFromSystem();
 		};
 		if (!sessionStorage.getItem('isLogged')) logOut();
+		
 	}, []);
+
+	
 
 	const authenticateUser = async () => {
 		const { email, password } = values;

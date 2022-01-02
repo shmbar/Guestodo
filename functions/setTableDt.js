@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {idToItem, Num2, getFees} from './functions.js';
+import {idToItem, Num2, getFees, getTaxes} from './functions.js';
 import Booking from '../logos/chnlsPics/Booking.png';
 import Airbnb from '../logos/chnlsPics/Airbnb.png';
 import Tripadvisor from '../logos/chnlsPics/Tripadvisor.png';
@@ -66,6 +66,9 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 	}else if (column.field==='Fund') {
 		tmp = scrSize !== 'xs' ? showItem(rowData, column, settings.funds): <> <span className="p-column-title">{column.header}
 		</span>{showItem(rowData, column, settings.funds)} </>
+	}else if (column.field==='NetAmnt' || column.field==='Fees' || column.field==='Taxes' || column.field==='VAT') {
+		tmp = scrSize !== 'xs' ? showCommasNfees1(rowData, column, settings, cur): <> <span className="p-column-title">{column.header}
+		</span>{showCommasNfees1(rowData, column, settings, cur)} </>
 	}else{
 		tmp = scrSize !== 'xs' ? rowData[column.field]: <> <span className="p-column-title">{column.header}</span>{rowData[column.field]} </>
 	}
@@ -100,6 +103,23 @@ const showCommasNfees=(rowData, column, cur, settings)=>{
 	
 	return `${cur} ${addCommas(tmp) }`;
 }
+
+const showCommasNfees1=(rowData, column, settings, cur )=>{
+	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
+	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
+	
+	let vatAmount =	rowData.RsrvAmnt-rowData.TtlRsrvWthtoutVat -
+				getFees(rowData, tmpAmnt )/(rowData.Vat ? (1 + parseFloat(vat)/100) :1) -
+												+getTaxes(rowData, tmpAmnt );
+	
+	const tmp = column.field==='NetAmnt' ? rowData.TtlRsrvWthtoutVat :
+								column.field==='Fees' ? +getFees(rowData, tmpAmnt )/(rowData.Vat ? (1 + parseFloat(vat)/100): 1) :
+								column.field==='Taxes' ? +getTaxes(rowData, tmpAmnt ):
+								vatAmount;
+	
+	return `${cur} ${addCommas(tmp) }`;
+}
+
 
 function addCommas(x) {
 	//var parts = Math.round(x).toString().split('.');
@@ -171,7 +191,6 @@ export const PmntClrStatus1 = (value) =>{
 	let Status = value==='Fully paid' ? FullP1 : value==='Partially paid' ?  PartP1: Unp1;
 	return  Status.backgroundColor ;
 };
-
 
 /////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////

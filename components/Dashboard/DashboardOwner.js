@@ -19,8 +19,7 @@ import Income from '../../logos/pics/Inc.png';
 import Expense from '../../logos/pics/Exp.png';
 import {AuthContext} from '../../contexts/useAuthContext';
 
-import firebase from "firebase/app";
-import 'firebase/functions';
+
 //import {obj} from './obj';
 //
 
@@ -269,15 +268,56 @@ const Dashboard = () => {
 	
 	const runAA=async()=>{
 		
+		/*const url = new URL('https://papi.tokeet.com/dialog/')
+		url.searchParams.append('response_type', 'code')
+		url.searchParams.append('scope', 'guests,inquiries,rentals,invoices')
+		url.searchParams.append('client_id', 'app_cf601eee518e47f3bb260f1133a77a34')
+		url.searchParams.append('redirect_uri', 'http://www.guestodo.com/owners')
+		res.redirect(url.toString());
 		
-			let getServers = firebase.functions().httpsCallable('getServers');
-			getServers().then((result) => {
-			
-				console.log(JSON.parse(result.data.data))
-		  })
+		
+		window.location.href = "https://papi.tokeet.com/dialog/?response_type=code&scope=guests,inquiries,rentals,invoices&client_id=app_cf601eee518e47f3bb260f1133a77a34&redirect_uri=http://www.guestodo.com/owners";
+	*/
+		
+		const response_type = 'code';
+		const scope = 'guests,inquiries,rentals,invoices';
+		const client_id = 'app_cf601eee518e47f3bb260f1133a77a34';
+		const redirect_uri = 'http://www.guestodo.com/owners';
+		const tokeetURL = 'https://papi.tokeet.com/dialog/?';
+		
+	  let p = new URLSearchParams();
+	  p.append('response_type', response_type);
+	  p.append('scope', scope);
+	  p.append('client_id', client_id);
+	  p.append("redirect_uri", redirect_uri);
+	 
+   
+/*
+   await fetch(tokeetURL + p, {
+   method: "GET",
+	 mode:'no-cors',
+	 credentials: 'same-origin', // include, *same-origin, omit
+  // body: params,
+   headers: {
+    "cache-Control": "no-cache",
+    'Content-Type': 'application/json',
+	'redirect': 'follow', // manual, *follow, error
+	'Access-Control-Allow-Origin': '*',
+	'Access-Control-Allow-Headers': 'X-Requested-With',
+	'Access-Control-Allow-Credentials' : true 
+  
+   }
+  })
+   */
+   //return response.json(); // parses JSON response into native JavaScript objects
+		
+		window.location.href = tokeetURL + p
+
+
 		
 		
-	//	await setSets(uidCollection)
+		
+		//	await setSets(uidCollection)
 		
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
 		

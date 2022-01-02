@@ -10,7 +10,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {RcContext} from '../../../contexts/useRcContext';
 import {SelectContext} from '../../../contexts/useSelectContext';
 import SnackBar from '../../Subcomponents/SnackBar';
-import {delData, getNewTR, convId2Item, deleteSlots, readDataSlots, delDPaymentsBatch} from '../../../functions/functions.js';
+import {delData, getNewTR, convId2Item, deleteSlots, readDataSlots, delDPaymentsBatch, getFees, getTaxes} from '../../../functions/functions.js';
 import {showDataTable} from '../../../functions/setTableDt.js';
 import DelDialog from '../../Subcomponents/DeleteDialog';
 import {AuthContext} from '../../../contexts/useAuthContext';
@@ -38,7 +38,11 @@ const tableCols = [
 			{field: 'TtlPmnt', header: 'Total Payment', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'BlncRsrv', header: 'Balance Due', showcol: true, s:['lg', 'xl']},	
 			{field: 'PmntStts', header: 'Payment Status', showcol: true, s:['md','lg', 'xl']},	
-        	{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
+			{field: 'NetAmnt', header: 'Base Amount', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'Fees', header: 'Fees', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'Taxes', header: 'Taxes', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'VAT', header: 'VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
 			{field: 'RsrvAmnt', header: 'Reservation Amount', showcol: true, s:['md','lg', 'xl']},	
 			{field: 'el' , header: '', el: 'el', showcol: true, s:['xs','sm','md','lg', 'xl']} 
 ];
@@ -207,7 +211,22 @@ const Table =() =>{
 	}
 	
 	const setSHortTr=(ddd) => { //for data export to excel
-		return ddd!=null ? ddd.map(x=> ({...x, 'Transaction': showShortTR(x, null)})) : [];
+		
+		const vat = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct )[0]['VAT'] : 0
+		let tmp = ddd.map(x=> {
+			const tmpAmnt = x.pStatus!=='Cancelled' ? +x.NetAmnt : +x.CnclFee;
+			let vatAmount =	x.RsrvAmnt-x.TtlRsrvWthtoutVat -
+				getFees(x, tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100) :1) - +getTaxes(x, tmpAmnt );
+			
+			let tmpRow = ({...x, 'Transaction': showShortTR(x, null), NetAmnt: x.TtlRsrvWthtoutVat,
+			Fees: +(+getFees(x,tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100): 1)).toFixed(2),
+			Taxes: +(+getTaxes(x, tmpAmnt )).toFixed(2), VAT: +(+vatAmount).toFixed(2),
+			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100): 1)).toFixed(2)})
+			
+			return tmpRow;
+		})
+		
+		return ddd!=null ? tmp: [];
 	}
 	
 	const header = <Header 

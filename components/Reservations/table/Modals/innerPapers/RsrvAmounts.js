@@ -32,7 +32,6 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 		  Num2(value.RsrvAmnt/value.NigthsNum);//cur.concat().concat().toString()
 	const ReservationAmount = cur + Array(1).fill('\xa0').join('') + Num2(+value.RsrvAmnt);
 	
-	
 	const NewChnCmsn = value.RsrvChn!=='' ? chnls.filter(x=> x.id===value.RsrvChn)[0]['ChnCmsn'] : '';
 	const ExistedChnCmsn = value.LstSave!==undefined && value.LstSave!==''?
 			 rcDataPrp.filter(x=> x.Transaction===value.Transaction)[0]['RsrvChn'] : '';

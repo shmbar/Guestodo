@@ -364,7 +364,7 @@ export const itemToId=(arr, val )=>{
 
 
 export const convId2Item = (arr,list, settings)=>{//(rcData.prp, 'PrpName', 'AptName','RsrvChn', 'PM')
-	
+
 	let newArr = arr.map(x=>	{
 
 		let tmpObj={};

@@ -180,6 +180,9 @@ const PaymentsPaper = (props) =>{
 						<Button variant="contained" onClick={addPaymentLne} color="primary"
 							  endIcon={<AddNew />} >Add Payment</Button>	
 				</Grid>	}
+				{value.pStatus==='Tentative' && <div style={{color: "red", fontSize: '12px'}}>
+				 		Not applicable as long as reservation status is Tentative.
+				 </div>}
 			</Grid>	
 		</div>
 	);

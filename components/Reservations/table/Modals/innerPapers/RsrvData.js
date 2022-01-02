@@ -328,7 +328,7 @@ const RsrvAmounts = () =>{
 									{rsr}
 								</Select>
 								<FormHelperText style={{color: 'red'}}>
-									{value.pStatus==='Tentative' && 'Base amount will not be taken into revenue, expenses and channel fees'}
+									{value.pStatus==='Tentative' && 'Base amount will not be taken into revenue, expenses and channel fees until the status is Confirmed or Canceled.'}
 								</FormHelperText>
 							</FormControl>
 					</Grid>

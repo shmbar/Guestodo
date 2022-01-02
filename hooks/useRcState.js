@@ -214,8 +214,22 @@ return {
 		}
 	},	
 	handleChangeDNew: (start, end) =>{
-			let tmp = getNight(dateFormat(end,'dd-mmm-yyyy'), dateFormat(start,'dd-mmm-yyyy'))
-			setValue({...value, 'ChckIn': dateFormat(start,'dd-mmm-yyyy'), 'ChckOut' : dateFormat(end,'dd-mmm-yyyy'),'NigthsNum' : tmp});
+		
+		let tmp = getNight(dateFormat(end,'dd-mmm-yyyy'), dateFormat(start,'dd-mmm-yyyy'))
+		
+		let newValue = {...value, 'ChckIn': dateFormat(start,'dd-mmm-yyyy'),
+					  'ChckOut' : dateFormat(end,'dd-mmm-yyyy'),'NigthsNum' : tmp}
+		
+		
+		const RsrvAmount = +newValue.NetAmnt + +getFees(newValue, newValue.NetAmnt) +
+					  			+getTaxes(newValue, newValue.NetAmnt);
+	
+	
+			setValue({...newValue, 
+					  'RsrvAmnt': RsrvAmount,
+						'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
+						'PmntStts': paymentStatus(value.TtlPmnt, +RsrvAmount),
+					 });
 	},	
 	handleChangeDPmnts: (name,val, id) =>{
 		let rowNum=id;
