@@ -111,17 +111,17 @@ export default function MonthsPicker(props) {
 		if (mnth === '') {
 			setMnth(val);
 			handleClose();
-			props.handleChangeD('AccDate', new Date(yr, val, 1));
+			props.setStartDate(new Date(yr, val, 1));
 		}
 	};
 
 	return (
 		<div>
 			<TextField
-				label="Accounting Date"
+				label="Arrive from"
 				fullWidth
 				value={
-					props.value.AccDate === null ? '' : dateFormat(props.value.AccDate, 'mmmm yyyy')
+					props.startDate === null ? '' : dateFormat(props.startDate, 'mmmm yyyy')
 				}
 				InputProps={{
 					readOnly: true,
@@ -133,7 +133,6 @@ export default function MonthsPicker(props) {
 						</InputAdornment>
 					),
 				}}
-				error={props.value.AccDate === null && props.redValid ? true : false}
 			/>
 			<Dialog
 				fullScreen={fullScreen}
@@ -201,13 +200,13 @@ export default function MonthsPicker(props) {
 									xs={4}
 									className={classes.cell}
 									style={
-										props.value.AccDate === null &&
+										props.startDate === null &&
 										dateFormat(new Date(), 'm') * 1 === i + 1 &&
 										dateFormat(new Date(), 'yyyy') * 1 === yr
 											? { border: '1px solid' }
-											: props.value.AccDate !== null &&
-											  dateFormat(props.value.AccDate, 'm') * 1 === i + 1 &&
-											  dateFormat(props.value.AccDate, 'yyyy') * 1 === yr
+											: props.startDate !== null &&
+											  dateFormat(props.startDate, 'm') * 1 === i + 1 &&
+											  dateFormat(props.startDate, 'yyyy') * 1 === yr
 											? { background: 'grey', color: 'white' }
 											: {}
 									}

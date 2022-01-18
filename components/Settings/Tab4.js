@@ -26,7 +26,7 @@ const tableCols = [
 
 ];
 
-const cnlArr = ['Airbnb','Booking','Tripadvisor','Agoda','Flipkey','Expedia','HomeAway'];
+const cnlArr = ['Airbnb','Booking','Tripadvisor','Agoda','Flipkey','Expedia','HomeAway', 'Tokeet'];
 
 
 const GreenCheckbox = withStyles({

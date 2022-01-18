@@ -1,6 +1,6 @@
 import React, {useContext, useState, useEffect} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {Paper} from '@material-ui/core';
+import {Paper, Button} from '@material-ui/core';
 import Table from '../Reservations/table/Table';
 import PannelData from '../Subcomponents/PannelData';
 import Grid from '@material-ui/core/Grid';
@@ -19,7 +19,7 @@ import {AuthContext} from '../../contexts/useAuthContext';
 import {readDataPerPropertyDates, isSlotAvailale, readData, readDataMultiPropertyDates} from '../../functions/functions.js';
 import {SettingsContext} from '../../contexts/useSettingsContext'; 
 import Switcher from '../Subcomponents/Switcher/Switcher.js';
-
+import RetrieveModal from './table/Modals/Retreive/OrdersModalRetrieveModal.js';
 
 import './Orders.css';
 
@@ -39,7 +39,8 @@ export default function PaperSheet() {
 
 	const scrSize = useWindowSize();
 	const [pnldata, setPnldata]=useState({avg:0, ttlrsrv:0, ttlblnxrsrv:0});
-	const {setRcDataPrp,rcDataPrp, calendarView, setCalendarView,} = useContext(RcContext);
+	const {setRcDataPrp,rcDataPrp, calendarView, setCalendarView,
+		  displayRetrieveDialog,setDisplayRetrieveDialog} = useContext(RcContext);
 	const {date,setDate, propertySlct, multiPropertySlct} = useContext(SelectContext);
 	const {uidCollection} = useContext(AuthContext);
 	const {setLoading, settings} = useContext(SettingsContext);
@@ -145,7 +146,12 @@ export default function PaperSheet() {
 	  	<div style={{margin:'5px', float: 'right', paddingTop:'10px'}}>
 			  	<Switcher  id="newsletter" onChange={setSwitcherToCalendar}  />
 	  	</div>
-
+		<div style={{margin:'5px', float: 'right', paddingTop:'10px', paddingRight:'20px'}}>
+		  {	<Button variant="outlined" color="primary" 
+				onClick={()=>setDisplayRetrieveDialog(true)}>Retreive Tokeet Data</Button>
+			}
+		</div>
+			
 		<div style={{padding: '60px 0px 10px 0px'}}>
 		  	<Paper className={classes.root} >
 			  	
@@ -154,7 +160,8 @@ export default function PaperSheet() {
 						<h4 className='ttlClr'>Reservations</h4>
 					</Grid>	
 					<Grid item sm={9} >
-						<Grid container  spacing={2} justifyContent="flex-end"  alignItems="center" style={{margin:"auto"}}>
+						<Grid container  spacing={2} justifyContent="flex-end"  
+							alignItems="center" style={{margin:"auto"}}>
 							<Grid item >
 								<MonthSelect allMonths={!calendarView}/>
 							</Grid>
@@ -163,11 +170,11 @@ export default function PaperSheet() {
 				</Grid>	 
 				
 		 	{ !calendarView  ? <Table />:	<Calendar />  }
-				
+			
 		  	</Paper>
 		</div>	 
 	 
-	  
+	  {displayRetrieveDialog && <RetrieveModal />}
 	  </div>
   );
 }

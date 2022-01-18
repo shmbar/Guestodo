@@ -18,6 +18,7 @@ import AgodaShort from '../logos/chnlsPics/AgodaShort.png';
 import FlipkeyShort from '../logos/chnlsPics/FlipkeyShort.png';
 import ExpediaShort from '../logos/chnlsPics/ExpediaShort.png';
 import HomeAwayShort from '../logos/chnlsPics/HomeAwayShort.png';
+import TokeetShort from '../logos/chnlsPics/TokeetShort.png';
 import DefaultChannelShort from '../logos/chnlsPics/DefaultChannelShort.png';
 
 const pmntsLogo = [{txt: 'Cash', img: Cash, width:'30px'},
@@ -33,6 +34,7 @@ const   chnnlslogo=  [{brnd: 'Booking', img: BookingShort, width:'25px'},
 				 {brnd: 'Flipkey', img: FlipkeyShort, width: '28px'},
 				 {brnd: 'Expedia', img: ExpediaShort, width: '25px'},
 				 {brnd: 'HomeAway', img: HomeAwayShort, width: '25px'},
+				 {brnd: 'Tokeet', img: TokeetShort, width: '25px'},	  
 			  	 {brnd: 'DefaultChannel', img: DefaultChannelShort, width: '25px'}
 				  ];
 const expOwner = ['Insurance',

@@ -18,8 +18,7 @@ import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import SnackBar from '../../../Subcomponents/SnackBar';
 import {formValidation, checkDates, delEmptyPaymentS} from '../../../../functions/formValidation';
-import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,
-				getFees, getTaxes} from '../../../../functions/functions.js';
+import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,updateTokeetIdList,getFees, getTaxes} from '../../../../functions/functions.js';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridLoader from 'react-spinners/GridLoader';  // //https://www.react-spinners.com/
@@ -73,9 +72,11 @@ const OrdersModal = (props) =>{
 	let scrSize = (scr==='xs' || scr==='sm');
 
 	const {rcDataPrp, setRcDataPrp,value,setValue,displayDialog, setDisplayDialog,
-		   	setRedValid, snackbar, setSnackbar, isSlotAvailable} = useContext(RcContext);
+		   	setRedValid, snackbar, setSnackbar, isSlotAvailable,
+		   setTokeetIdList, tokeetIdList} = useContext(RcContext);
 	const {displayDialogSettings, runTab, settings, updtSettings,
-		   settingsShows, setSettingsShows, displayDialogSettingsApt, setLoading, loading} = useContext(SettingsContext);
+		   settingsShows, setSettingsShows, displayDialogSettingsApt, setLoading, loading} = 
+		  useContext(SettingsContext);
 	const {write, uidCollection} = useContext(AuthContext);					 						 				 
 	const {date} = useContext(SelectContext);
 	
@@ -300,7 +301,8 @@ const OrdersModal = (props) =>{
 				//in case apt is changed, find the previous apt
 				
 				let oldApt = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0]['AptName'];
-				updateSlots(uidCollection, oldApt, value.AptName,value.Transaction, value.ChckIn,value.ChckOut, startDold , endDold)
+				updateSlots(uidCollection, oldApt, value.AptName,value.Transaction,
+							value.ChckIn,value.ChckOut, startDold , endDold)
 			}else if(value.pStatus==='Cancelled'){
 				deleteSlots(uidCollection, value.AptName , value.Transaction, value.ChckIn, value.ChckOut)
 			}
@@ -336,8 +338,8 @@ const OrdersModal = (props) =>{
 						setRcDataPrp(tmpArrAdd);
 					}
 
-					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(false, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn,
-																			tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
+					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(false, MngTRexCmsn,
+						tmpChnlCmsnPrcntg, tmpMngCmsn,tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
 					//do nothing for channel commission , managemnt transaction, management commisson, include or not include vat
 				}else{
 					ChnlTRex = await 'EX'.concat( await  getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4()); 
@@ -347,8 +349,6 @@ const OrdersModal = (props) =>{
 					const tmpObj = {...newObj, 'ChnlTRex': ChnlTRex, 'MngTRexCmsn': MngTRexCmsn} //new Object incl commission transactions
 
 					let tmpArrAdd = [...rcDataPrp, tmpObj ];
-					//tmpArrAdd=tmpArrAdd.filter(x=> !(x.IcalTransaction===tmpObj.IcalTransaction && x.Transaction==null)); //filter out the ical after adding
-
 
 					setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(tmpObj.ChckIn,'yyyy'), tmpObj)), msg: 'New Order has been added!',
 							  variant: 'success'});
@@ -360,8 +360,8 @@ const OrdersModal = (props) =>{
 						setRcDataPrp(tmpArrAdd);
 					}
 
-					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,
-																			tmpMngCmsnAddVatYesNo); 
+					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(ChnlTRex, MngTRexCmsn,
+					tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,tmpMngCmsnAddVatYesNo); 
 					//channel transacton, managemnt transaction, management commisson, include or not include vat
 
 				}
@@ -373,11 +373,18 @@ const OrdersModal = (props) =>{
 			
 			//Payments
 			let pmtnsObj = value.Payments.map(x=>{
-					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date), 'Transaction': value.Transaction,
-							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'], ChnPrcnt: newObj.ChnPrcnt, Vat: value.Vat,
+					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date),
+							'Transaction': value.Transaction,
+							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'],
+							ChnPrcnt: newObj.ChnPrcnt, Vat: value.Vat,
 							ChnlTRex: !tmpChnlCmsn ? '': ChnlTRex, PrpName: value.PrpName}
 			})
 			await addDPaymentsBatch(uidCollection,'payments',pmtnsObj)
+			
+			if(value.tokeetID!==null){
+				await updateTokeetIdList(uidCollection, value.tokeetID);
+				setTokeetIdList([...tokeetIdList,value.tokeetID])
+			}
 										   
 		} 
 		setLoading(false)

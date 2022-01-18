@@ -26,7 +26,10 @@ import {checkAvailableSlot, paymentStatus, readDataSlots, getFees, getTaxes} fro
 	const [slotsTable, setSlotsTable] = useState([]);
 	const [rcTable, setRcTable] = useState([]);
 	const [calendarView, setCalendarView] = useState(true)
-
+	const [displayRetrieveDialog,setDisplayRetrieveDialog]=useState(false);
+	const [tokeetIdList,setTokeetIdList]=useState([]);
+		
+		
 	const getNight=(end,start)=>{
 		const diffTime = Math.abs(new Date(end).getTime() - new Date(start).getTime());
 		return Math.ceil(diffTime / (1000 * 60 * 60 * 24)); 
@@ -53,6 +56,8 @@ return {
 	setIsSlotAvailable,
 	calendarView, setCalendarView,
 	getFees, getTaxes,
+	displayRetrieveDialog,setDisplayRetrieveDialog,
+	tokeetIdList,setTokeetIdList,
 	handleChange: async (uidCollection, e, settings, date) => {
 	
 	//	let ChnItem= value.RsrvChn!==''? settings.channels.filter(x => value.RsrvChn===x.id)[0] : ''

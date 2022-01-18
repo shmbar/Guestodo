@@ -10,7 +10,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import {RcContext} from '../../../contexts/useRcContext';
 import {SelectContext} from '../../../contexts/useSelectContext';
 import SnackBar from '../../Subcomponents/SnackBar';
-import {delData, getNewTR, convId2Item, deleteSlots, readDataSlots, delDPaymentsBatch, getFees, getTaxes} from '../../../functions/functions.js';
+import {delData, getNewTR, convId2Item, deleteSlots, readDataSlots, delDPaymentsBatch,
+		getFees, getTaxes,delTokeetIdList} from '../../../functions/functions.js';
 import {showDataTable} from '../../../functions/setTableDt.js';
 import DelDialog from '../../Subcomponents/DeleteDialog';
 import {AuthContext} from '../../../contexts/useAuthContext';
@@ -208,6 +209,8 @@ const Table =() =>{
 		await delData(uidCollection,'expenses', date.year, ExIDCommissionMng);
 		
 		await delDPaymentsBatch(uidCollection,'payments',row.Payments)
+		
+		if(row.tokeetID!==null){await delTokeetIdList(uidCollection, row.tokeetID)}
 	}
 	
 	const setSHortTr=(ddd) => { //for data export to excel

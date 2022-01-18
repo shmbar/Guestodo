@@ -150,7 +150,8 @@ const Dashboard = () => {
 					const vatProperty = settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']/100;
 					let val = +tmpRcDataDsh[i].TtlRsrvWthtoutVat + 
 							+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(1 + parseFloat(vatProperty));
-		
+						
+						
 					if(dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()){
 						nightsNum+= tmpRcDataDsh[i].NigthsNum;
 						reservs+= (+tmpRcDataDsh[i].RsrvAmnt);
@@ -241,7 +242,7 @@ const Dashboard = () => {
 			revenue = revenue!==0 ? revenue: 0;
 			otherInc = otherInc!==0 ? otherInc: 0;
 			expenses = expenses!==0 ? addCommas(expenses): 0;
-
+		
 		
 			let tmpObj={}; //show real channels names instead of id's
 			for (let k of Object.keys(ChannelsListArray)) {
@@ -268,56 +269,10 @@ const Dashboard = () => {
 	
 	const runAA=async()=>{
 		
-		/*const url = new URL('https://papi.tokeet.com/dialog/')
-		url.searchParams.append('response_type', 'code')
-		url.searchParams.append('scope', 'guests,inquiries,rentals,invoices')
-		url.searchParams.append('client_id', 'app_cf601eee518e47f3bb260f1133a77a34')
-		url.searchParams.append('redirect_uri', 'http://www.guestodo.com/owners')
-		res.redirect(url.toString());
+			
 		
 		
-		window.location.href = "https://papi.tokeet.com/dialog/?response_type=code&scope=guests,inquiries,rentals,invoices&client_id=app_cf601eee518e47f3bb260f1133a77a34&redirect_uri=http://www.guestodo.com/owners";
-	*/
-		
-		const response_type = 'code';
-		const scope = 'guests,inquiries,rentals,invoices';
-		const client_id = 'app_cf601eee518e47f3bb260f1133a77a34';
-		const redirect_uri = 'http://www.guestodo.com/owners';
-		const tokeetURL = 'https://papi.tokeet.com/dialog/?';
-		
-	  let p = new URLSearchParams();
-	  p.append('response_type', response_type);
-	  p.append('scope', scope);
-	  p.append('client_id', client_id);
-	  p.append("redirect_uri", redirect_uri);
-	 
-   
-/*
-   await fetch(tokeetURL + p, {
-   method: "GET",
-	 mode:'no-cors',
-	 credentials: 'same-origin', // include, *same-origin, omit
-  // body: params,
-   headers: {
-    "cache-Control": "no-cache",
-    'Content-Type': 'application/json',
-	'redirect': 'follow', // manual, *follow, error
-	'Access-Control-Allow-Origin': '*',
-	'Access-Control-Allow-Headers': 'X-Requested-With',
-	'Access-Control-Allow-Credentials' : true 
-  
-   }
-  })
-   */
-   //return response.json(); // parses JSON response into native JavaScript objects
-		
-		window.location.href = tokeetURL + p
-
-
-		
-		
-		
-		//	await setSets(uidCollection)
+	//		await setSets('903dbfe0-5cb3-4e71-b389-781bed81558b')
 		
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
 		

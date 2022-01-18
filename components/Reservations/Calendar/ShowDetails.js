@@ -6,7 +6,7 @@ import { makeStyles } from '@material-ui/core/styles';
 import {PmntClrStatus1, brandTemplate1} from '../../../functions/setTableDt.js';
 import { SettingsContext } from '../../../contexts/useSettingsContext';
 import { RcContext } from '../../../contexts/useRcContext';
-import {idToItem, addComma, deleteSlots, delData, delDPaymentsBatch} from '../../../functions/functions.js';
+import {idToItem, addComma, deleteSlots, delData, delDPaymentsBatch, delTokeetIdList} from '../../../functions/functions.js';
 import DelDialog from './DeleteDialog';
 import {AuthContext} from '../../../contexts/useAuthContext';
 import { SelectContext } from '../../../contexts/useSelectContext';
@@ -62,6 +62,8 @@ export default function MouseOverPopover(props) {
 	
 		if(ExIDCommissionCnhl!==undefined) {await delData(uidCollection, 'expenses', date.year, ExIDCommissionCnhl)};
 		await delData(uidCollection,'expenses', date.year, ExIDCommissionMng); 
+	   
+	   if(slot.tokeetID!==null){await delTokeetIdList(uidCollection, slot.tokeetID)}
 	} 
 
     const open = Boolean(props.anchorEl);

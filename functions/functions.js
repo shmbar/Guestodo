@@ -31,7 +31,6 @@ export const addDataSettings = (uidCollection, collection, doc, data)=>{
 		.catch(error=> {
 			console.error("Error writing document: ", error);
 		});
-	
 };
 
 
@@ -58,7 +57,36 @@ export const getRecurringExpense = (obj)=>{
 	});
 };
 
+//////////////////////////////////////////////
+export const updateTokeetIdList = (uidCollection, id)=>{
+	
+	return db.collection(uidCollection).doc('data').collection('tokeetIdList').doc(id)
+		.set({tokeetID: id})
+		.then(()=> {
+		return true;
+		})
+		.catch(error=> {
+			console.error("Error writing document: ", error);
+		});
+};
+///////////////////////////////////////////
+export const getTokeetIdList = async (uidCollection)=>{
+   const snapshot = await db.collection(uidCollection).doc('data').collection('tokeetIdList').get()
+    return snapshot.docs.map(doc => doc.data());
+}
 ////////////////////////////////////////////////
+export const delTokeetIdList = async (uidCollection, id)=>{
+
+	return await db.collection(uidCollection).doc('data').collection('tokeetIdList').doc(id)
+	.delete().then(()=> {
+    	return true;
+	}).catch(error=> {
+    console.error("Error removing document: ", error);
+});
+	
+};
+
+////////////////////////////////////////////
 
 export const readRecurringExpense = async (uidCollection)=>{
    const snapshot = await db.collection('RecurringCosts').get()
@@ -78,9 +106,7 @@ export const delRecurringExpense = (obj)=>{
 	
 };
 
-
-
-///
+////////////////////////////////////////////////////
 export const getNewTR = async(uidCollection, collection, document, id)=>{
 	
 	const increment = firebase.firestore.FieldValue.increment(1);
@@ -489,7 +515,8 @@ export const checkAvailableSlot = async(uidCollection, apt, Transaction, startD,
 	let prevDay = tmppDate.setDate(tmppDate.getDate() - 1);
 	
 	for (let y = dateFormat(startD,"yyyy"); y <= dateFormat(prevDay,"yyyy"); y++) {
-		const data = await db.collection(uidCollection).doc('slots').collection(y.toString()).doc(apt).get()
+		const data = await 
+		db.collection(uidCollection).doc('slots').collection(y.toString()).doc(apt).get()
 		existedArray = data.exists ? {...existedArray, ...data.data()} : existedArray;
 	}
 
@@ -775,6 +802,18 @@ export const getTaxes=(value, val)=>{
 		return totalTaxes;
 	}
 ////////////////////////////////////////////////////////	
+export const getTokeetCredentials = async(doc)=>{
+	
+	return await db.collection('Tokeet_credentials').doc(doc).get()
+		.then((doc) => {
+   			return doc.data();
+	})
+   .catch((error) => {
+    console.log("Error getting document:", error);
+	});
+};
+///////////////////////////////////////////////////////////////////////
+
 /*
 export const setID=async(uidCollection, collection)=>{
 	
@@ -988,8 +1027,8 @@ export const setSets=async(uidCollection)=>{
 		
 		let fees = {FeeName:'', FeeType:'', FeeAmount: '', FeeModality: '', FeeDescription: '', 'id': uuidv4()}
 		let taxes = {TaxName:'', TaxType:'', TaxAmount: '', TaxTypeDscrp: '', TaxModality: '', TaxDescription: '', 'id': uuidv4()};
-		let Commissions={ManagCommission: propsArr[i].ManagCommission, addVat:propsArr[i].addVat==='Yes' ? true: false, inclVat:propsArr[i].inclVat==='Yes' 
-						 ? true: false};
+		let Commissions={ManagCommission: propsArr[i].ManagCommission, addVat:propsArr[i].addVat==='Yes' ? true: false, 
+						 inclVat:propsArr[i].inclVat==='Yes'  ? true: false};
 		let newObj = {...propsArr[i], 'Fees':[fees], 'Taxes': [taxes], 'Commissions': Commissions, 'VAT': vt.data().vat }
 		delete newObj.ManagCommission
 		delete newObj.addVat

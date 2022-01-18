@@ -129,11 +129,14 @@ export const handleMouseUp = (mouseDown,setMouseDown, setOpenAddRsrv, setSnackba
 		
 				for(let i=strt; i<=end; i++ ){
 					
-					if( (tableObj[resources[slctdCell.y].id][i]==='t' || tableObj[resources[slctdCell.y].id][i]==='c') ||
-						(tableObj[resources[slctdCell.y].id][i]==='s' && tableObj[resources[slctdCell.y].id][i+1]==='e' && (i+1)<=end) 
+					if( (tableObj[resources[slctdCell.y].id][i]==='t' || 
+						 tableObj[resources[slctdCell.y].id][i]==='c') ||
+						(tableObj[resources[slctdCell.y].id][i]==='s' && 
+						 tableObj[resources[slctdCell.y].id][i+1]==='e' && (i+1)<=end) 
 					  )	{
 							cancel=true;
-							setSnackbar( {open:true, msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
+			setSnackbar( {open:true,
+	  msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
 							return;
 						}
 				}
