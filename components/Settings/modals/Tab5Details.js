@@ -9,7 +9,7 @@ import {
     Checkbox,
     Grid,
     TextField,
-    InputAdornment,
+    InputAdornment,FormHelperText
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { withStyles } from '@material-ui/core/styles';
@@ -94,28 +94,53 @@ const Tab5Details = (props) => {
     })((props) => <Checkbox {...props} />);
 
     const label = { inputProps: { 'aria-label': 'Checkbox demo' } };
+	
+	const roleHelper=()=>{
+		let tmp=null;
+		
+		switch(valueSettings.role) {
+  			case 'Property Owner':
+				tmp='Property Owners can assign only to the property they own.'
+				break;
+		  	case 'Accounting':
+				tmp='Accounting can assign all properties and Company.';
+				break;
+			case 'House Stuff':
+				tmp='House stuff can assign all properties.'
+				break;
+			case 'Property Manager':
+				tmp='Property Managers  can assign all properties.'// code block
+				break;
+		  default:
+				tmp=''// code block
+				break;
+			
+		}
+		return tmp;
+	}
 
     return (
         <Grid container direction="column">
-            <FormControl className={classes.formControl}>
-                <InputLabel
-                    htmlFor="role"
-                    //	error={valueSettings.OwnerName === '' && redValid ? true : false}
-                >
-                    Role
-                </InputLabel>
-                <Select
-                    value={valueSettings.role}
-                    onChange={props.handleChange}
-                    fullWidth
-                    inputProps={{
-                        name: 'role',
-                    }}
-                    error={valueSettings.role === '' && redValid ? true : false}
-                >
-                    {titlesMenu}
-                </Select>
-            </FormControl>
+					<FormControl className={classes.formControl}>
+						<InputLabel
+							htmlFor="role"
+							//	error={valueSettings.OwnerName === '' && redValid ? true : false}
+						>
+							Role
+						</InputLabel>
+						<Select
+							value={valueSettings.role}
+							onChange={props.handleChange}
+							fullWidth
+							inputProps={{
+								name: 'role',
+							}}
+							error={valueSettings.role === '' && redValid ? true : false}
+						>
+							{titlesMenu}
+						</Select>
+						 <FormHelperText>{roleHelper()}</FormHelperText>
+					</FormControl>
 
             {valueSettings.role === 'Property Owner' && (
                 <FormControl className={classes.formControl} style={{ marginTop: 8 }}>

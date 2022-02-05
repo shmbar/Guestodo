@@ -20,7 +20,7 @@ import { SettingsContext } from '../../contexts/useSettingsContext';
 import { css } from '@emotion/core';
 import GridLoader from 'react-spinners/GridLoader'; // //https://www.react-spinners.com/
 import { LogoutFromSystem } from '../../functions/functions';
-import { useLocation } from 'react-router-dom';
+//import { useLocation } from 'react-router-dom';
 import MMenu from '../LandingPage/Menu/MainMenu';
 import useMediaQuery from '@material-ui/core/useMediaQuery';
 import { useTheme } from '@material-ui/core/styles';
@@ -51,7 +51,7 @@ const override = css`
 
 export default function LoginToApp(props) {
     const { setLoading, loading } = useContext(SettingsContext);
-    const location = useLocation();
+   // const location = useLocation();
 	const theme = useTheme();
 	let screenXS = useMediaQuery(theme.breakpoints.down('xs'));
 	const [snackbar, setSnackbar] = useState({open: false, msg: '',
@@ -108,8 +108,9 @@ export default function LoginToApp(props) {
 
     const classes = useStyles();
 
-    let Initial = { name: location.state.name, email: location.state.email, password: '', password1: '' };
-
+    //let Initial = { name: location.state.name, email: location.state.email, password: '', password1: '' };
+	let Initial = { name: '', email: '', password: '', password1: '' };
+	
     const authenticateUser = async () => {
         const { name, email, password } = values;
 

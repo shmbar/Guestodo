@@ -18,7 +18,7 @@ import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import SnackBar from '../../../Subcomponents/SnackBar';
 import {formValidation, checkDates, delEmptyPaymentS} from '../../../../functions/formValidation';
-import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,updateTokeetIdList,getFees, getTaxes} from '../../../../functions/functions.js';
+import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,updateTokeetData,getFees, getTaxes} from '../../../../functions/functions.js';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridLoader from 'react-spinners/GridLoader';  // //https://www.react-spinners.com/
@@ -139,11 +139,13 @@ const OrdersModal = (props) =>{
 	
 	const createCmsnObj=(ChnlTRex, tmpChnlCmsnPrcntg)=>{
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
-	
-		const Amnt = +((+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1))*tmpChnlCmsnPrcntg/100).toFixed(2)
+		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+		
+		const Amnt = +((+value.TtlRsrvWthtoutVat + 
+				+getFees(value, value.NetAmnt)/eliminateVat)*tmpChnlCmsnPrcntg/100).toFixed(2)
 		
 		const tmp  = +value.TtlPmnt/(+value.NetAmnt + +getFees(value, value.NetAmnt) + 
-							+getTaxes(value, value.NetAmnt)) // calcuate ratio
+							+getTaxes(value, value.NetAmnt, eliminateVat)) // calcuate ratio
 		const pmntRatio = tmp*(+value.NetAmnt + +getFees(value, value.NetAmnt))
 		const ttlPmnt = value.Vat ? 
 			  (pmntRatio/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100).toFixed(2) : 
@@ -293,7 +295,6 @@ const OrdersModal = (props) =>{
 										tmpMngCmsnAddVatYesNo)
 			}
 			
-			
 			setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(newObj.ChckIn,'yyyy'), newObj)), msg: 'Order has been updated!',
 						  variant: 'success'});
 			
@@ -350,7 +351,9 @@ const OrdersModal = (props) =>{
 
 					let tmpArrAdd = [...rcDataPrp, tmpObj ];
 
-					setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(tmpObj.ChckIn,'yyyy'), tmpObj)), msg: 'New Order has been added!',
+					setSnackbar( {open: (await addData(uidCollection, 
+				'reservations',dateFormat(tmpObj.ChckIn,'yyyy'), tmpObj)), 
+				msg: 'New Order has been added!',
 							  variant: 'success'});
 					updateSettingsShows(); 
 
@@ -381,9 +384,10 @@ const OrdersModal = (props) =>{
 			})
 			await addDPaymentsBatch(uidCollection,'payments',pmtnsObj)
 			
-			if(value.tokeetID!==null){
-				await updateTokeetIdList(uidCollection, value.tokeetID);
-				setTokeetIdList([...tokeetIdList,value.tokeetID])
+			if(value.tokeet!=null){
+				await updateTokeetData(uidCollection, 'tokeetIdList', value.tokeet.tokeetID,
+									   {tokeetID:  value.tokeet.tokeetID});
+				setTokeetIdList([...tokeetIdList,value.tokeet.tokeetID])
 			}
 										   
 		} 

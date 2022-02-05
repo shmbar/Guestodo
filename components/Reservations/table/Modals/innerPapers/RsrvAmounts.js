@@ -19,15 +19,20 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 	const  cur = settings.CompDtls.currency;
 	
 	const tmpAmnt = value.pStatus!=='Cancelled' ? +value.NetAmnt : +value.CnclFee;
+	const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+	
 	const fees = cur + Array(1).fill('\xa0').join('') + 
-		  Num2(getFees(value, tmpAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1));
-	const taxes = cur + Array(1).fill('\xa0').join('') + Num2(getTaxes(value, tmpAmnt ));
-	let reservationAMountBeforeVat = cur + Array(1).fill('\xa0').join('') + Num2(+value.TtlRsrvWthtoutVat);
+		  Num2(getFees(value, tmpAmnt )/eliminateVat);
+	const taxes = cur + Array(1).fill('\xa0').join('') + Num2(getTaxes(value, tmpAmnt, eliminateVat ));
+	let reservationAMountBeforeVat = cur + Array(1).fill('\xa0').join('') +
+		Num2(+value.TtlRsrvWthtoutVat);
+	
 	let vatAmount = cur + Array(1).fill('\xa0').join('') + 	
 		Num2(value.RsrvAmnt-value.TtlRsrvWthtoutVat -
-				getFees(value, tmpAmnt )/(value.Vat ? (1 + parseFloat(vat)/100) :1) -
-												+getTaxes(value, tmpAmnt ));
+				getFees(value, tmpAmnt )/eliminateVat -
+			+getTaxes(value, tmpAmnt, eliminateVat ));
 	
+
 	const txt = cur + Array(1).fill('\xa0').join('') + 
 		  Num2(value.RsrvAmnt/value.NigthsNum);//cur.concat().concat().toString()
 	const ReservationAmount = cur + Array(1).fill('\xa0').join('') + Num2(+value.RsrvAmnt);

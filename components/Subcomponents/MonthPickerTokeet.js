@@ -118,7 +118,7 @@ export default function MonthsPicker(props) {
 	return (
 		<div>
 			<TextField
-				label="Arrive from"
+				label="Check In"
 				fullWidth
 				value={
 					props.startDate === null ? '' : dateFormat(props.startDate, 'mmmm yyyy')

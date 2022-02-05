@@ -6,7 +6,8 @@ import { makeStyles } from '@material-ui/core/styles';
 import {PmntClrStatus1, brandTemplate1} from '../../../functions/setTableDt.js';
 import { SettingsContext } from '../../../contexts/useSettingsContext';
 import { RcContext } from '../../../contexts/useRcContext';
-import {idToItem, addComma, deleteSlots, delData, delDPaymentsBatch, delTokeetIdList} from '../../../functions/functions.js';
+import {idToItem, deleteSlots, delData, delDPaymentsBatch, 
+		delTokeetIdList, Num2} from '../../../functions/functions.js';
 import DelDialog from './DeleteDialog';
 import {AuthContext} from '../../../contexts/useAuthContext';
 import { SelectContext } from '../../../contexts/useSelectContext';
@@ -63,7 +64,7 @@ export default function MouseOverPopover(props) {
 		if(ExIDCommissionCnhl!==undefined) {await delData(uidCollection, 'expenses', date.year, ExIDCommissionCnhl)};
 		await delData(uidCollection,'expenses', date.year, ExIDCommissionMng); 
 	   
-	   if(slot.tokeetID!==null){await delTokeetIdList(uidCollection, slot.tokeetID)}
+	   if(slot.tokeet!=null){await delTokeetIdList(uidCollection, slot.tokeet.tokeetID)}
 	} 
 
     const open = Boolean(props.anchorEl);
@@ -116,12 +117,12 @@ export default function MouseOverPopover(props) {
                         <Grid container direction="row" justifyContent="flex-start" alignItems="center">
                             <Grid item  xs={12} style={{ paddingLeft: '11px' }} >
                                 <span className="header2-text" >
-                                { `Reservation Amount: ${settings.CompDtls.currency} ${addComma(props.slot.RsrvAmnt)}`} 
+                                { `Reservation Amount: ${settings.CompDtls.currency} ${Num2(props.slot.RsrvAmnt)}`} 
 								 </span>
                             </Grid>
 							 <Grid item  xs={12} style={{ paddingLeft: '11px', paddingTop: '7px' }} >
                                 <span className="header2-text" >
-                                { `Balance Due: ${settings.CompDtls.currency} ${addComma(props.slot.BlncRsrv)}`} 
+                                { `Balance Due: ${settings.CompDtls.currency} ${Num2(props.slot.BlncRsrv)}`} 
 								 </span>
                             </Grid>
 							 <Grid item  xs={12} style={{ paddingLeft: '11px', paddingTop: '7px' }} >

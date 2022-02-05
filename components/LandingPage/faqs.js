@@ -25,7 +25,7 @@ const useStyles = makeStyles((theme) => ({
 
 const fqs = [
 			{ttl: 'How much does a subscription cost?', txt:<> Our plans are based on the total number of listings (Apartments, rooms, villas …) you manage. You can find the pricing calculator <Link to='/pricing'>here.</Link> </>},
-			{ttl: 'How does the trial period work?', txt: 'Once you have registered your account, you will have 30 days in which you will be able to access all the features of the service. We recommend that you use this period to best configure your account thus eliminating the bureaucracy from your business. At the end of the trial period, you will need to choose one of our plans and make the payment.'},
+			{ttl: 'How long does the trial period last?', txt: 'Once you have registered your account, you have 30 days in which you can access all features of the service. We recommend that you use this period to best configure your account and maximize your income. At the end of the trial period, you have to decide and choose which plan works for you and then make the payment.'},
 			{ttl: 'What are the payment methods GuesTodo accepts?', txt: <>We currently accept all major credit / debit cards and Paypal thanks to integration with our reseller <a href='https://payproglobal.com/'>Paypro.</a></>}, 
 			{ttl: 'Who is the target market of GuesTodo App?', txt: 'Airbnb entrepreneurs, vacation rental property management firms and property owners.'},
 			{ttl: 'Is GuesTodo compatible with any of the existing channel managers?',
@@ -39,7 +39,7 @@ const fqs = [
 			{ttl: 'As a property manager, will I be able to view the financial reports of my business?', 
 			 		txt: 'Yes! GuesTodo provides you with a user-friendly app to deliver comprehensive detailed information necessary for your business operations.'},
 			{ttl: 'Can GuesTodo provide my accountant with the necessary information he needs to ease his bookkeeping tasks?', txt: 'Yes! GuesTodo App was created to help you navigate with ease the tedious task of bookkeeping. The one click automated bookkeeping advantage saves you time, money and effort.'},
-			{ttl: 'Can I cancel my subscription?', txt: 'Of course. You can cancel your subscription without notice and at any time.'},
+			{ttl: 'Can I cancel my subscription?', txt: 'Yes! You can terminate the service anytime without prior notice.'},
 	
 	
 ]

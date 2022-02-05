@@ -1,5 +1,4 @@
 import React, {useState, useContext,useEffect, /* useRef*/} from 'react';
-import Grid from '@material-ui/core/Grid';
 import {DataTable} from 'primereact/datatable';
 import {Column} from 'primereact/column';
 import {Fab} from '@material-ui/core';
@@ -22,7 +21,7 @@ import {SettingsContext} from '../../../contexts/useSettingsContext';
 import EditDel from '../../Subcomponents/EditDel'
 
 import '../../Subcomponents/tablecomponents/Table.css';
-//import '../../Subcomponents/tablecomponents/Table1.scss';
+import '../../Subcomponents/tablecomponents/Table1.scss';
 
 const dateFormat = require('dateformat');
 const tableCols = [
@@ -35,13 +34,14 @@ const tableCols = [
 			{field: 'NigthsNum', header: 'Nights', showcol: false, s:['xs','sm','md','lg', 'xl']},
 		//	{field: 'PrpName', header: 'Property', showcol: true,initial: 4},
 			{field: 'AptName', header: 'Apartment', showcol: true, s:['xs','sm','md','lg', 'xl']},
-			{field: 'RsrvChn', header: 'Channel', showcol: true, s:['xs','sm','md','lg', 'xl']},	
+			{field: 'RsrvChn', header: 'Channel', showcol: true, s:['md','lg', 'xl']},	
 			{field: 'TtlPmnt', header: 'Total Payment', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'BlncRsrv', header: 'Balance Due', showcol: true, s:['lg', 'xl']},	
 			{field: 'PmntStts', header: 'Payment Status', showcol: true, s:['md','lg', 'xl']},	
 			{field: 'NetAmnt', header: 'Base Amount', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'Fees', header: 'Fees', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false,
+			 s:['xs','sm','md','lg', 'xl']},
 			{field: 'Taxes', header: 'Taxes', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'VAT', header: 'VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
 			{field: 'RsrvAmnt', header: 'Reservation Amount', showcol: true, s:['md','lg', 'xl']},	
@@ -53,7 +53,10 @@ const useStyles = makeStyles(theme => ({
  	button: {
     margin: theme.spacing(1.5, 0 ,0, 1),
 	background: '#5ec198'
-  }
+  },
+	grid: {
+		display: 'grid',
+		},
 }));
 
 const Table =() =>{
@@ -210,21 +213,23 @@ const Table =() =>{
 		
 		await delDPaymentsBatch(uidCollection,'payments',row.Payments)
 		
-		if(row.tokeetID!==null){await delTokeetIdList(uidCollection, row.tokeetID)}
+		if(row.tokeet!=null){await delTokeetIdList(uidCollection, row.tokeet.tokeetID)}
 	}
 	
 	const setSHortTr=(ddd) => { //for data export to excel
 		
 		const vat = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct )[0]['VAT'] : 0
+		
 		let tmp = ddd.map(x=> {
 			const tmpAmnt = x.pStatus!=='Cancelled' ? +x.NetAmnt : +x.CnclFee;
+			const eliminateVat = x.Vat ? (1 + parseFloat(vat)/100): 1;
 			let vatAmount =	x.RsrvAmnt-x.TtlRsrvWthtoutVat -
-				getFees(x, tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100) :1) - +getTaxes(x, tmpAmnt );
+				getFees(x, tmpAmnt )/eliminateVat - +getTaxes(x, tmpAmnt,eliminateVat );
 			
 			let tmpRow = ({...x, 'Transaction': showShortTR(x, null), NetAmnt: x.TtlRsrvWthtoutVat,
-			Fees: +(+getFees(x,tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100): 1)).toFixed(2),
-			Taxes: +(+getTaxes(x, tmpAmnt )).toFixed(2), VAT: +(+vatAmount).toFixed(2),
-			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/(x.Vat ? (1 + parseFloat(vat)/100): 1)).toFixed(2)})
+			Fees: +(+getFees(x,tmpAmnt )/eliminateVat).toFixed(2),
+			Taxes: +(+getTaxes(x, tmpAmnt, eliminateVat )).toFixed(2), VAT: +(+vatAmount).toFixed(2),
+			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/eliminateVat).toFixed(2)})
 			
 			return tmpRow;
 		})
@@ -255,7 +260,8 @@ const Table =() =>{
 					   		field={col.field}
 					   		header={col.header}
 					   		body={col.field==='el'? actionTemplate: dataTable} 
-					   		headerStyle={{overflow:'visible', textAlign:'center'}}
+					   		headerStyle={col.field!=='el' ? 
+				{overflow:'visible', textAlign:'center'}: {with:'100px'}}
 					   		style={{textAlign:'center'}}
 					   		filter={col.field!=='el'? showFilter:false} 
 					   />;
@@ -263,37 +269,40 @@ const Table =() =>{
 	
 
 	return(	
-		<div className="datatable-responsive-demo">
-		<Grid container >
+		 <div className="datatable-responsive-demo">
 			<SnackBar msg={snackbar.msg} snackbar={snackbar.open} setSnackbar={setSnackbar}
 				variant={snackbar.variant}/>
 			<DelDialog open={open} setOpen={setOpen} handleDelete={handleDelete}
 					title='This order will be deleted!' 
 					content='Please Confirm'/>
-				
+				{
 					<DataTable  value={convId2Item(rcDataPrp, ['AptName','RsrvChn'], settings)}
-								className="p-datatable-responsive-demo"
+							//	className="p-datatable-responsive-demo"
 								ref={(el) => setDt(el)}
+								className="p-datatable-responsive-demo"
+							//	className={classes.grid}
+								rowHover 
 								globalFilter={globalFilter}
 								header={header}
 								paginator={true}
 								rows={10} rowsPerPageOptions={[5,10,20]}
-								paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
-								currentPageReportTemplate={scrSize!=='xs' ? "Showing {first} to {last} of {totalRecords}" : ''}
+								paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
+							   PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+								currentPageReportTemplate={scrSize!=='xs' ?
+							"Showing {first} to {last} of {totalRecords}" : ''}
 						>
 							{dynamicColumns}
-						
 					</DataTable>
-				
+				}
 
-					{write && <Fab color="primary" aria-label="add" className={classes.button} onClick={addOrder}>
+					{write && <Fab color="primary" aria-label="add" 
+								  className={classes.button} onClick={addOrder}>
 									<AddIcon />
 							</Fab>}
 			
 			{ displayDialog ?  <OrdersModal  />: null}
 			 
-		 </Grid> 
-		 </div>
+		 </div> 
 	)
 };
 

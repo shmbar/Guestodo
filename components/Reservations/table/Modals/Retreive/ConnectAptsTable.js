@@ -1,24 +1,17 @@
 import React from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import {
-	InputLabel,
+	InputLabel,//Checkbox,
 	MenuItem,
 	FormControl,
 	Select,
-	Paper,
-	Table,
-	TableBody,
-	TableCell,
-	TableContainer,
-	TableHead,
-	TableRow,
-	Tooltip,
-	IconButton,
+	Paper ,Container,
 } from '@material-ui/core';
 
-import CompareArrowsIcon from '@material-ui/icons/CompareArrows';
-import DeleteIcon from '@material-ui/icons/Delete';
-
+import Button from '@material-ui/core/Button';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { Checkbox } from 'primereact/checkbox';
 
 const useStyles = makeStyles((theme) => ({
 	formControl: {
@@ -35,95 +28,103 @@ const useStyles = makeStyles((theme) => ({
 		fontFamily: '"Poppins", Sans-serif',
 		pointerEvents: 'none',
 	},
-	table: {
-		minWidth: 750,
-		maxWidth: 850,
-	},
 	fnt: {
 		fontFamily: '"Poppins", Sans-serif',
+		padding: '10px'
 	},
 }));
+
+
 
 const ConnectAptsTable = (props) => {
 	const classes = useStyles();
 
-	return (
-		<TableContainer component={Paper} style={{ width: 'fit-content', marginTop: '30px' }}>
-			<Table className={classes.table} aria-label="simple table">
-				<TableHead>
-					<TableRow>
-						<TableCell className={classes.fnt}>Tokeet Apartments</TableCell>
-						<TableCell align="left" className={classes.fnt}>
-							GuesTodo Apartments
-						</TableCell>
-					</TableRow>
-				</TableHead>
+	const SetYel=(rowData, column)=>{
+		return(
+		/*	<Checkbox
+					edge="start"
+					checked={rowData.checked}
+					onChange={() => props.handleChangeChecked(rowData)}
+					disableRipple
+			/> */
+			<Checkbox onChange={() => props.handleChangeChecked(rowData)} checked={rowData.checked}
+				disabled={rowData.GstdApt===''}></Checkbox>
+		)	
+	}
+	
+	const setAptsDrill=(rowData, column)=>{
+		return(
+			<FormControl className={classes.formControl}>
+					<InputLabel htmlFor="grouped-select" 
+						style={{fontFamily: '"Poppins", Sans-serif',}}>
+						Apartment
+					</InputLabel>
+					<Select
+						id="grouped-select"
+						value={rowData.GstdApt}
+						onChange={(e) => props.handleChange(e, rowData)}
+					>
+						{props.arrApts.map((y, k) => {
+							return (
+								<MenuItem	key={k}	className={	y.val === 'apt' ? classes.apt :
+										classes.prp} value={y.name}
+								>
+									{y.name}
+								</MenuItem>
+							);
+						})}
+					</Select>
+				</FormControl>
+		)	
+}
 
-				<TableBody>
-					{props.assignApts.map((x, i) => (
-						<TableRow key={x.TokeetApt}>
-							<TableCell className={classes.fnt} style={{ paddingTop: '30px' }}>
-								{x.TokeetApt}
-							</TableCell>
-							<TableCell align="left">
-								<FormControl className={classes.formControl}>
-									<InputLabel htmlFor="grouped-select" 
-										className={classes.fnt}>
-										Apartment
-									</InputLabel>
-									<Select
-										id="grouped-select"
-										value={x.GstdApt}
-										onChange={(e) => props.handleChange(e, i)}
-									>
-										{props.arrApts.map((y, k) => {
-											return (
-												<MenuItem
-													key={k}
-													className={
-														y.val === 'apt' ? classes.apt :
-														classes.prp
-													}
-													value={y.name}
-												>
-													{y.name}
-												</MenuItem>
-											);
-										})}
-									</Select>
-								</FormControl>
-							</TableCell>
-							<TableCell className={classes.fnt} style={{ paddingTop:
-												   '30px' }}>
-								<div style={{ display: 'inline-flex' }}>
-									<Tooltip title="Connect between Tokeet and GuesTodo apartments">
-										<span>
-											<IconButton
-												aria-label="Edit"
-												onClick={() => props.importLine(i)}
-												disabled={x.GstdApt === ''  || !x.connectIcn}
-											>
-												<CompareArrowsIcon />
-											</IconButton>
-										</span>
-									</Tooltip>
-									<Tooltip title="Clear">
-										<span>
-											<IconButton
-												aria-label="Delete"
-												onClick={() => props.clrLine(i)}
-											>
-												<DeleteIcon />
-											</IconButton>
-										</span>
-									</Tooltip>
-								</div>
-							</TableCell>
-						</TableRow>
-					))}
-				</TableBody>
-			</Table>
-		</TableContainer>
+	
+	const footer = 	<div>
+					  <Button size="small" variant="contained" color="primary" onClick={()=>props.moveToStep3(3)}
+						  disabled={props.assignApts.filter(x=> x.checked).length===0}>
+						Move to Step 3
+					  </Button>
+		  			<Button size="small" variant="contained" color="secondary" onClick={()=>props.clr()}
+						style={{marginLeft: '10px'}}>Clear List</Button>
+					</div>
+
+	
+	return (
+		<Container maxWidth="sm" style={{margin: 0 }}>
+		<Paper className={classes.root}  >
+			<div className="datatable-responsive-demo">
+				<DataTable
+					value={props.assignApts}
+					className="p-datatable-responsive-demo"
+					rowHover 
+					//	header={header}
+					footer={footer}
+					paginator={false}
+				
+					rows={50}
+				//	rowsPerPageOptions={[5, 10, 20]}
+				/*	paginatorTemplate="CurrentPageReport FirstPageLink 
+							   PrevPageLink PageLinks NextPageLink LastPageLink 
+							   RowsPerPageDropdown" 
+					currentPageReportTemplate={
+						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : '' 
+					} */
+				>
+					 <Column field="el" header="" body={SetYel} style={{width: '3em', textAlign: 'right', background: 'aliceblue'}}
+						/>
+					 <Column field="TokeetApt" header='Tokeet Apartments' style={{width: '12em', background: 'aliceblue'}}/>
+					 <Column field="GstdApt" header='GuesTodo Apartments' body={setAptsDrill}  style={{background: 'aliceblue'}}/>
+				</DataTable>
+			</div>
+		</Paper>
+		</Container>
+		
+		
+		
+     
+			
+      
+      
 	);
 };
 

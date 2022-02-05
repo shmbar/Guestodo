@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import {Button,	Grid} from '@material-ui/core';
-import { getTokeetCredentials, getFees, getTaxes, getTokeetIdList } from 
+import {Tabs, Tab, Box, Paper } from '@material-ui/core';
+import { getTokeetCredentials, getFees, getTaxes, getTokeetIdList, addDataSettings } from 
 	'../../../../../functions/functions.js';
 import { AuthContext } from '../../../../../contexts/useAuthContext';
 import { SelectContext } from '../../../../../contexts/useSelectContext';
@@ -10,11 +10,13 @@ import { SettingsContext } from '../../../../../contexts/useSettingsContext';
 import firebase from 'firebase/app';
 import GridLoader from 'react-spinners/GridLoader'; // //https://www.react-spinners.com/
 import { css } from '@emotion/core';
-import CheckedIcon from '../../../../LandingPage/checked.png';
 import { v4 as uuidv4 } from 'uuid';
-import MonthPickerTokeet from '../../../../Subcomponents/MonthPickerTokeet';
-import ConnectAptsTable from './ConnectAptsTable';
-import TktReservationsTable from './TktReservationsTable'
+
+import TokeetShort from '../../../../../logos/chnlsPics/TokeetShort.png'
+import GettingStarted from './GettingStarted.js';
+import TabStep1 from './TabStep1.js';
+import TabStep2 from './TabStep2.js';
+import TabStep3 from './TabStep3.js';
 
 const override = css`
 	position: fixed;
@@ -33,40 +35,60 @@ export const getNights = (end, start) => {
 
 export const getIdChannel = (x, settings) => {
 	let tmp;
-	switch (x) {
+	
+	if(x==='airbnb' || x==='airbnbapiv2'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Airbnb')[0]['id'];
+		return tmp;
+	}else if(x==='vrboapi' || x==='hometogo' || x==='homeaway' || x==='vrbo'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'HomeAway')[0]['id'];
+		return tmp;
+	}else if(x==='flipkey'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Flipkey')[0]['id'];
+		return tmp;
+	}else if(x==='expedia' || x==='Expedia.com'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Expedia')[0]['id'];
+		return tmp;
+	}else if(x==='booking.com' || x==='Booking.com'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Booking')[0]['id'];
+		return tmp;
+	}else if(x==='tokeet'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
+		return tmp;
+	}else{
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
+		return tmp;
+	}
+
+};
+
+const getRsrvPrice=(x)=>{
+	
+	let inqSourse = x.inquiry_source;
+	let tmp;
+	switch (inqSourse) {
 		case 'airbnb':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Airbnb')[0]['id'];
+			tmp = x.abb_price!=null? x.abb_price.base: 0;
 			break;
-		case 'vrboapi':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'HomeAway')[0]['id'];
+		case 'Expedia.com':
+			tmp = x.expedia_price.before_taxes
 			break;
-		case 'hometogo':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'HomeAway')[0]['id'];
+		case 'Booking.com':
+			tmp = x.bdc_price.before_taxes
 			break;
-		case 'flipkey':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Flipkey')[0]['id'];
-			break;
-		case 'vrbo':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'HomeAway')[0]['id'];
-			break;
-		case 'expedia':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Expedia')[0]['id'];
-			break;
-		case 'booking.com':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Booking')[0]['id'];
-			break;
-		case 'airbnbapiv2':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Airbnb')[0]['id'];
+		case 'homeaway':
+			tmp = x.booking_engine.base
 			break;
 		case 'tokeet':
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
+			tmp = x.booking_engine.base
 			break;
 		default:
-			tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
+			tmp = 0;
 			break;
 	}
 	return tmp;
-};
+}
+
+
 
 const useStyles = makeStyles((theme) => ({
 	mainGrid: {
@@ -76,23 +98,60 @@ const useStyles = makeStyles((theme) => ({
 		fontFamily: '"Poppins", Sans-serif',
 		fontSize: '18px',
 	},
+	root: {
+		flexGrow: 1,
+		backgroundColor: theme.palette.background.paper,
+		display: 'flex',
+		minHeight: 340,
+	  },
+	  tabs: {
+		borderRight: `1px solid ${theme.palette.divider}`,
+
+
+	  },
 }));
 
+function TabPanel(props) {
+	const { children, value, index, ...other } = props;
+  
+	return (
+	  <div
+		role="tabpanel"
+		hidden={value !== index}
+		id={`vertical-tabpanel-${index}`}
+		aria-labelledby={`vertical-tab-${index}`}
+		{...other}
+	  >
+		{value === index && (
+		  <Box p={3}>
+			<div>{children}</div>
+		  </Box>
+		)}
+	  </div>
+	);
+  }
+
 const RetreiveDetails = () => {
-	const classes = useStyles();
+const classes = useStyles();
 	const { /*write,*/ uidCollection } = useContext(AuthContext);
 	const { date } = useContext(SelectContext);
-	const {tokeetIdList,setTokeetIdList} = useContext(RcContext);
-	const { loading, setLoading, settings } = useContext(SettingsContext);
+	const {tokeetIdList, setTokeetIdList } = useContext(RcContext);
+	const {loading, setLoading, settings, setSettings } = useContext(SettingsContext);
 	const [authorized, setAuthorized] = useState(false);
 	const [lastTokenTime, setLastTokenTime] = useState(0);
-	const [assignApts, setAssignApts] = useState([]);
+	const [assignApts, setAssignApts] = useState(settings.tokeetSets!=null? settings.tokeetSets: []);
 	const [arrApts, setArrApts] = useState([]);
-	const [TokeetApts, setTokeetApts] = useState([]);
+	//const [tokeetRsrvs, setTokeetRsrvs] = useState([]);
 	const [gstdAptsArr, setGstdAptsArr] = useState([]);
-	const [startDate, setStartDate] = useState(null);
-
+	const [startDate, setStartDate] = useState(new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 	const dateFormat = require('dateformat');
+
+	const [valueTab, setValueTab] = useState(settings.tokeetSets!=null? settings.tokeetSets.filter(x=>x.checked).length>0 ? 3: 2 : 0 );
+
+	const handleChange1 = (event, newValue) => {
+		setValueTab(newValue);
+	  };
+
 
 	useEffect(() => {
 		const isTokenExist = async () => {
@@ -105,8 +164,8 @@ const RetreiveDetails = () => {
 					return doc.data();
 				});
 
-			setAuthorized(token.access_token == null ? false : true);
-			setLastTokenTime(token.date);
+			setAuthorized(token!=null? token.access_token == null ? false : true: false);
+			setLastTokenTime(token!=null? token.date: null);
 		};
 
 		isTokenExist();
@@ -116,7 +175,7 @@ const RetreiveDetails = () => {
 				? settings.properties.filter((x) => x.show).map((x) => x.id)
 				: [];
 		let arrApts1 = [];
-		
+
 		for (let i in properties) {
 			let prp = {
 				id: properties[i],
@@ -133,15 +192,36 @@ const RetreiveDetails = () => {
 		}
 		setArrApts(arrApts1);
 	}, [uidCollection, settings]);
+	
+	const checkTokeetSets = (dt) => {
+		let S;
+		const setsTmp = settings.tokeetSets;
+
+		S = dt.map((x) => {
+			let aa = setsTmp != null ? setsTmp.filter((k) => k.TokeetId === x.pkey) : [];
+
+			let tmp = {
+				TokeetApt: x.name,
+				TokeetId: x.pkey,
+				GstdApt: aa.length ? aa[0]['GstdApt'] : '',
+				GstdAptID: aa.length ? aa[0]['GstdAptID'] : '',
+				checked: aa.length ? aa[0]['checked'] : false,
+			};
+			return tmp;
+		});
+
+		return S;
+	};
 
 	const runAuth = async () => {
 		const client_idTmp = await getTokeetCredentials('client_id');
 
 		const response_type = 'code';
-		const scope = 'guests,inquiries,rentals,invoices';
+		const scope = 'inquiries,rentals'; //'guests,inquiries,rentals,invoices';
 		const client_id = client_idTmp.client_id;
 		const redirect_uri =
 			'https://us-central1-guestodo.cloudfunctions.net/tokeetAPI/auth-callback';
+			
 		const tokeetURL = 'https://papi.tokeet.com/dialog/?';
 
 		let p = new URLSearchParams();
@@ -154,9 +234,43 @@ const RetreiveDetails = () => {
 		window.location.href = tokeetURL + p;
 	};
 
-	const getData = async () => {
+	const getTokeetApartments = async () => {
 		setLoading(true);
 		setGstdAptsArr([]);
+		const nowTime = Date.now();
+
+		if (nowTime - lastTokenTime > 3600000) {
+			let newToken = await firebase.functions().httpsCallable('newToken');
+			await newToken(uidCollection).then(async (result) => {
+				console.log(result.data);
+			});
+
+			let getAptsTokeet = await firebase.functions().httpsCallable('getAptsTokeet');
+			await getAptsTokeet({uidCollection: uidCollection})
+				.then(async (result) => {
+				console.log(result.data);
+
+				setAssignApts(checkTokeetSets(result.data.rental.data));
+				setLoading(false);
+			});
+		} else {
+			let getAptsTokeet = await firebase.functions().httpsCallable('getAptsTokeet');
+			await getAptsTokeet({uidCollection: uidCollection})
+				.then(async (result) => {
+				console.log(result.data);
+				
+				setAssignApts(checkTokeetSets(result.data.rental.data));
+				setLoading(false);
+			});
+		}
+	
+	};
+
+	const getTokeetReservs = async () => {
+		setLoading(true);
+		let tmpTktReservs=null;
+		const TokeetRentalsIdList = assignApts.filter((x) => x.checked).map((y) => y.TokeetId);
+	
 		const nowTime = Date.now();
 
 		if (nowTime - lastTokenTime > 3600000) {
@@ -169,97 +283,118 @@ const RetreiveDetails = () => {
 			await getDataTokeet({
 				uidCollection: uidCollection,
 				start: new Date(startDate).getTime() / 1000,
+				rentals:TokeetRentalsIdList
 			}).then(async (result) => {
 				console.log(result.data);
-				setAssignApts(
-					result.data.rental.data.map((x) => ({
-						TokeetApt: x.name,
-						TokeetId: x.pkey,
-						GstdApt: '',
-						connectIcn: true
-					}))
-				);
-				setTokeetApts(result.data.inquiry.data);
+			//	setTokeetRsrvs(result.data.inquiry.data);
+				tmpTktReservs = result.data.inquiry.data;
 				setLoading(false);
 			});
 		} else {
 			let getDataTokeet = await firebase.functions().httpsCallable('getDataTokeet');
+			
 			await getDataTokeet({
 				uidCollection: uidCollection,
 				start: new Date(startDate).getTime() / 1000,
+				rentals:TokeetRentalsIdList
 			}).then(async (result) => {
 				console.log(result.data);
-				setAssignApts(
-					result.data.rental.data.map((x) => ({
-						TokeetApt: x.name,
-						TokeetId: x.pkey,
-						GstdApt: '',
-						connectIcn: true
-					}))
-				);
-				setTokeetApts(result.data.inquiry.data);
+				
+			//	setTokeetRsrvs(result.data.inquiry.data);
+				tmpTktReservs = result.data.inquiry.data;
 				setLoading(false);
 			});
 		}
+
+		const tokeetIdList = await getTokeetIdList(uidCollection);
+		setTokeetIdList(tokeetIdList.map((a) => a.tokeetID));
 		
-		const tokeetIdList = await getTokeetIdList(uidCollection)
-		setTokeetIdList(tokeetIdList.map(a => a.tokeetID))
+		return tmpTktReservs;
+	};
+	
+	const handleChange = (e, row) => {
+		setAssignApts(
+			assignApts.map((x, k) =>
+				x.TokeetId !== row.TokeetId	? x	: {
+							...x,
+							GstdApt: e.target.value,
+							GstdAptID: settings.apartments.filter(
+								(x) => x.AptName === e.target.value)[0]['id'],
+							checked: true
+					  }
+			)
+		);
+	};
+	
+	const handleChangeChecked = (row) => {
+		setAssignApts(assignApts.map((x, k) => (x.TokeetId !== row.TokeetId ? x :
+					{ ...x, checked: !x.checked,
+					GstdApt: x.checked ? '' :  x.GstdApt, 
+					GstdAptID: x.checked ? '' :  x.GstdAptID })));
 	};
 
-	const handleChange = (e, i) => {
-		setAssignApts(assignApts.map((x, k) => (k !== i ? x : { ...x, GstdApt: e.target.value })));
-	};
-
-	const importLine = async (i) => {
+	const importLines = async () => {
 		setLoading(true);
-		let tmpData = TokeetApts.filter((x) => x.rental_id === assignApts[i].TokeetId);
-		const tmpTokeetId = gstdAptsArr.map((x) => x.tokeetID);
-		tmpData = tmpData.filter((x) => !tmpTokeetId.includes(x.pkey));
 
+		let tktReservs = await getTokeetReservs();
+		tktReservs = tktReservs.filter(x=> x.booked!==0)
+		
+	//	const AptsInitialData = tktReservs.filter((x) => TokeetRentalsIdList.includes(x.rental_id));
+	
 		let newArr = [];
-		for (let k in tmpData) {
-			let a = tmpData[k];
+		for (let k in tktReservs) {
+			let a = tktReservs[k];
 			
-			const Apt = settings.apartments
-			.filter((x) => x.AptName === assignApts[i].GstdApt)[0]['id'];
+			let GstAptName = assignApts.filter((x) => x.TokeetId === a.rental_id)[0]['GstdApt'];
+			let set1 = settings.apartments.filter((x) => x.AptName === GstAptName)[0];
+
+			const AptID = set1['id'];
+			const PrpName = set1['PrpName'];
+
+			let Vat =
+				+settings.properties.filter((x) => x.id === set1['PrpName'])[0]['VAT'] === 0
+					? false
+					: true;
+
+			let vat = settings.properties.filter((x) => x.id === PrpName)[0]['VAT'];
+			let ChnPrcnt1 = settings.channels.filter(
+				(x) => getIdChannel(a.inquiry_source, settings) === x.id
+			)[0]['ChnCmsn'];
 			
-			const PrpName = settings.apartments.filter((x) =>
-				   x.AptName === assignApts[i].GstdApt)[0]['PrpName'];
+			const basePrice = getRsrvPrice(a)
 			
-			let Vat = +settings.properties.filter((x) =>
-						x.id ===settings.apartments.filter(
-							(x) => x.AptName === assignApts[i].GstdApt)[0]['PrpName']
-					)[0]['VAT'] === 0? false: true;
+			let netAmnt = (+basePrice / (1 + +vat / 100 - +ChnPrcnt1 / 100)) *
+					(1 + vat / 100)
 			
-			let vat= settings.properties.filter(x=> x.id===PrpName)[0]['VAT']
-				
 			let tmpObj = {
 				ChckIn: dateFormat(new Date(+a.check_in * 1000), 'dd-mmm-yyyy'),
 				ChckOut: dateFormat(new Date(+a.check_out * 1000), 'dd-mmm-yyyy'),
 				Transaction: '',
 				Payments: [{ P: '', Date: null, PM: '', id: uuidv4() }],
-				Vat:Vat,
-				PrpName:PrpName,
+				Vat: Vat,
+				PrpName: PrpName,
 				RsrvChn: getIdChannel(a.inquiry_source, settings),
-				NetAmnt: a.booking_engine.base,
+				NetAmnt: netAmnt,
 				CnclFee: '',
-				ChnPrcnt: '',
+				ChnPrcnt: settings.channels.filter(
+					(x) => getIdChannel(a.inquiry_source, settings) === x.id
+				)[0]['ChnCmsn'],
 				Fees: settings.properties
 					.filter(
 						(x) =>
-							x.id === settings.apartments.filter((x) => x.id === Apt)[0]['PrpName']
+							x.id === settings.apartments.filter((x) => x.id === AptID)[0]['PrpName']
 					)[0]
 					['Fees'].map((x) => ({ ...x, show: true })),
 				Taxes: settings.properties
 					.filter(
 						(x) =>
-							x.id === settings.apartments.filter((x) => x.id === Apt)[0]['PrpName']
+							x.id === settings.apartments.filter((x) => x.id === AptID)[0]['PrpName']
 					)[0]
 					['Taxes'].map((x) => ({ ...x, show: true })),
 				NigthsNum: getNights(+a.check_out * 1000, +a.check_in * 1000),
 				TtlPmnt: '',
 				GstName: a.guest_details.name,
-				AptName: Apt,
+				AptName: AptID,
 				pStatus: 'Tentative',
 				dtls: {
 					adlts: a.num_adults,
@@ -271,41 +406,60 @@ const RetreiveDetails = () => {
 					addrss: '',
 					cntry: '',
 				},
-			//	LstSave: dateFormat(Date(), 'dd-mmm-yyyy'),
+				//	LstSave: dateFormat(Date(), 'dd-mmm-yyyy'),
 				PmntStts: 'Unpaid',
 				m: dateFormat(new Date(+a.check_in * 1000), 'mm'),
-				TtlRsrvWthtoutVat: 	Vat===false ?  +a.booking_engine.base:
-								+a.booking_engine.base/(1 + parseFloat(vat)/100),
-				tokeetID: a.ref_id,
-				TokeetApt: assignApts[i].TokeetApt
+				TtlRsrvWthtoutVat: Vat === false? netAmnt : netAmnt / (1 + parseFloat(vat) / 100),
+				tokeet: {
+					tokeetID: a.ref_id,
+					TokeetApt: assignApts.filter((x) => x.TokeetId ===
+							 a.rental_id)[0]['TokeetApt'],
+					TokeetAmntOriginal: +basePrice,
+				},
 			};
-			
-			let tmpAMount = +tmpObj.NetAmnt + 
-					+getFees(tmpObj, +tmpObj.NetAmnt) +
-					+getTaxes(tmpObj, +tmpObj.NetAmnt);
-			
-			tmpObj={...tmpObj,RsrvAmnt: tmpAMount , BlncRsrv: tmpAMount}
-			
+
+			const eliminateVat = Vat ? 1 + parseFloat(vat) / 100 : 1;
+
+			let tmpAMount =
+				+tmpObj.NetAmnt +
+				+getFees(tmpObj, +tmpObj.NetAmnt) +
+				+getTaxes(tmpObj, +tmpObj.NetAmnt, eliminateVat);
+
+			tmpObj = { ...tmpObj, RsrvAmnt: tmpAMount, BlncRsrv: tmpAMount };
+
 			newArr.push(tmpObj);
 		}
 
-		let tmpArr = [...gstdAptsArr, ...newArr];
-		setGstdAptsArr(tmpArr);
-		setAssignApts(assignApts.map((x,k)=> k===i? {...x, connectIcn: false}: x) )
+		setGstdAptsArr(newArr);
+
 		setLoading(false);
 	};
-	
-	const clrLine = (i) => {
-		let tmpData = TokeetApts.filter((x) => x.rental_id === assignApts[i].TokeetId);
-		const tmpTokeetIdArr = tmpData.map((x) => x.pkey);
-		
-		let newArr = gstdAptsArr.filter((x) => !tmpTokeetIdArr.includes(x.tokeetID));
-		setGstdAptsArr(newArr);
-		
-		let tmmpAr = assignApts.map((y,k)=> k===i? {...y, GstdApt: '', connectIcn: true}: y )
-		setAssignApts(tmmpAr)
-	};
 
+	const clr = async() => {
+		setGstdAptsArr([]);
+
+		let tmmpAr = assignApts.map((y, k) => ({
+			...y,
+			GstdApt: '',
+			checked: false,
+			GstdAptID: '',
+		}));
+		setAssignApts(tmmpAr);
+
+
+		setSettings({ ...settings, tokeetSets: tmmpAr });
+		await addDataSettings(uidCollection, 'settings', 'tokeetSets', { tokeetSets: tmmpAr });
+	};
+	
+	const moveToStep3=async()=>{
+		setLoading(true);
+			setGstdAptsArr([]);
+			await setSettings({ ...settings, tokeetSets: assignApts });
+			await addDataSettings(uidCollection, 'settings', 'tokeetSets', { tokeetSets: assignApts });
+
+			setValueTab(3)
+		setLoading(false);
+	}
 	return (
 		<div className={classes.mainGrid}>
 			<div>
@@ -317,75 +471,69 @@ const RetreiveDetails = () => {
 					loading={loading}
 				/>
 			</div>
-			<Grid container direction="row" justifyContent="flex-start"
-				alignItems="baseline">
-				<Grid item>
-					<p className={classes.txt}>1. Authorize yourself to retrieve Tokeet data:
-					</p>
-				</Grid>
-				<Grid item style={{ paddingLeft: '20px', display: 'inline-flex' }}>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={() => runAuth()}
-						disabled={authorized}
-					>
-						Get Authorization
-					</Button>
-					{authorized && (
-						<div style={{ alignSelf: 'center', paddingLeft: '10px' }}>
-							<img src={CheckedIcon} alt="123" width="20px" />
-						</div>
-					)}
-				</Grid>
-			</Grid>
-			<Grid container direction="row" justifyContent="flex-start">
-				<Grid item>
-					<p className={classes.txt} style={{ marginTop: 'revert' }}>
-						2. Download data
-					</p>
-				</Grid>
-				<Grid item style={{ paddingLeft: '10px' }}>
-					<MonthPickerTokeet
-						date={date} //handleChangeD={handleChangeD}
-						startDate={startDate}
-						setStartDate={setStartDate}
-					/>
-				</Grid>
-				<Grid item style={{ paddingLeft: '20px', alignSelf: 'center' }}>
-					<Button
-						variant="outlined"
-						color="primary"
-						onClick={() => getData()}
-						disabled={startDate === null}
-					>
-						Tokeet data
-					</Button>
-				</Grid>
-			</Grid>
+ 
+		<Paper className={classes.root}>
+
+			<div style={{paddingTop: '35px'}}>
+				<div style={{textAlign: 'center'}}>
+					<img src={TokeetShort} alt='Tokeet' width={70}/>
+				</div>
+				<Tabs
+					orientation="vertical"
+					variant="scrollable"
+					value={valueTab}
+					onChange={handleChange1}
+					className={classes.tabs}
+				>
+				
+					<Tab label="Getting Started"  />
+					<Tab label="Step 1"  />
+					<Tab label="Step 2"  disabled={!authorized}/>
+					<Tab label="Step 3"  disabled={!authorized}/>
+				
+			</Tabs>
+
+
+			</div>
 			
-			<Grid  container  direction="row" justifyContent="space-between" 
-				alignItems="center">
-				<Grid item xs={12} style={{paddingBottom: '20px'}}>
-				 	<ConnectAptsTable 
-						 importLine={importLine}
-						 clrLine={clrLine}
-						 handleChange={handleChange}
-						 assignApts={assignApts}
-						 arrApts={arrApts}
-				 	/>
-				</Grid>
-				<Grid item xs={12}>
-				<TktReservationsTable
-					gstdAptsArr={gstdAptsArr}
-					uidCollection={uidCollection}
-					tokeetIdList={tokeetIdList}
-					/>
-				</Grid>
-			</Grid>
-			
-			
-		</div>
+
+			<TabPanel value={valueTab} index={0}>
+					<GettingStarted settings={settings}/>
+			</TabPanel>
+			<TabPanel value={valueTab} index={1}>
+					<TabStep1 runAuth={runAuth} authorized={authorized}/>
+			</TabPanel>
+			<TabPanel value={valueTab} index={2}>
+					<TabStep2	getTokeetApartments={getTokeetApartments}
+								moveToStep3={moveToStep3}
+								handleChange={handleChange}
+								assignApts={assignApts}
+								arrApts={arrApts}
+								gstdAptsArr={gstdAptsArr}
+								uidCollection={uidCollection}
+								clr={clr}
+								handleChangeChecked={handleChangeChecked}
+						/>
+			</TabPanel>
+			<TabPanel value={valueTab} index={3}>
+					<TabStep3 	
+								date={date} startDate={startDate}
+								setStartDate={setStartDate} 
+								importLines={importLines}
+								handleChange={handleChange}
+								assignApts={assignApts}
+								arrApts={arrApts}
+								gstdAptsArr={gstdAptsArr}
+								uidCollection={uidCollection}
+								tokeetIdList={tokeetIdList}
+								clr={clr}
+								
+						/>
+			</TabPanel>
+
+			</Paper>
+    	</div>
+
 	);
 };
 

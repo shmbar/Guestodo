@@ -146,7 +146,7 @@ const Pricing = () => {
 			setTtlPrice(x);
 		} else {
 		//	setPricePerPrp(((x / value) * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
-			setTtlPrice((x * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
+			setTtlPrice((x * (1 - parseFloat(AnnualDiscount) / 100)*12).toFixed(2));
 		}
 		setMaxPrp(mxPrp)
 	};

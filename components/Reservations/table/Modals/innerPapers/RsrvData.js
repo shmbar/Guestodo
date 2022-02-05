@@ -13,7 +13,7 @@ import { withStyles } from '@material-ui/core/styles';
 import { green } from '@material-ui/core/colors';
 //import {SelectContext} from '../../../../../contexts/useSelectContext';
 import './papersStyle.css';
-import {idToItem} from '../../../../../functions/functions.js';
+import {idToItem, Num2} from '../../../../../functions/functions.js';
 import NumberFormatCustom from '../../../../Subcomponents/NumberFormatCustom';
 import CustomDatePicker from './datePicker';
 import {SelectContext} from '../../../../../contexts/useSelectContext';
@@ -176,13 +176,14 @@ const RsrvAmounts = () =>{
 	// let ObjProperty={id:uuid(),PrpName: '' , StartDate: null, EndDate : null, ManagCommission : '',
 	// 	IntCshFlBnce: '', BAccNum: '', show:true};
 	let ObjChannel={RsrvChn:'',ChnCmsn:'', MngCmsn:'', id: uuidv4(), show:true };
-	let ObjApt={id:uuidv4(), PrpName: value.PrpName, AptName: '' , StartDate:null, EndDate : null, show:true/*, Ical: '', RsrvChn: ''*/ };  
+	let ObjApt={id:uuidv4(), PrpName: value.PrpName, AptName: '' , StartDate:null, EndDate : null,
+				show:true/*, Ical: '', RsrvChn: ''*/ };  
 	
 	const Add=(obj,tab)=>{
 		tab!=='TabApt' ? selectValueSettings(obj):selectValueSettingsApt(obj);
 		setRunTab(tab)
 	}
-	
+
 	const tmpAmnt =  value.pStatus!=='Cancelled' ? +value.NetAmnt : +value.CnclFee
 	const fees = value.Fees!=null ? value.Fees.map((x,i)=>{
 		return  <div className={classes.labelRoot} key={i}>
@@ -197,18 +198,22 @@ const RsrvAmounts = () =>{
 			 		}
 					{x.FeeAmount !=='' &&
 						<Typography variant="body1" className={classes.labelText}>
-            				{	x.FeeType==='Percent' ? tmpAmnt*x.FeeAmount/100 + cur : 
-								x.FeeType==='Flat' && x.FeeModality==='Per Stay'  ? x.FeeAmount + cur:
-								x.FeeType==='Flat' && x.FeeModality==='Per Night'  ? x.FeeAmount*value.NigthsNum + cur:
-								x.FeeType==='Flat' && x.FeeModality==='Per Person'  ? x.FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn) + cur:
-								x.FeeType==='Flat' && x.FeeModality==='Per Person/Per Night'  ?
-								x.FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum + cur: ''
+            				{	x.FeeType==='Percent' ?  tmpAmnt*x.FeeAmount/100 + cur : 
+								x.FeeType==='Flat' && x.FeeModality==='Per Stay'  ? 
+							 (x.FeeAmount) + cur:
+								x.FeeType==='Flat' && x.FeeModality==='Per Night'  ? 
+							 ( x.FeeAmount*value.NigthsNum) + cur:
+								x.FeeType==='Flat' && x.FeeModality==='Per Person'  ? 
+							 (x.FeeAmount*(+value.dtls.adlts + +value.dtls.chldrn)) + cur:
+							x.FeeType==='Flat' && x.FeeModality==='Per Person/Per Night' ?
+								(x.FeeAmount*( +value.dtls.adlts + 
+							+value.dtls.chldrn)*value.NigthsNum) + cur: ''
 						}
 						<FormControlLabel
 							control={
 								  <GreenCheckboxFeesTaxes
 									checked={x.show}
-									onChange={handleChangeTrueFalseFeesTaxes('Fees', i)}
+									onChange={handleChangeTrueFalseFeesTaxes('Fees', i, settings)}
 								  />
 							}
 						disabled={!write}
@@ -221,6 +226,7 @@ const RsrvAmounts = () =>{
         		</div> 
 		}) : [];
 	
+	const vatExisted = value.Vat ? (1 + parseFloat(vat)/100): 1;
 	
 	const taxes = value.Taxes!=null ? value.Taxes.map((x,i)=>{
 		return  	<div className={classes.labelRoot} key={i}>
@@ -235,18 +241,22 @@ const RsrvAmounts = () =>{
 						}
 						{x.TaxAmount !=='' &&
 							<Typography variant="body1" className={classes.labelText}>
-								{	x.TaxType==='Percent' ? (tmpAmnt + +getFees(value, tmpAmnt ))*x.TaxAmount/100 + cur : 
-							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? x.TaxAmount + cur:
-							 		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? x.TaxAmount*value.NigthsNum + cur:
-							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? x.TaxAmount*( +value.dtls.adlts) + cur:
+								{	x.TaxType==='Percent' ?   Num2((tmpAmnt +
+							 +getFees(value, tmpAmnt ))*x.TaxAmount/100/vatExisted) + cur : 
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? 
+								x.TaxAmount + cur:
+							  		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? 
+								x.TaxAmount*value.NigthsNum + cur:
+							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? 
+								x.TaxAmount*(+value.dtls.adlts) + cur:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Person/Per Night'  ?
-								 	x.TaxAmount*( +value.dtls.adlts )*value.NigthsNum + cur: ''
+					x.TaxAmount*( +value.dtls.adlts )*value.NigthsNum + cur: ''
 							 }
 							<FormControlLabel
 								control={
 									  <GreenCheckboxFeesTaxes
 										checked={x.show}
-										onChange={handleChangeTrueFalseFeesTaxes('Taxes', i)}
+										onChange={handleChangeTrueFalseFeesTaxes('Taxes', i, settings)}
 									  />
 								}
 								disabled={!write}
@@ -257,8 +267,7 @@ const RsrvAmounts = () =>{
 						}
 					</div>
 		}): [];
-	
-	
+
 	return (
 			<Grid container spacing={3} alignItems="flex-end">
 					<Grid item xs={12} md={7}>
@@ -296,7 +305,8 @@ const RsrvAmounts = () =>{
 									>Apartment</InputLabel>
 								<Select
 									value={idToItem(settings.apartments,value.AptName, 'AptName')}  
-									onChange={e=> write && (e.target.value!=='Add new apartment'? handleChange(uidCollection, e,settings, date): Add(ObjApt, 'TabApt'))
+									onChange={e=> write && (e.target.value!=='Add new apartment'? 
+									handleChange(uidCollection, e,settings, date): Add(ObjApt, 'TabApt'))
 										 }
 									inputProps={{
 										name: 'AptName'
@@ -362,7 +372,7 @@ const RsrvAmounts = () =>{
 							  />
 					
 					</Grid>
-					<Grid item xs={12} md={4}>
+					<Grid item xs={12} md={6}>
 						<FormControl >
 							<FormControlLabel
 							control={
@@ -375,27 +385,29 @@ const RsrvAmounts = () =>{
 							label={`${vat}% VAT included`}
 							disabled={!write || +vat===0}
 							labelPlacement="end"
-      					/>	
+						/>	
 						</FormControl>
 					</Grid>
+			
 					<Grid item xs={12}>
-						 <TreeView  className={classes.treeview} defaultCollapseIcon={<ExpandMoreIcon />}  defaultExpandIcon={<ChevronRightIcon />}>
+						 <TreeView  className={classes.treeview} 
+							 defaultCollapseIcon={<ExpandMoreIcon />} 
+							 defaultExpandIcon={<ChevronRightIcon />}>
 							  {fees}
 							  {taxes}
 						</TreeView>
 					</Grid>
 					<Grid item xs={12} md={6} style={{alignSelf: 'normal'}}>
 							  <TextField   
-								value={value.RsrvAmnt}    
-								//onChange={e=>write && handleChange(uidCollection, e,settings)}
-								name="NetAmnt"
+								value={Num2(value.RsrvAmnt)}    
 								label="Total Amount Paid by Guest"
-								InputProps={{inputComponent: NumberFormatCustom, readOnly: true,}}
+							//	InputProps={{inputComponent: NumberFormatCustom, readOnly: true,}}
 								fullWidth
 								 error={value.NetAmnt==='' && redValid ? true: false}
 							  />
 					
 					</Grid>
+					
 					<Grid item xs={12} md={8} > 
 						<TextField
 							value={value.Notes}   

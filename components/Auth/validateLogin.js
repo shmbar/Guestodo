@@ -9,7 +9,7 @@ export default function validateLogin(values) {
     }
     // Password Errors
 
-    if (window.location.pathname.substring(1) === 'signup') {
+    if (window.location.pathname.substring(1) === 'signup123') {
 		
 			if (!values.password && values.password1 != null) {
 				errors.password = 'Password required';

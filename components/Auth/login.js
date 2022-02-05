@@ -45,7 +45,6 @@ const Initial = { email: '', password: '', showPassword: false };
 
 export default function LoginToApp(props) {
 	const [loginError, setLoginError] = useState(false);
-	const reg = { name: '', email: '' };
 	const theme = useTheme();
 	let screenXS = useMediaQuery(theme.breakpoints.down('xs'));
 	const [snackbar, setSnackbar] = useState({ open: false, msg: '', variant: '' });
@@ -89,7 +88,7 @@ export default function LoginToApp(props) {
 		},
 		ttl: {
 			color: '#193e6d',
-			fontSize: '20px',
+			fontSize: '14px',
 			fontFamily: 'Poppins, Sans-serif!important',
 		},
 		welcome: {
@@ -184,7 +183,7 @@ export default function LoginToApp(props) {
 				.then(() => {
 					setSnackbar({
 						open: true,
-						msg: 'Password reset email sent',
+						msg: 'Password reset request was sent to your email',
 						variant: 'success',
 					});
 				})
@@ -216,11 +215,15 @@ export default function LoginToApp(props) {
 							)}
 						</Grid>
 						<Grid item xs={12} sm={6} className={classes.paper}>
-							<Typography component="h1" variant="h4" className={classes.welcome}>
-								Welcome
+							<Typography component="h1" variant="h4" 
+								className={classes.welcome}>
+								Welcome Back
 							</Typography>
-							<Typography component="h1" variant="h4" className={classes.ttl}>
-								Sign In
+							<Typography className={classes.ttl}>
+								{`Don't have an account? `} 
+								<Link
+									to='/freedemo'	className={classes.txt1}
+								>Create today!</Link>
 							</Typography>
 							<form className={classes.form} onSubmit={handleSubmit} noValidate>
 								<TextField
@@ -294,18 +297,6 @@ export default function LoginToApp(props) {
 								Forgot Password?
 							</Typography>
 					
-							<Typography component="h1" variant="h4" className={classes.NtGstMember}>
-								Not a Guestodo member yet?
-							</Typography>
-
-							<Typography component="h1" variant="h4" gutterBottom>
-								<Link
-									to={{ pathname: '/signup', state: reg }}
-									className={classes.txt1}
-								>
-									Create New Account
-								</Link>
-							</Typography> 
 							<div style={{ display: 'inline-flex' }}>
 								<Link to="/terms" className={classes.txt2}>
 									Terms of Services{' '}

@@ -33,7 +33,7 @@ return {
 		let newVal=[...value.Payments];
 		let TotalPmnt = newVal.map(x=>+x.P).filter(x=> x>0)
 			.reduce((a, b) => a + b, 0);
-		
+	
 		setValue({...value, 'valueInc': valueVatTmp, /*'valuex': valueVatTmpEx,*/ 'VatPayRtrn':
 				  +valueVatTmp.Vat - +valExInput /*+valueVatTmpEx.Vat*/,
 				  'BlncVat': +(+valueVatTmp.Vat - +valExInput /*+valueVatTmpEx.Vat*/

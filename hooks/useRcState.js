@@ -59,23 +59,23 @@ return {
 	displayRetrieveDialog,setDisplayRetrieveDialog,
 	tokeetIdList,setTokeetIdList,
 	handleChange: async (uidCollection, e, settings, date) => {
-	
+
 	//	let ChnItem= value.RsrvChn!==''? settings.channels.filter(x => value.RsrvChn===x.id)[0] : ''
 	//	let CmsnDescription = value.RsrvChn!==''? ChnItem['MngCmsn'] : '';
 	//	let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
-	
-	const RsrvAmount = +e.target.value + +getFees(value, e.target.value) +
-					  			+getTaxes(value, e.target.value);
+	const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
 		
+	const RsrvAmount = (+e.target.value + +getFees(value, e.target.value) +
+					  			+getTaxes(value, e.target.value, eliminateVat));
+
 		if (e.target.name==='NetAmnt') {
 		
 			if(value.RsrvChn===''){
 				setSnackbar( {open:true, msg: 'Choose channel first!', variant: 'warning'});
 				return;
 			}
-			
-			
+		
 			setValue({...value, [e.target.name]: e.target.value,
 					  			'RsrvAmnt': RsrvAmount,
 					 			'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
@@ -104,15 +104,15 @@ return {
 				  || e.target.name==='addrss' || e.target.name==='cntry') {
 				
 				let moshe={...value.dtls,[e.target.name]:e.target.value};
-			
 				setValue({...value,'dtls':moshe });
+			
 		} else if (e.target.name==='RsrvChn'){	
 		
 			let ChnItem= settings.channels.filter(x => e.target.value===x.RsrvChn)[0];
 	//		let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
 			const RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt);
-			
+					  			+getTaxes(value, value.NetAmnt, eliminateVat);
+
 			value.NetAmnt!=='' ?	setValue({...value, [e.target.name]: ChnItem['id'],
 										'BlncRsrv': +(+RsrvAmount-value.TtlPmnt),
 										'PmntStts': paymentStatus(value.TtlPmnt, RsrvAmount),
@@ -122,7 +122,8 @@ return {
 				}) : setValue({...value, [e.target.name]: ChnItem['id']});	
 		
 		}else if (e.target.name==='AptName'){	
-			setValue({...value, [e.target.name]:settings.apartments.filter(x=> x.AptName===e.target.value)[0]['id'] });	
+			setValue({...value, [e.target.name]:settings.apartments.filter(x=> 
+		   x.AptName===e.target.value)[0]['id'] });	
 			
 			//load slots of the current year
 			let slotsData = await readDataSlots(uidCollection, 'slots', date.year,
@@ -147,10 +148,12 @@ return {
 			
 		}else if(e.target.name==='pStatus'){    //name==='RsrvCncl'
 
-			const tmpAmnt = e.target.value!=='Cancelled' ? +value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt) : +value.CnclFee + +getFees(value, value.CnclFee) +
-					  			+getTaxes(value, value.CnclFee)
+			const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
 			
+			const tmpAmnt = e.target.value!=='Cancelled' ? +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt, eliminateVat) : +value.CnclFee + +getFees(value, value.CnclFee) +
+					  			+getTaxes(value, value.CnclFee, eliminateVat)
+		
 			setValue({ ...value, [e.target.name]: e.target.value,
 							'RsrvAmnt': +tmpAmnt,
 							'BlncRsrv': +(tmpAmnt-value.TtlPmnt),
@@ -192,6 +195,8 @@ return {
 		tmp=tmp<0?0:tmp;
 		let moshe={...value.dtls,[y]:tmp};
 		const val = {...value, 'dtls' : moshe}
+	//	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
+	//	const vatExisted = value.Vat ? (1 + parseFloat(vat)/100): 1;
 		const RsrvAmount = +value.NetAmnt + +getFees(val, value.NetAmnt) +
 					  			+getTaxes(val, value.NetAmnt);
 		
@@ -207,9 +212,10 @@ return {
 			setValue({...value, [name]: dateFormat(val,'dd-mmm-yyyy'), 'NigthsNum' : tmp});
 
 			let availORnotavail = (value.ChckIn!==null && name==='ChckOut' && value.AptName!=='') ?
-				await checkAvailableSlot(uidCollection, value.AptName, value.Transaction, value.ChckIn, val) :
-				(value.ChckOut!==null && name==='ChckIn' && value.AptName!=='') ? await checkAvailableSlot(uidCollection, 
-																			value.AptName,value.Transaction, val, value.ChckOut):null
+				await checkAvailableSlot(uidCollection, value.AptName, value.Transaction, value.ChckIn,
+			 val) :	(value.ChckOut!==null && name==='ChckIn' && value.AptName!=='') ?
+				await checkAvailableSlot(uidCollection, 
+			 value.AptName,value.Transaction, val, value.ChckOut):null
 		
 				if(availORnotavail){
 					setSnackbar( {open:true, msg: 'This apartment is already reserved for the selected dates', variant: 'warning'});
@@ -250,8 +256,13 @@ return {
 	},
 	handleChangeTrueFalse: (name,vat) => e => {
 		
+	const eliminateVat = e.target.checked ? (1 + parseFloat(vat)/100): 1;
+	const RsrvAmount = (+value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt, eliminateVat));
+			
 		if(name==='Vat'){
    	 		setValue({ ...value, [name]: e.target.checked,
+					'RsrvAmnt': RsrvAmount,	
 			 		'TtlRsrvWthtoutVat': 
 			 		e.target.checked===false ?
 					  (value.pStatus!=='Cancelled' ?  +value.NetAmnt : +value.CnclFee ) :
@@ -262,20 +273,24 @@ return {
 			setValue({ ...value, [name]: e.target.checked})
 		}	
   	},
-	handleChangeTrueFalseFeesTaxes: (name,i) => e =>{
+	handleChangeTrueFalseFeesTaxes: (name,i, settings) => e =>{
 		let tmp = value[name] 
 		tmp[i]={...tmp[i], show: !tmp[i].show}
 		
-		const RsrvAmount = value.pStatus!=='Cancelled' ?  +value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt) : +value.CnclFee + +getFees(value, value.CnclFee) +
-					  			+getTaxes(value, value.CnclFee);
+		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
+		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+		
+		const RsrvAmount = value.pStatus!=='Cancelled' ?  +value.NetAmnt +
+			+getFees(value, value.NetAmnt) + +getTaxes(value, value.NetAmnt, eliminateVat) :
+			+value.CnclFee + +getFees(value, value.CnclFee) + 
+			  +getTaxes(value, value.CnclFee, eliminateVat);
 								
 		setValue({...value, [name]: tmp, 
 					'RsrvAmnt': RsrvAmount,
 					'BlncRsrv': +(RsrvAmount-value.TtlPmnt),
 					'PmntStts': paymentStatus(value.TtlPmnt, +RsrvAmount),
 			}); 
-	}
+	},
 	  
 };
 };

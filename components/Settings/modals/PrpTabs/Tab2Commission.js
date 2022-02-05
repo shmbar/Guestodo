@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import { Grid, TextField } from '@material-ui/core';
+import { Grid, TextField, FormHelperText } from '@material-ui/core';
 import { SettingsContext } from '../../../../contexts/useSettingsContext';
 import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -85,6 +85,9 @@ const Tab2Commission = (props) => {
 							>
 								{YesNo}
 							</Select>
+							 <FormHelperText><p><b>Yes</b>: If you wish to charge the commission percentage from property reservation revenue amount 
+								 including VAT. </p>
+								 <b>No</b>: If you wish to charge the commission percentage from property reservation revenue before vat or if 												the property’s region doesn't charge VAT by law.</FormHelperText>
 						</FormControl>
 				</Grid>
 				<Grid item xs={12} md={3}>
@@ -102,6 +105,9 @@ const Tab2Commission = (props) => {
 							>
 								{YesNo}
 							</Select>
+							 <FormHelperText><p><b>Yes</b>: If you wish to charge VAT on the commission you
+							collect	from the property owner.</p>
+								 <b>No</b>: If property’s region doesn't charge  VAT by law.</FormHelperText>
 						</FormControl>
 				</Grid>
 			</Grid>

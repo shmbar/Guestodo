@@ -181,7 +181,7 @@ const VatModal = () =>{
 				valueVatTmp = pushArrOi(valueVatTmp, val);
 			}
 		}
-		
+	
 		setValueIncEx(valueVatTmp, value.inputVat);
 	};
 	

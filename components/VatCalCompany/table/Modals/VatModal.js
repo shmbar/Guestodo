@@ -138,7 +138,7 @@ const VatModal = () =>{
 				valueVatTmp = pushArr(valueVatTmp, tmpDataIncomeMngmt[i]);
 		}
 
-		
+
 		let tmpDataOtherIncome =  await readDataIncExpCompany(uidCollection, 'otherIncomeCompany', From, To ); //Other Income Company
 		for(let i=0; i<tmpDataOtherIncome.length; i++){  //Income
 				valueVatTmp = pushArrOtherIncome(valueVatTmp, tmpDataOtherIncome[i]);
@@ -150,8 +150,8 @@ const VatModal = () =>{
 				valueVatTmpEx = pushArrEx(valueVatTmpEx,tmpDataExpIncome[i]);
 		}
 
-	
-		 setValueIncEx(valueVatTmp,valueVatTmpEx);
+
+		 setValueIncEx(valueVatTmp, value.inputVat);
 	
 	};
 	
@@ -178,11 +178,13 @@ const VatModal = () =>{
 	 	if(indx!==-1){ //Update the table
 			const tmpArr = vtDataC.map(k =>
 	 		   		k.Transaction===value.Transaction ? newObj : k  );
-			setSnackbar( {open: (await addData(uidCollection, 'vatcalCompany',dateFormat(newObj.From,'yyyy'), newObj)), msg: 'Vat transaction has been updated!', variant: 'success'});
+			setSnackbar( {open: (await addData(uidCollection, 'vatcalCompany',dateFormat(newObj.From,'yyyy'), newObj)),
+						  msg: 'Vat transaction has been updated!', variant: 'success'});
 			setVtDataC(tmpArr);
 			
 			let pmtnsObj = newObj.Payments.map(x=>{
-					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date), 'Transaction': newObj.Transaction, VatPayRtrn: newObj.VatPayRtrn}
+					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date), 'Transaction': newObj.Transaction,
+							VatPayRtrn: newObj.VatPayRtrn}
 			})
 			
 			let olPayments = vtDataC.filter(k => k.Transaction===value.Transaction)[0]['Payments'];
@@ -193,7 +195,8 @@ const VatModal = () =>{
 			
 		}else{ //add new data
 			const tmpArr = [...vtDataC, newObj];
-			setSnackbar( {open: (await addData(uidCollection, 'vatcalCompany',dateFormat(newObj.From,'yyyy'), newObj)), msg: 'New Vat transaction has been added!', variant: 'success'});
+			setSnackbar( {open: (await addData(uidCollection, 'vatcalCompany',dateFormat(newObj.From,'yyyy'), newObj)),
+						  msg: 'New Vat transaction has been added!', variant: 'success'});
 			
 			
 			
@@ -206,7 +209,8 @@ const VatModal = () =>{
 			}
 			
 			let pmtnsObj = newObj.Payments.map(x=>{
-					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date), 'Transaction': newObj.Transaction, VatPayRtrn: newObj.VatPayRtrn}
+					return {...x, ExpInc: 'VAT',  VendChnnl: 'VAT Payment' , Date: new Date(x.Date),
+							'Transaction': newObj.Transaction, VatPayRtrn: newObj.VatPayRtrn}
 			})
 			
 			await addDPaymentsBatch(uidCollection,'paymentsCompany',pmtnsObj)

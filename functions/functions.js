@@ -58,11 +58,10 @@ export const getRecurringExpense = (obj)=>{
 };
 
 //////////////////////////////////////////////
-export const updateTokeetIdList = (uidCollection, id)=>{
+export const updateTokeetData = (uidCollection, doc,id , x)=>{
 	
-	return db.collection(uidCollection).doc('data').collection('tokeetIdList').doc(id)
-		.set({tokeetID: id})
-		.then(()=> {
+	return db.collection(uidCollection).doc('data').collection(doc).doc(id)
+		.set(x).then(()=> {
 		return true;
 		})
 		.catch(error=> {
@@ -770,8 +769,10 @@ export const getFees=(value, val )=>{
 					totalFees += +value.Fees[i].FeeAmount*value.NigthsNum
 				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person'){
 					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)
-				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality==='Per Person/Per Night'){
-					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + +value.dtls.chldrn)*value.NigthsNum
+				}else if(value.Fees[i].FeeType==='Flat' && value.Fees[i].FeeModality===
+					'Per Person/Per Night'){
+					totalFees += +value.Fees[i].FeeAmount*( +value.dtls.adlts + 
+								   +value.dtls.chldrn)*value.NigthsNum
 				}
 			}
 		}
@@ -779,14 +780,15 @@ export const getFees=(value, val )=>{
 	return totalFees;
 	}	
 	
-export const getTaxes=(value, val)=>{
+export const getTaxes=(value, val, eliminateVat)=>{
 		
 		let totalTaxes=0;
 		for (let i in value.Taxes){
 			if(value.Taxes[i].show){
 				
 				if(value.Taxes[i].TaxType==='Percent'){
-					totalTaxes += (+val + +getFees(value, val ))*value.Taxes[i].TaxAmount/100
+					totalTaxes += (+val + 
+				   +getFees(value, val ))*value.Taxes[i].TaxAmount/100/eliminateVat
 				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Stay'){
 					totalTaxes += +value.Taxes[i].TaxAmount
 				}else if(value.Taxes[i].TaxType==='Flat' && value.Taxes[i].TaxModality==='Per Night'){

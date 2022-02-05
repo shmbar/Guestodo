@@ -167,13 +167,13 @@ const Main =(props) =>{
 		
 	const setInitials=useCallback(async(sets)=>{
 		
-			let Shows = (await readDatSettings(uidCollection, 'settingsShows')).reduce((a, c) => ({...a, ...c}),
-						Object.create(null));	
+			let Shows = (await readDatSettings(uidCollection, 'settingsShows'))
+			.reduce((a, c) => ({...a, ...c}),Object.create(null));	
 			setSettingsShows(Shows);  
 		
-			const owners = sets.owners!=null  ? (admn || stuff ? sets.owners.filter(x=> x.show ).map(x=>x.item) :
-													sets.owners.findIndex(x=> x.id === uid)!==-1 ? [uid] : [] )
-											: [];
+			const owners = sets.owners!=null  ? (admn || stuff ? sets.owners.filter(x=> 
+			x.show ).map(x=>x.item) : sets.owners.findIndex(x=> x.id === uid)!==-1 ? 
+			[uid] : [] ): [];
 	
 			const properties =  sets.properties!= null ? (admn || stuff ? sets.properties.filter(x=> x.show ).map(x=>x.PrpName) :
 									sets.properties.filter(x=> (x.Owner === (owners[0])) &&
@@ -199,7 +199,7 @@ const Main =(props) =>{
 				setFundSlct(itemToId(sets.funds,funds[0]));
 			}
 
-			setPage(/*'Permissions'   'DashboardOwner' */ 'Reservations')
+			setPage(/*'Permissions' */  'DashboardOwner' /*'Reservations'*/)
 		
 	},[ admn, stuff, setSettingsShows, uid, uidCollection ,setFundSlct, setFundList, setPage, setPropertyList, setPropertySlct,
 	   setMultiPropertySlct, setCheckedCalendar])

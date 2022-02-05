@@ -99,6 +99,7 @@ const Table =({newOrdr}) =>{
 		  tmpObj.valuex= {withVat: '', withoutVat:'', Vat:''};
 		  tmpObj.TtlPmnt = '';
 		  tmpObj.BlncVat='';
+		  tmpObj.inputVat=0;
 		  tmpObj.PmntStts='Unpaid';
 		 return tmpObj;
     };

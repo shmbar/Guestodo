@@ -9,12 +9,14 @@ import {RcContext} from '../../../../../contexts/useRcContext';
 import { convId2Item, readDataSlots, getNewTR, checkAvailableSlot } from '../../../../../functions/functions.js';
 import EditIcon from '@material-ui/icons/Edit';
 import { v4 as uuidv4 } from 'uuid';
+import {showDataTable} from '../../../../../functions/setTableDt.js';
 
 const dateFormat = require('dateformat');
 
 const tableCols = [
 	{ field: 'TokeetApt', header: 'Tokeet Apt', showcol: true },
 	{ field: 'ChckIn', header: 'Check In', showcol: true },
+	{field: 'RsrvChn', header: 'Channel', showcol: true},	
 	{ field: 'PrpName', header: 'Property', showcol: true },
 	{ field: 'AptName', header: 'Apartment', showcol: true },
 	{ field: 'pStatus', header: 'Status', showcol: true },
@@ -51,6 +53,7 @@ const TktReservationsTable = (props) => {
 			padding: scrSize === 'xs' ? theme.spacing(1, 1, 5, 1) : theme.spacing(1, 4, 5, 4),
 			display: 'grid',
 			maxWidth: 900,
+			background: 'aliceblue'
 		},
 	}));
 
@@ -59,10 +62,10 @@ const TktReservationsTable = (props) => {
 	};
 
 	const selectValueOrder = async (rowData) => {
-		
-		const indx = props.gstdAptsArr.findIndex(x=>x.tokeetID===rowData.tokeetID);
+
+		const indx = props.gstdAptsArr.findIndex(x=>x.tokeet.tokeetID===rowData.tokeet.tokeetID);
 		let val = props.gstdAptsArr[indx];
-		
+
 		selectValue(val);
 		
 		let tmpRC = await  getNewTR(props.uidCollection, 'lastTR', 'lastTR', 'RC');
@@ -81,8 +84,9 @@ const TktReservationsTable = (props) => {
 	};
 
 	const actionTemplate = (rowData, column) => {
+	
 		return ( 
-			!props.tokeetIdList.includes(rowData.tokeetID) ? 
+			!props.tokeetIdList.includes(rowData.tokeet.tokeetID) ? 
 				<Tooltip title='Edit before importing'>
 					<IconButton aria-label="Edit" onClick={() => selectValueOrder(rowData)}>
 						<EditIcon />
@@ -93,7 +97,11 @@ const TktReservationsTable = (props) => {
 			
 		);
 	};
-
+	
+	const dataTable=(rowData, column)=>{
+		return showDataTable(rowData, column, scrSize, settings);
+	}
+	
 	const classes = useStyles();
 	let dynamicColumns = tableCols.map((col, i) => {
 		return (
@@ -101,28 +109,33 @@ const TktReservationsTable = (props) => {
 				key={col.field}
 				field={col.field}
 				header={col.header}
-				body={col.field === 'pStatus' ? SetYel : col.field === 'el' ? actionTemplate : ''}
-				headerStyle={{ overflow: 'visible', textAlign: 'center' }}
-				style={{ textAlign: 'center' }}
+				body={col.field === 'pStatus' ? SetYel :
+						col.field === 'el' ? actionTemplate :
+						col.field === 'RsrvChn' ? dataTable :
+						''}
+				headerStyle={{ overflow: 'visible', textAlign: 'center', background: 'aliceblue' }}
+				style={{ textAlign: 'center', background: 'aliceblue' }}
 				//	filter={col.field!=='el'? showFilter:false}
 			/>
 		);
 	});
 
+
 	return (
 		<Paper className={classes.root}>
-			<h4 className="ttlClr">Reservations for approval</h4>
+			<h4 className="ttlClr">Tokeet reservations</h4>
 			<div className="datatable-responsive-demo">
 				<DataTable
-					value={convId2Item(props.gstdAptsArr, ['AptName', 'PrpName'], settings)}
+					value={convId2Item(props.gstdAptsArr.map(x=> ({...x, TokeetApt:
+						x.tokeet.TokeetApt})), ['AptName', 'PrpName', 'RsrvChn'], settings)}
 					className="p-datatable-responsive-demo"
+					rowHover 
 					//	header={header}
 					paginator={true}
+				
 					rows={10}
-					rowsPerPageOptions={[5, 10, 20]}
-					paginatorTemplate="CurrentPageReport FirstPageLink 
-							   PrevPageLink PageLinks NextPageLink LastPageLink 
-							   RowsPerPageDropdown"
+					 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
+					rowsPerPageOptions={[10,25,50]}
 					currentPageReportTemplate={
 						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : ''
 					}

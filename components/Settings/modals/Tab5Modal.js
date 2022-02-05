@@ -147,7 +147,8 @@ const Tab5Modal = (props) => {
 		}
 	
         if (valueSettings.passYN && !/^(?=.*\d)(?=.*[A-Z])[0-9a-zA-Z]{8,}$/.test(valueSettings.password)) {
-            props.setSnackbar({ open: true, msg: 'Password must be at least 8 characters including at least one digit and one upper case letter',  variant: 'warning' });
+            props.setSnackbar({ open: true, msg: 'Password must be at least 8 characters including at least one digit and one upper case letter',
+							   variant: 'warning' });
             setLoading(false);
             return;
         }

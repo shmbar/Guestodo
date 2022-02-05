@@ -1,6 +1,5 @@
 import React, { useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Button } from '@material-ui/core';
 
 import Dialog from '@material-ui/core/Dialog';
 import CloseIcon from '@material-ui/icons/Close';
@@ -10,7 +9,6 @@ import Toolbar from '@material-ui/core/Toolbar';
 import IconButton from '@material-ui/core/IconButton';
 import { RcContext } from '../../../../../contexts/useRcContext';
 import SnackBar from '../../../../Subcomponents/SnackBar';
-import { AuthContext } from '../../../../../contexts/useAuthContext';
 import useWindowSize from '../../../../../hooks/useWindowSize';
 import RetreiveDetails from './RetreiveDetails';
 import '../modals.css';
@@ -35,8 +33,6 @@ const OrdersModalRetrieveData = (props) => {
 	const {	snackbar,setSnackbar,displayRetrieveDialog,
 		setDisplayRetrieveDialog} = useContext(RcContext);
 
-	const { write } = useContext(AuthContext);
-
 	const closeDialog = () => {
 		//	setRedValid(false);
 		setDisplayRetrieveDialog(false);
@@ -51,11 +47,11 @@ const OrdersModalRetrieveData = (props) => {
 				</IconButton>
 
 
-				{write && (
-					<Button color="inherit" onClick={/*handleSave*/ null}>
+				{/*write && (
+					<Button color="inherit" onClick={handleSave null}>
 						Save
 					</Button>
-				)}
+				)*/}
 			</Toolbar>
 		</AppBar>
 	);
