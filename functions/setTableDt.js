@@ -17,14 +17,14 @@ import {Tooltip} from '@material-ui/core';
 const dateFormat = require('dateformat');
 
 const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
-				 {brnd: 'Airbnb', img: Airbnb, width: '48px'},
+				 {brnd: 'Airbnb', img: Airbnb, width: '85px'},
 				 {brnd: 'Tripadvisor', img: Tripadvisor, width: '95px'},
-				 {brnd: 'Agoda', img: Agoda, width: '65px'},
-				 {brnd: 'Flipkey', img: Flipkey, width: '75px'},
-				 {brnd: 'Expedia', img: Expedia, width: '75px'},
-				 {brnd: 'HomeAway', img: HomeAway, width: '90px'},
+				 {brnd: 'Agoda', img: Agoda, width: '80px'},
+				 {brnd: 'Flipkey', img: Flipkey, width: '80px'},
+				 {brnd: 'Expedia', img: Expedia, width: '85px'},
+				 {brnd: 'HomeAway', img: HomeAway, width: '95px'},
 				 {brnd: 'DefaultChannel', img: DefaultChannel, width: '90px'},
-				 {brnd: 'Tokeet', img: Tokeet, width: '75px'}
+				 {brnd: 'Tokeet', img: Tokeet, width: '80px'}
 		];
 		
 			
@@ -183,7 +183,7 @@ const setStatIcon= (rowData, column)=>{
 	let clr = rowData[column.field]==='Confirmed' ? confirmed : rowData[column.field]==='Tentative' ?  Tentative: Canceled;
 		
 	let style = { height: '15px', width: '15px',  backgroundColor: clr, borderRadius: '50%', alignSelf: 'center', marginRight: '5px'}
-	return <span style={{display: 'inline-flex'}}><div style={style}></div>{rowData[column.field]}</span>;
+	return <span style={{display: 'inline-flex', float: 'left', paddingLeft: '7px'}}><div style={style}></div>{rowData[column.field]}</span>;
 }
 
 const showIcons = (rowData, column)=>{

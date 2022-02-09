@@ -24,6 +24,7 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 	const fees = cur + Array(1).fill('\xa0').join('') + 
 		  Num2(getFees(value, tmpAmnt )/eliminateVat);
 	const taxes = cur + Array(1).fill('\xa0').join('') + Num2(getTaxes(value, tmpAmnt, eliminateVat ));
+	
 	let reservationAMountBeforeVat = cur + Array(1).fill('\xa0').join('') +
 		Num2(+value.TtlRsrvWthtoutVat);
 	
@@ -53,7 +54,7 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 	}
 
 	let amountFilled = value.NetAmnt!=='' || value.CnclFee!=='';
-
+	
 	return (
 			<Grid container spacing={3}>
 					<Grid item xs={12} style={{width:'100%'}} >
@@ -81,15 +82,16 @@ const RsrvAmounts = ({rcDataPrp}) =>{
 					</Grid>	
 					
 					<Grid item xs={12} style={{width:'100%'}}>
-						<RowOut name={(value.NigthsNum!=='' && value.NetAmnt!=='') ? `Reservation Amount ${txt} X ${value.NigthsNum} Nights` : 	'Reservation Amount' } 
+						<RowOut name={(value.NigthsNum!=='' && value.NetAmnt!=='') ? `Reservation Amount ${txt} X ${value.NigthsNum} Nights` :
+							'Reservation Amount' } 
 								value={amountFilled ? ReservationAmount: ''}  pad='0'/>
 					</Grid>	
 			
 					{ChnPrcnt!=='' &&
 					<Grid item sm={12} style={{width:'100%'}}>
 						<RowOut name={`Channel Service Fee (${ChnPrcnt}%)`}
-							value={amountFilled ? `-${cur} ${Num2((value.TtlRsrvWthtoutVat + 
-						+getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vat)/100): 1))*ChnPrcnt/100)}` :''}
+							value={amountFilled ? `${ChnPrcnt==='0'? '': '-'}${cur} ${Num2((value.TtlRsrvWthtoutVat + 
+						+getFees(value, value.NetAmnt )/eliminateVat)*ChnPrcnt/100)}` :''}
 							pad='0' />
 					</Grid>
 					}

@@ -15,33 +15,13 @@ const dateFormat = require('dateformat');
 
 const tableCols = [
 	{ field: 'TokeetApt', header: 'Tokeet Apt', showcol: true },
+	{ field: 'GstName', header: 'Guest', showcol: true },
 	{ field: 'ChckIn', header: 'Check In', showcol: true },
 	{field: 'RsrvChn', header: 'Channel', showcol: true},	
 	{ field: 'PrpName', header: 'Property', showcol: true },
 	{ field: 'AptName', header: 'Apartment', showcol: true },
 	{ field: 'pStatus', header: 'Status', showcol: true },
 	{ field: 'el', header: '', el: 'el', showcol: true },
-	/*   {field: 'LstSave', header: 'Last Created ', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'pStatus', header: 'Status ', showcol: true, s:['xs','sm','md','lg', 'xl']},
-			{field: 'GstName', header: 'Guest', showcol: true, s:['xs','sm','md','lg', 'xl']},
-			{field: 'Transaction', header: 'Transaction', showcol: true, s:['md','lg', 'xl']},
-			{field: 'ChckIn', header: 'Check In', showcol: true, s:['xs','sm','md','lg', 'xl']},
-			{field: 'ChckOut', header: 'Check Out', showcol: true, s:['lg', 'xl']},
-			{field: 'NigthsNum', header: 'Nights', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'PrpName', header: 'Property', showcol: true,initial: 4},
-			{field: 'AptName', header: 'Apartment', showcol: true, s:['xs','sm','md','lg', 'xl']},
-			{field: 'RsrvChn', header: 'Channel', showcol: true, s:['xs','sm','md','lg', 'xl']},	
-			{field: 'TtlPmnt', header: 'Total Payment', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'BlncRsrv', header: 'Balance Due', showcol: true, s:['lg', 'xl']},	
-			{field: 'PmntStts', header: 'Payment Status', showcol: true, s:['md','lg', 'xl']},	
-			{field: 'NetAmnt', header: 'Base Amount', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'Fees', header: 'Fees', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'Taxes', header: 'Taxes', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'VAT', header: 'VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
-			{field: 'RsrvAmnt', header: 'Reservation Amount', showcol: true, s:['md','lg', 'xl']},	
-			{field: 'el' , header: '', el: 'el', showcol: true, s:['xs','sm','md','lg', 'xl']} 
-			*/
 ];
 
 const TktReservationsTable = (props) => {
@@ -52,8 +32,8 @@ const TktReservationsTable = (props) => {
 		root: {
 			padding: scrSize === 'xs' ? theme.spacing(1, 1, 5, 1) : theme.spacing(1, 4, 5, 4),
 			display: 'grid',
-			maxWidth: 900,
-			background: 'aliceblue'
+			maxWidth: 1200,
+			background: '#f8f9fa'
 		},
 	}));
 
@@ -64,6 +44,7 @@ const TktReservationsTable = (props) => {
 	const selectValueOrder = async (rowData) => {
 
 		const indx = props.gstdAptsArr.findIndex(x=>x.tokeet.tokeetID===rowData.tokeet.tokeetID);
+	
 		let val = props.gstdAptsArr[indx];
 
 		selectValue(val);
@@ -113,13 +94,12 @@ const TktReservationsTable = (props) => {
 						col.field === 'el' ? actionTemplate :
 						col.field === 'RsrvChn' ? dataTable :
 						''}
-				headerStyle={{ overflow: 'visible', textAlign: 'center', background: 'aliceblue' }}
-				style={{ textAlign: 'center', background: 'aliceblue' }}
+				headerStyle={{ overflow: 'visible', textAlign: 'center', background: '#f8f9fa' }}
+				style={{ textAlign: 'center', background: '#f8f9fa' }}
 				//	filter={col.field!=='el'? showFilter:false}
 			/>
 		);
 	});
-
 
 	return (
 		<Paper className={classes.root}>
@@ -129,13 +109,10 @@ const TktReservationsTable = (props) => {
 					value={convId2Item(props.gstdAptsArr.map(x=> ({...x, TokeetApt:
 						x.tokeet.TokeetApt})), ['AptName', 'PrpName', 'RsrvChn'], settings)}
 					className="p-datatable-responsive-demo"
-					rowHover 
-					//	header={header}
 					paginator={true}
-				
-					rows={10}
-					 paginatorTemplate="FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink CurrentPageReport RowsPerPageDropdown"
-					rowsPerPageOptions={[10,25,50]}
+					rows={10} rowsPerPageOptions={[5,10,20]}
+								paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
+							   PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
 					currentPageReportTemplate={
 						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : ''
 					}

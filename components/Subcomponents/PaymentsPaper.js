@@ -75,7 +75,8 @@ const PaymentsPaper = (props) =>{
 		
 		let TotalPmnt = newArr.map(x=> parseInt(x.P)).filter(x=> x>0)
 			.reduce((a, b) => a + b, 0);
-		setValue({...value,'Payments':newArr, 'TtlPmnt':TotalPmnt, [blnc]: +amnt - +TotalPmnt });
+		setValue({...value,'Payments':newArr, 'TtlPmnt':TotalPmnt, [blnc]: +amnt - +TotalPmnt,
+				  'PmntStts': paymentStatus(TotalPmnt, amnt) });
 	}
 	
 	

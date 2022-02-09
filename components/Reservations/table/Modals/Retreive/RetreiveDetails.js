@@ -67,7 +67,7 @@ const getRsrvPrice=(x)=>{
 	let tmp;
 	switch (inqSourse) {
 		case 'airbnb':
-			tmp = x.abb_price!=null? x.abb_price.base: 0;
+			tmp = x.abb_price!=null? x.abb_price.payout: 0;
 			break;
 		case 'Expedia.com':
 			tmp = x.expedia_price.before_taxes
@@ -411,13 +411,13 @@ const classes = useStyles();
 				m: dateFormat(new Date(+a.check_in * 1000), 'mm'),
 				TtlRsrvWthtoutVat: Vat === false? netAmnt : netAmnt / (1 + parseFloat(vat) / 100),
 				tokeet: {
-					tokeetID: a.ref_id,
+					tokeetID: a.pkey,
 					TokeetApt: assignApts.filter((x) => x.TokeetId ===
 							 a.rental_id)[0]['TokeetApt'],
 					TokeetAmntOriginal: +basePrice,
 				},
 			};
-
+			
 			const eliminateVat = Vat ? 1 + parseFloat(vat) / 100 : 1;
 
 			let tmpAMount =

@@ -277,10 +277,8 @@ const Table =() =>{
 					content='Please Confirm'/>
 				{
 					<DataTable  value={convId2Item(rcDataPrp, ['AptName','RsrvChn'], settings)}
-							//	className="p-datatable-responsive-demo"
 								ref={(el) => setDt(el)}
 								className="p-datatable-responsive-demo"
-							//	className={classes.grid}
 								rowHover 
 								globalFilter={globalFilter}
 								header={header}

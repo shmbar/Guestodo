@@ -259,7 +259,7 @@ const Pricing = () => {
 								className={classes.fnt}
 								style={{ fontSize: '30px', textAlign: 'center' }}
 							>
-								How many properties do you plan to manage?
+								How many properties/apartments do you plan to manage?
 							</div>
 							{/*<div
 								className={classes.fnt}

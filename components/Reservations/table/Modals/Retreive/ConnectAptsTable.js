@@ -110,10 +110,10 @@ const ConnectAptsTable = (props) => {
 						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : '' 
 					} */
 				>
-					 <Column field="el" header="" body={SetYel} style={{width: '3em', textAlign: 'right', background: 'aliceblue'}}
+					 <Column field="el" header="" body={SetYel} style={{width: '3em', textAlign: 'right', background: '#f8f9fa'}}
 						/>
-					 <Column field="TokeetApt" header='Tokeet Apartments' style={{width: '12em', background: 'aliceblue'}}/>
-					 <Column field="GstdApt" header='GuesTodo Apartments' body={setAptsDrill}  style={{background: 'aliceblue'}}/>
+					 <Column field="TokeetApt" header='Tokeet Apartments' style={{width: '12em', background: '#f8f9fa'}}/>
+					 <Column field="GstdApt" header='GuesTodo Apartments' body={setAptsDrill}  style={{background: '#f8f9fa'}}/>
 				</DataTable>
 			</div>
 		</Paper>

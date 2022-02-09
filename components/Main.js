@@ -77,7 +77,7 @@ const Main =(props) =>{
  
 	const scr = useWindowSize();
 	let scrSize = (scr==='xs' || scr==='sm');
-	const {setRcDataPrp, calendarView} = useContext(RcContext);
+	const {setRcDataPrp, calendarView, setSlotsTable} = useContext(RcContext);
 	const {setExDataPrp} = useContext(ExContext);
 	const {setCfData} = useContext(CfContext);
 	const {setVtData} = useContext(VtContext);
@@ -263,6 +263,7 @@ const Main =(props) =>{
 		setSettings([]);
 		setSettingsShows([]);
 		setPage('');
+		setSlotsTable([])
 		props.history.push('/login');
 	}
 
