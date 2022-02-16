@@ -112,7 +112,7 @@ const PaymentsPaper = (props) =>{
 									<IconButton
 											disabled={value.pStatus==='Tentative'}
 										  aria-label="toggle password visibility"
-									      onClick={write && CopyAmount}
+									      onClick={write ? CopyAmount : null}
 									>
 										<FilterNoneIcon /> 
 									</IconButton></span>

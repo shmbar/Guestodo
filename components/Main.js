@@ -60,6 +60,8 @@ import FundSelect from './Subcomponents/FundSelect';
 import TimeOut from './Subcomponents/Idle/timeOut';
 import Logo from './LandingPage/Menu/Logo.svg';
 
+import PmntNotification from './Subcomponents/pmntNotification';
+
 const drawerWidth = 220;
 
 const override = css`
@@ -218,20 +220,17 @@ const Main =(props) =>{
 				let sets = (await readDatSettings(uidCollection, 'settings')).reduce((a, c) => ({...a, ...c}),
 				Object.create(null));
 			
-			
-				
 				if(JSON.stringify(sets) === '{}'){ //in case empty setting or serve problem
 					alert('Network problem has occured. Please refresh or press "F5"');
 					return;
 				}
 
-			
+				
 				setSettings(sets);
-				setInitials(sets) 
+				setInitials(sets)  
 		}
 		
 		setAllSettings();
-		
 		
 	},[user, setSettings, uidCollection, setInitials ]);
 	
@@ -270,10 +269,11 @@ const Main =(props) =>{
   function handleDrawerClose() {
     setOpenMenu(false);
   }
-
+  
+	
   return (
     <div className={classes.root}>
-		
+		<PmntNotification />
       <CssBaseline />
       <AppBar   position="fixed" className={clsx(classes.appBar, {[classes.appBarShift]: openMenu})}   >
         <Toolbar>
@@ -391,6 +391,7 @@ const Main =(props) =>{
 		  
       </main>
 		  {displayVat && <VatModal />}
+		  
     </div>
   );
 }

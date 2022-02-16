@@ -32,12 +32,12 @@ const Dates = (props) =>{
 				<Grid item xs={12} md={4}>
 					<MRangePickerVat	value={value} setValue={setValue} date={date}/>
 				</Grid>
-			{write && <Grid item xs={12} md={4} style={{marginLeft: '10px' }}>
+				<Grid item xs={12} md={4} style={{marginLeft: '10px' }}>
 					<Button variant="contained" onClick={props.Calculate}
 					color="primary"
-						disabled={(value.inputVat==='') ? true: false}
+						disabled={(value.inputVat==='' || !write) ? true: false}
 						> Calculate Vat</Button>
-				</Grid> }
+				</Grid> 
 				<Grid item xs={12} md={6} style={{paddingTop:'20px', paddingBottom:'24px'}}>
 					<RowOut name='Revenue Amount (Before VAT)'
 						value='' st={true}

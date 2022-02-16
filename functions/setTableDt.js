@@ -17,10 +17,10 @@ import {Tooltip} from '@material-ui/core';
 const dateFormat = require('dateformat');
 
 const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
-				 {brnd: 'Airbnb', img: Airbnb, width: '85px'},
+				 {brnd: 'Airbnb', img: Airbnb, width: '80px'},
 				 {brnd: 'Tripadvisor', img: Tripadvisor, width: '95px'},
 				 {brnd: 'Agoda', img: Agoda, width: '80px'},
-				 {brnd: 'Flipkey', img: Flipkey, width: '80px'},
+				 {brnd: 'Flipkey', img: Flipkey, width: '90px'},
 				 {brnd: 'Expedia', img: Expedia, width: '85px'},
 				 {brnd: 'HomeAway', img: HomeAway, width: '95px'},
 				 {brnd: 'DefaultChannel', img: DefaultChannel, width: '90px'},

@@ -51,7 +51,7 @@ const OtherIncomeModal = (props) =>{
 	const {displayDialogSettings, runTab, settings, updtSettings,
 		   	setSettingsShows, settingsShows} = useContext(SettingsContext);
 	const {date} = useContext(SelectContext);
-	const {uidCollection} = useContext(AuthContext);
+	const {uidCollection, write} = useContext(AuthContext);
 	
 	useEffect(()=>{
 		
@@ -168,9 +168,9 @@ const OtherIncomeModal = (props) =>{
             <Typography variant="h6" className={classes.title}>
 				{scrSize ? 'Extra Revenue': 'Company Extra Revenue Details'}
             </Typography>
-			  <Button color="inherit" onClick={handleSave} >
+			 {write && <Button color="inherit" onClick={handleSave} >
               Save
-            </Button>
+            </Button>}
           </Toolbar>
         </AppBar>;
 

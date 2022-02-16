@@ -8,7 +8,7 @@ import {ExpCompare, RevenueCompare, PLCompare, ExpenseGroup, PieChart, OccupPrcn
 import PannelData from './SubComponents/PannelData';
 import { makeStyles } from '@material-ui/core/styles';
 //import 'chartjs-plugin-datalabels';
-import {idToItem /*,  addDataSettings  addData */, readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,
+import {idToItem ,/*  addDataSettings,  addData, addNewSlotDoc ,*/ readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,
 		setSets, getFees } from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 
@@ -258,20 +258,19 @@ const Dashboard = () => {
 						PLCmpr: PLCompare(PLCurrentYear,PLPrevYear, date).obj,
 						ExpensesGroup: ExpenseGroup(expOwner, ExpGroup, 1).obj,
 						ChnPie:PieChart(tmpObj, '').obj, /*Occpnc: Occupancy, */
-				});
+				}); 
 
 			setLoading(false);
 		}
 
-		runData();
+		runData(); 
 
 	},[  date, settings , uidCollection, expOwner,admn, propertySlct, setLoading])
 	
 	const runAA=async()=>{
 		
-			
 		
-		
+	
 	//		await setSets('903dbfe0-5cb3-4e71-b389-781bed81558b')
 		
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
@@ -279,6 +278,11 @@ const Dashboard = () => {
 	//await setPmnt(uidCollection, 'reservations_2022', settings, 'payments') //paymentsCompany
 	//	await setNewRsrvCncl('3dd6714a-5777-43d1-b87b-67eee361d6e4', 'reservations_2021')
    
+		
+	//	uploadDataSettings('17dbdfee-0b5d-40a4-8042-122a8211b124')
+	//	uploadData(uidCollection)
+	//	uploadSlots(uidCollection)
+		
 	}
 
 	
@@ -335,7 +339,7 @@ const Dashboard = () => {
 					</Paper>
 		  		</Grid>
 		  	</Grid>
-			{/*<button style={{width: '50px', height: '50px'}}onClick={runAA}></button> */}
+			{/*<button style={{width: '50px', height: '50px'}}onClick={runAA}></button>*/ }
 	</div>
 	)
 	
@@ -347,7 +351,7 @@ export default Dashboard;
 /*
 		const uploadDataSettings = async(uidCollection) =>{
 			
-			let sets = obj
+			let sets = obj.settings
 		
 			console.log(	sets.owners	);
 		
@@ -374,56 +378,57 @@ export default Dashboard;
 			
 			await addDataSettings(uidCollection,'settings',  'pmntMethods', {pmntMethods:sets.pmntMethods	})
 		}
-
-
+*/
+/*
 		const uploadData = async(uidCollection) =>{
 		
 		console.log(obj)	
 		
-	/*	let zz = obj.expensesCompany_2021
+		let zz = obj.expensesCompany_2021
 		for(let i in zz){await addData(uidCollection, 'expensesCompany', dateFormat(zz[i].AccDate, 'yyyy'), zz[i] )	} 
 		
-		let zz = obj.cashflowCompany_2021
+		zz = obj.cashflowCompany_2021
 		for(let i in zz){await addData(uidCollection, 'cashflowCompany', dateFormat(zz[i].TransactionDate, 'yyyy'), zz[i])} 
 		
-		let zz = obj.cashflow_2021
+		zz = obj.cashflow_2021
 		for(let i in zz){await addData(uidCollection, 'cashflow', dateFormat(zz[i].TransactionDate, 'yyyy'), zz[i])	} 
 		
-		let zz = obj.expenses_2021
+		zz = obj.expenses_2021
 		for(let i in zz){await addData(uidCollection, 'expenses', dateFormat(zz[i].AccDate, 'yyyy'), zz[i] )} 
 		
-		let zz = obj.incomeCompany_2021
+		zz = obj.incomeCompany_2021
 		for(let i in zz){
 				let dt = zz[i].Transaction.substring(zz[i].Transaction.length-4, zz[i].Transaction.length).toString();
 				await addData(uidCollection, 'incomeCompany', dt, zz[i])
 		} 
 		
-		let zz = obj.otherIncomeCompany_2021
+		zz = obj.otherIncomeCompany_2021
 		for(let i in zz){
 			await addData(uidCollection, 'otherIncomeCompany', dateFormat(zz[i].AccDate, 'yyyy'), zz[i])
 		}  
 		
-		let zz = obj.otherIncome_2021
+		zz = obj.otherIncome_2021
 		for(let i in zz){await addData(uidCollection, 'otherIncome', dateFormat(zz[i].AccDate, 'yyyy'), zz[i])	} 
 		
-		let zz = obj.reservations_2021
+		zz = obj.reservations_2021
 		for(let i in zz){await addData(uidCollection, 'reservations', dateFormat(zz[i].ChckIn, 'yyyy'), zz[i])	} 
 		
-		let zz = obj.vatcalCompany_2021
+		zz = obj.vatcalCompany_2021
 		for(let i in zz){await addData(uidCollection, 'vatcalCompany',  dateFormat(zz[i].From, 'yyyy'), zz[i])	} 
 		
 		
-		let zz = obj.vatcal_2021
-		for(let i in zz){await addData(uidCollection, 'vatcal',  dateFormat(zz[i].From, 'yyyy'), zz[i])	} */
+		zz = obj.vatcal_2021
+		for(let i in zz){await addData(uidCollection, 'vatcal',  dateFormat(zz[i].From, 'yyyy'), zz[i])	} 
 		
+	} 
+			*/
 		
-		
-		
-		
-			
-			
-			
-	//} 
-			
-			
 	
+/*const uploadSlots = async(uidCollection) =>{
+		
+		let zz = Object.keys(obj.slotsArr)
+			for(let i in zz){
+				await addNewSlotDoc(uidCollection, zz[i], '2021', obj.slotsArr[zz[i]])
+			}
+		}
+*/

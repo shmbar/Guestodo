@@ -90,7 +90,7 @@ const ConnectAptsTable = (props) => {
 
 	
 	return (
-		<Container maxWidth="sm" style={{margin: 0 }}>
+		<Container maxWidth="md" style={{margin: 0 }}>
 		<Paper className={classes.root}  >
 			<div className="datatable-responsive-demo">
 				<DataTable
@@ -101,18 +101,18 @@ const ConnectAptsTable = (props) => {
 					footer={footer}
 					paginator={false}
 				
-					rows={50}
-				//	rowsPerPageOptions={[5, 10, 20]}
-				/*	paginatorTemplate="CurrentPageReport FirstPageLink 
+					rows={20}
+					rowsPerPageOptions={[5, 10, 20]}
+					paginatorTemplate="CurrentPageReport FirstPageLink 
 							   PrevPageLink PageLinks NextPageLink LastPageLink 
 							   RowsPerPageDropdown" 
-					currentPageReportTemplate={
+					/*currentPageReportTemplate={
 						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : '' 
 					} */
 				>
-					 <Column field="el" header="" body={SetYel} style={{width: '3em', textAlign: 'right', background: '#f8f9fa'}}
+					 <Column field="el" header="" body={SetYel} style={{width: '5em', textAlign: 'center', background: '#f8f9fa'}}
 						/>
-					 <Column field="TokeetApt" header='Tokeet Apartments' style={{width: '12em', background: '#f8f9fa'}}/>
+					 <Column field="TokeetApt" header='Tokeet Apartments' style={{ background: '#f8f9fa'}}/>
 					 <Column field="GstdApt" header='GuesTodo Apartments' body={setAptsDrill}  style={{background: '#f8f9fa'}}/>
 				</DataTable>
 			</div>

@@ -401,7 +401,7 @@ const RsrvAmounts = () =>{
 							  <TextField   
 								value={Num2(value.RsrvAmnt)}    
 								label="Total Amount Paid by Guest"
-							//	InputProps={{inputComponent: NumberFormatCustom, readOnly: true,}}
+								InputProps={{inputComponent: NumberFormatCustom, readOnly: true,}}
 								fullWidth
 								 error={value.NetAmnt==='' && redValid ? true: false}
 							  />

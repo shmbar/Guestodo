@@ -238,16 +238,16 @@ const Table =() =>{
 	}
 	
 	const header = <Header 
-                                onChange={onSearchChange}
-                                runFltr={()=> setShowFilter(!showFilter)}
-                                showFilter={showFilter}
-                                searchValue={searchValue}
-                                resetFltr={resetFilter}
-                                handleToggleCols={handleToggleCols}
-                                cols={cols}
-                                tableData={setSHortTr(convId2Item(rcDataPrp, ['AptName','RsrvChn', 'TtlRsrvWthtoutVat', 'RsrvAmnt', 'TtlPmnt'], settings))}
-					   			showOwners={false}
-					   			showSearch={true}
+						onChange={onSearchChange}
+						runFltr={()=> setShowFilter(!showFilter)}
+						showFilter={showFilter}
+						searchValue={searchValue}
+						resetFltr={resetFilter}
+						handleToggleCols={handleToggleCols}
+						cols={cols}
+						tableData={setSHortTr(convId2Item(rcDataPrp, ['AptName','RsrvChn', 'TtlRsrvWthtoutVat', 'RsrvAmnt', 'TtlPmnt'], settings))}
+						showOwners={false}
+						showSearch={true}
 							/> ;  
 							
 						

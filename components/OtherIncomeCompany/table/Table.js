@@ -57,7 +57,7 @@ const Table =() =>{
 	const [id, setId] = useState('');			 						 				 
 	const {settings} = useContext(SettingsContext);
 	const {date} = useContext(SelectContext);
-	const {uidCollection} = useContext(AuthContext);	
+	const {uidCollection, write} = useContext(AuthContext);	
 	
 	useEffect(()=>{
 	
@@ -202,9 +202,9 @@ const Table =() =>{
 						rows={10} rowsPerPageOptions={[5,10,20]}>
 					{dynamicColumns}
 			</DataTable>
-			<Fab color="primary" aria-label="add" className={classes.button} onClick={addOrder}>
+			{write && <Fab color="primary" aria-label="add" className={classes.button} onClick={addOrder}>
 	  						<AddIcon />
-			</Fab>
+			</Fab>}
 			{ displayDialog ?  <OtherIncomeModal  />: null}
 		</Grid>
 		</div>

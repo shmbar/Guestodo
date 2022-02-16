@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import useWindowSize from '../../../../../hooks/useWindowSize';
@@ -10,6 +10,7 @@ import { convId2Item, readDataSlots, getNewTR, checkAvailableSlot } from '../../
 import EditIcon from '@material-ui/icons/Edit';
 import { v4 as uuidv4 } from 'uuid';
 import {showDataTable} from '../../../../../functions/setTableDt.js';
+import { InputText } from 'primereact/inputtext';
 
 const dateFormat = require('dateformat');
 
@@ -20,7 +21,6 @@ const tableCols = [
 	{field: 'RsrvChn', header: 'Channel', showcol: true},	
 	{ field: 'PrpName', header: 'Property', showcol: true },
 	{ field: 'AptName', header: 'Apartment', showcol: true },
-	{ field: 'pStatus', header: 'Status', showcol: true },
 	{ field: 'el', header: '', el: 'el', showcol: true },
 ];
 
@@ -28,11 +28,14 @@ const TktReservationsTable = (props) => {
 	const scrSize = useWindowSize();
 	const { settings } = useContext(SettingsContext);
 	const {selectValue, setSlotsTable, setRcTable, setIsSlotAvailable} = useContext(RcContext);
+	const [globalFilter,setGlobalFilter] = useState(null);
+	const [searchValue, setSearchValue] = useState('');
+	
 	const useStyles = makeStyles((theme) => ({
 		root: {
 			padding: scrSize === 'xs' ? theme.spacing(1, 1, 5, 1) : theme.spacing(1, 4, 5, 4),
 			display: 'grid',
-			maxWidth: 1200,
+			maxWidth: 1400,
 			background: '#f8f9fa'
 		},
 	}));
@@ -96,20 +99,39 @@ const TktReservationsTable = (props) => {
 						''}
 				headerStyle={{ overflow: 'visible', textAlign: 'center', background: '#f8f9fa' }}
 				style={{ textAlign: 'center', background: '#f8f9fa' }}
+				sortable
 				//	filter={col.field!=='el'? showFilter:false}
 			/>
 		);
 	});
+	
+	const onSearchChange = (event) => { 
+        setGlobalFilter(event.target.value);
+        setSearchValue(event.target.value);
+    }; 
+	
 
+	const searchBox =   <div className="flex justify-content-between">
+                				<span className="p-input-icon-left">
+                   				<i className="pi pi-search" />
+                    			<InputText value={searchValue} onChange={onSearchChange} placeholder="Keyword Search" />
+                				</span>
+            			</div>
+	
 	return (
 		<Paper className={classes.root}>
-			<h4 className="ttlClr">Tokeet reservations</h4>
+			<div style={{display:'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
+				<h4 className="ttlClr">Tokeet reservations</h4>
+				{searchBox}
+			</div>
+			
 			<div className="datatable-responsive-demo">
 				<DataTable
 					value={convId2Item(props.gstdAptsArr.map(x=> ({...x, TokeetApt:
 						x.tokeet.TokeetApt})), ['AptName', 'PrpName', 'RsrvChn'], settings)}
 					className="p-datatable-responsive-demo"
 					paginator={true}
+					globalFilter={globalFilter}
 					rows={10} rowsPerPageOptions={[5,10,20]}
 								paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
 							   PageLinks NextPageLink LastPageLink RowsPerPageDropdown"

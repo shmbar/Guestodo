@@ -49,7 +49,7 @@ const CashFlowModal = (props) =>{
 	const {displayDialogSettings, runTab, settings, updtSettings,
 		   	settingsShows, setSettingsShows} = useContext(SettingsContext);
 	const {date} = useContext(SelectContext);
-	const {uidCollection} = useContext(AuthContext);
+	const {uidCollection, write} = useContext(AuthContext);
 	
 	useEffect(()=>{
 		
@@ -134,9 +134,9 @@ const CashFlowModal = (props) =>{
             <Typography variant="h6" className={classes.title}>
 				{scrSize ? 'Money Transfer Details': 'Company Money Transfer Details'}
             </Typography>
-			  <Button color="inherit" onClick={handleSave} >
+			  {write && <Button color="inherit" onClick={handleSave} >
               Save
-            </Button>
+            </Button> }
           </Toolbar>
         </AppBar>;
 

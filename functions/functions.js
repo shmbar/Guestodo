@@ -816,6 +816,16 @@ export const getTokeetCredentials = async(doc)=>{
 };
 ///////////////////////////////////////////////////////////////////////
 
+export const getSubsciptionData = (x)=>{
+	
+	return db.collection(x).doc('subscription').get()
+		.then((doc) => {
+   			return doc.data();
+	})
+   .catch((error) => {
+    console.log("Error getting document:", error);
+	});
+};
 /*
 export const setID=async(uidCollection, collection)=>{
 	

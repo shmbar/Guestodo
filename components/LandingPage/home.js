@@ -8,7 +8,7 @@ import CheckedIcon from './checked.png';
 import Footer from './Footer/footer';
 import Button from '@material-ui/core/Button';
 import quote from './Pics/quote.svg';
-import idanPic from './Pics/idanPic.jpg';
+import idanPic from './Pics/idanPic.png';
 import nirPic from './Pics/nirPic.jpg';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';

@@ -28,13 +28,13 @@ export default function DatesRangePicker(props) {
     const [dates, setDates] = useState({ start: '', end: ''});
     const { date } = useContext(SelectContext);
     const [arrdays, setArrdays] = useState([]);
-    const [pDate, setPDate] = useState(date);
     const weekDays = ['SU', 'MO', 'TU', 'WE', ' TH', 'FR', 'SA'];
 	const {slotsTable, rcTable, value,handleChangeDNew, setSlotsTable, setRcTable, setIsSlotAvailable} = useContext(RcContext);
+	const [pDate, setPDate] = useState(value.m==null ? date : {month: value.m*1 - 1, year: date.year});
 	const [disSchedule, setDisSchedule] = useState([]);
 	const [slotsChange, setSlotsChange] = useState([]);
 	const {uidCollection} = useContext(AuthContext);
-	
+
     useEffect(() => {
         let firstDay = new Date(pDate.year, pDate.month, 1).getDay();
         let lastDay = 32 - new Date(pDate.year, pDate.month, 32).getDate();

@@ -53,7 +53,7 @@ export default function PaperSheet() {
 		setDisplayRetrieveDialog,
 	} = useContext(RcContext);
 	const { date, setDate, propertySlct, multiPropertySlct } = useContext(SelectContext);
-	const { uidCollection } = useContext(AuthContext);
+	const { uidCollection, PropMangr, admn, creator, write } = useContext(AuthContext);
 	const { setLoading, settings } = useContext(SettingsContext);
 
 	const useStyles = makeStyles((theme) => ({
@@ -211,7 +211,7 @@ export default function PaperSheet() {
 			<Grid container direction='row' spacing={scrSize==='xs' ? 2:5} 
 				justifyContent="flex-end" alignItems="center" style={{padding: '20px'}}>
 				<Grid item>
-				{	<Button
+				{((PropMangr || admn || creator) && write)	&& <Button
 						variant="contained"
 						color="primary"
 						onClick={() => setDisplayRetrieveDialog(true)}

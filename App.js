@@ -16,7 +16,7 @@ import Contact from './components/LandingPage/contact';
 import Pricing from './components/LandingPage/pricing';
 import Terms from './components/LandingPage/termsofuse';
 import Privacy from './components/LandingPage/privacy';
-import Pmnt from './components/LandingPage/Pmnt';
+import PaymentSetUp from './components/Subcomponents/PmntSetUp';
 import Features from './components/LandingPage/features';
 import FreeDemo from './components/LandingPage/freedemo';
 import ResetPaswword from './components/Auth/passwordReset';
@@ -25,7 +25,7 @@ import {Switch, Route} from 'react-router-dom';
 
 import 'primereact/resources/themes/saga-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
-import 'primeicons/primeicons.css';
+import 'primeicons/primeicons.css'
 import { Redirect } from "react-router-dom";
 import './App.css';
 import CD from './components/Subcomponents/cookiesDrawer';
@@ -58,7 +58,7 @@ const App = (props) => {
 									<Route path="/pricing"  component={Pricing} />
 									<Route path="/terms"  component={Terms} />
 									<Route path="/privacy"  component={Privacy} />
-									<Route path="/pmnt"  component={Pmnt} />
+									<Route path="/paymentsubscription"  component={PaymentSetUp} />
 									<PrivateRoute path="/owners"  component={Main} />
 									<PrivateRoute path="/dataupload"  component={UploadData} />
 								</Switch>

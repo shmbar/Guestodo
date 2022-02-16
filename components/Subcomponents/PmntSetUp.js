@@ -1,6 +1,6 @@
-import React from 'react';
+import React, {useContext} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-
+import { AuthContext } from '../../contexts/useAuthContext';
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -45,9 +45,10 @@ const useStyles = makeStyles((theme) => ({
 
 export default function ContainedButtons() {
 	const classes = useStyles();
+	const { uidCollection } = useContext(AuthContext);
 
 	let checkoutUrl =
-		'https://store.payproglobal.com/checkout?products[1][id]=69304&page-template=22222&currency=USD&exfo=742';
+		`https://store.payproglobal.com/checkout?products[1][id]=69304&page-template=22222&currency=USD&exfo=742&x-UniqueID=${uidCollection}`;
 
 	return (
 		<div className={classes.divMain}>
@@ -56,7 +57,7 @@ export default function ContainedButtons() {
 			</div>
 			<iframe
 				frameBorder={0}
-				allowtransparency={true}
+				allowtransparency='true'
 				title="iframe"
 				src={checkoutUrl}
 				loading="lazy"

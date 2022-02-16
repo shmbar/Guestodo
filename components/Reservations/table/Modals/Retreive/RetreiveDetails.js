@@ -217,7 +217,7 @@ const classes = useStyles();
 		const client_idTmp = await getTokeetCredentials('client_id');
 
 		const response_type = 'code';
-		const scope = 'inquiries,rentals'; //'guests,inquiries,rentals,invoices';
+		const scope = 'inquiries,rentals, calendars'; //'guests,inquiries,rentals,invoices';
 		const client_id = client_idTmp.client_id;
 		const redirect_uri =
 			'https://us-central1-guestodo.cloudfunctions.net/tokeetAPI/auth-callback';
@@ -242,13 +242,13 @@ const classes = useStyles();
 		if (nowTime - lastTokenTime > 3600000) {
 			let newToken = await firebase.functions().httpsCallable('newToken');
 			await newToken(uidCollection).then(async (result) => {
-				console.log(result.data);
+				//console.log(result.data);
 			});
 
 			let getAptsTokeet = await firebase.functions().httpsCallable('getAptsTokeet');
 			await getAptsTokeet({uidCollection: uidCollection})
 				.then(async (result) => {
-				console.log(result.data);
+				//console.log(result.data);
 
 				setAssignApts(checkTokeetSets(result.data.rental.data));
 				setLoading(false);
@@ -257,7 +257,7 @@ const classes = useStyles();
 			let getAptsTokeet = await firebase.functions().httpsCallable('getAptsTokeet');
 			await getAptsTokeet({uidCollection: uidCollection})
 				.then(async (result) => {
-				console.log(result.data);
+				//console.log(result.data);
 				
 				setAssignApts(checkTokeetSets(result.data.rental.data));
 				setLoading(false);
@@ -269,6 +269,8 @@ const classes = useStyles();
 	const getTokeetReservs = async () => {
 		setLoading(true);
 		let tmpTktReservs=null;
+		let tmpCalendars=null;
+		
 		const TokeetRentalsIdList = assignApts.filter((x) => x.checked).map((y) => y.TokeetId);
 	
 		const nowTime = Date.now();
@@ -276,7 +278,7 @@ const classes = useStyles();
 		if (nowTime - lastTokenTime > 3600000) {
 			let newToken = await firebase.functions().httpsCallable('newToken');
 			await newToken(uidCollection).then(async (result) => {
-				console.log(result.data);
+				//console.log(result.data);
 			});
 
 			let getDataTokeet = await firebase.functions().httpsCallable('getDataTokeet');
@@ -285,9 +287,10 @@ const classes = useStyles();
 				start: new Date(startDate).getTime() / 1000,
 				rentals:TokeetRentalsIdList
 			}).then(async (result) => {
-				console.log(result.data);
-			//	setTokeetRsrvs(result.data.inquiry.data);
+				//console.log(result.data);
+
 				tmpTktReservs = result.data.inquiry.data;
+				tmpCalendars = result.data.calendarRsrvs.data;
 				setLoading(false);
 			});
 		} else {
@@ -298,18 +301,18 @@ const classes = useStyles();
 				start: new Date(startDate).getTime() / 1000,
 				rentals:TokeetRentalsIdList
 			}).then(async (result) => {
-				console.log(result.data);
+				//console.log(result.data);
 				
-			//	setTokeetRsrvs(result.data.inquiry.data);
 				tmpTktReservs = result.data.inquiry.data;
+				tmpCalendars = result.data.calendarRsrvs.data;
 				setLoading(false);
 			});
 		}
 
 		const tokeetIdList = await getTokeetIdList(uidCollection);
 		setTokeetIdList(tokeetIdList.map((a) => a.tokeetID));
-		
-		return tmpTktReservs;
+	
+		return {tmpTktReservs:tmpTktReservs , tmpCalendars:	tmpCalendars.filter(x=> TokeetRentalsIdList.includes(x.rental_id))};
 	};
 	
 	const handleChange = (e, row) => {
@@ -328,22 +331,20 @@ const classes = useStyles();
 	
 	const handleChangeChecked = (row) => {
 		setAssignApts(assignApts.map((x, k) => (x.TokeetId !== row.TokeetId ? x :
-					{ ...x, checked: !x.checked,
-					GstdApt: x.checked ? '' :  x.GstdApt, 
-					GstdAptID: x.checked ? '' :  x.GstdAptID })));
+					{ ...x, checked: !x.checked})));
 	};
 
 	const importLines = async () => {
 		setLoading(true);
 
-		let tktReservs = await getTokeetReservs();
-		tktReservs = tktReservs.filter(x=> x.booked!==0)
-		
-	//	const AptsInitialData = tktReservs.filter((x) => TokeetRentalsIdList.includes(x.rental_id));
-	
+		let tktData = await getTokeetReservs();
+		let tktReservs = tktData.tmpTktReservs.filter(x=> x.booked!==0)
+		tktReservs = [...tktReservs,...tktData.tmpCalendars]
+
 		let newArr = [];
 		for (let k in tktReservs) {
 			let a = tktReservs[k];
+			let Nrsrv = a.check_in ? true: false; // Normal reservation or hold resservation
 			
 			let GstAptName = assignApts.filter((x) => x.TokeetId === a.rental_id)[0]['GstdApt'];
 			let set1 = settings.apartments.filter((x) => x.AptName === GstAptName)[0];
@@ -361,23 +362,25 @@ const classes = useStyles();
 				(x) => getIdChannel(a.inquiry_source, settings) === x.id
 			)[0]['ChnCmsn'];
 			
-			const basePrice = getRsrvPrice(a)
+			const basePrice = Nrsrv ? getRsrvPrice(a): 0;
 			
 			let netAmnt = (+basePrice / (1 + +vat / 100 - +ChnPrcnt1 / 100)) *
 					(1 + vat / 100)
 			
 			let tmpObj = {
-				ChckIn: dateFormat(new Date(+a.check_in * 1000), 'dd-mmm-yyyy'),
-				ChckOut: dateFormat(new Date(+a.check_out * 1000), 'dd-mmm-yyyy'),
+				ChckIn: Nrsrv ? dateFormat(new Date(+a.check_in * 1000), 'dd-mmm-yyyy'):
+						dateFormat(new Date(+a.start * 1000), 'dd-mmm-yyyy'), 
+				ChckOut: Nrsrv ? dateFormat(new Date(+a.check_out * 1000), 'dd-mmm-yyyy'):
+						dateFormat(new Date(+a.end * 1000), 'dd-mmm-yyyy'),
 				Transaction: '',
 				Payments: [{ P: '', Date: null, PM: '', id: uuidv4() }],
 				Vat: Vat,
 				PrpName: PrpName,
-				RsrvChn: getIdChannel(a.inquiry_source, settings),
+				RsrvChn: Nrsrv ? getIdChannel(a.inquiry_source, settings): getIdChannel(a.source, settings),
 				NetAmnt: netAmnt,
 				CnclFee: '',
 				ChnPrcnt: settings.channels.filter(
-					(x) => getIdChannel(a.inquiry_source, settings) === x.id
+					(x) => getIdChannel(Nrsrv ? a.inquiry_source: a.source, settings) === x.id
 				)[0]['ChnCmsn'],
 				Fees: settings.properties
 					.filter(
@@ -391,16 +394,17 @@ const classes = useStyles();
 							x.id === settings.apartments.filter((x) => x.id === AptID)[0]['PrpName']
 					)[0]
 					['Taxes'].map((x) => ({ ...x, show: true })),
-				NigthsNum: getNights(+a.check_out * 1000, +a.check_in * 1000),
+				NigthsNum: Nrsrv ? getNights(+a.check_out * 1000, +a.check_in * 1000):
+							getNights(+a.end * 1000, +a.start * 1000),
 				TtlPmnt: '',
-				GstName: a.guest_details.name,
+				GstName: Nrsrv ? a.guest_details.name: a.title,
 				AptName: AptID,
-				pStatus: 'Tentative',
+				pStatus: 'Confirmed',
 				dtls: {
-					adlts: a.num_adults,
-					chldrn: a.num_child,
+					adlts: Nrsrv ? a.num_adults: '',
+					chldrn: Nrsrv ? a.num_child: '',
 					Passport: '',
-					email: a.guest_details.email,
+					email: Nrsrv ? a.guest_details.email: '',
 					mobile: '',
 					phone: '',
 					addrss: '',
@@ -408,12 +412,11 @@ const classes = useStyles();
 				},
 				//	LstSave: dateFormat(Date(), 'dd-mmm-yyyy'),
 				PmntStts: 'Unpaid',
-				m: dateFormat(new Date(+a.check_in * 1000), 'mm'),
+				m: Nrsrv ? dateFormat(new Date(+a.check_in * 1000), 'mm'):dateFormat(new Date(+a.start * 1000), 'mm'),
 				TtlRsrvWthtoutVat: Vat === false? netAmnt : netAmnt / (1 + parseFloat(vat) / 100),
 				tokeet: {
 					tokeetID: a.pkey,
-					TokeetApt: assignApts.filter((x) => x.TokeetId ===
-							 a.rental_id)[0]['TokeetApt'],
+					TokeetApt: assignApts.filter((x) => x.TokeetId === a.rental_id)[0]['TokeetApt'],
 					TokeetAmntOriginal: +basePrice,
 				},
 			};
@@ -429,8 +432,9 @@ const classes = useStyles();
 
 			newArr.push(tmpObj);
 		}
-
-		setGstdAptsArr(newArr);
+	
+	
+		setGstdAptsArr(newArr.filter(x=> (x.m*1-1)===startDate.getMonth())); //show only the reservations of the selected month
 
 		setLoading(false);
 	};
