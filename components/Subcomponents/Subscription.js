@@ -1,20 +1,16 @@
-import React, { useState } from 'react';
+import React, { useState, useContext } from 'react';
 import { Container, Grid } from '@material-ui/core';
-import MMenu from './Menu/MainMenu';
 import { makeStyles } from '@material-ui/core/styles';
 import { Button } from 'primereact/button';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-//import FormControl from '@material-ui/core/FormControl';
-//import Select from '@material-ui/core/Select';
-//import MenuItem from '@material-ui/core/MenuItem';
 import Card from '@material-ui/core/Card';
 import CardContent from '@material-ui/core/CardContent';
 import Slider from '@material-ui/core/Slider';
-import CheckedIcon from './checked.png';
+import CheckedIcon from '../LandingPage/checked.png';
 import { Link } from 'react-router-dom';
-import Footer from './Footer/footer';
 import {addComma} from '../../functions/functions.js';
+import {SettingsContext} from '../../contexts/useSettingsContext'; 
 
 const marks = [
 	{
@@ -27,41 +23,9 @@ const marks = [
 
 const AnnualDiscount = '15%';
 const useStyles = makeStyles((theme) => ({
-	root: {
-		backgroundColor: '#193E6D',
-		marginTop: '80px',
-		padding: '30px 0',
-		[theme.breakpoints.down('md')]: {
-			marginTop: '70px',
-		},
-	},
-	containerBlueUpperText: {
-		color: '#193e6d',
-		fontFamily: '"Poppins", Sans-serif',
-		fontSize: '36px',
-		fontWeight: 600,
-		lineHeight: '55px',
-		letterSpacing: '0.2px',
-		textAlign: 'left',
-		[theme.breakpoints.down('md')]: {
-			lineHeight: '45px',
-		},
-		[theme.breakpoints.down('sm')]: {
-			fontSize: '25px',
-		},
-	},
 	txt: {
 		fontFamily: '"Poppins", Sans-serif',
 		fontSize: '18px',
-	},
-	inptNumber: {
-		height: '39px',
-		width: '60px',
-		borderRight: 'none',
-		borderLeft: 'none',
-		borderBottom: '1px solid rgba(0, 0, 0, 0.12)',
-		borderTop: '1px solid rgba(0, 0, 0, 0.12)',
-		textAlign: 'center',
 	},
 	tglBTN1: {
 		width: '50px',
@@ -86,12 +50,6 @@ const useStyles = makeStyles((theme) => ({
 	},
 	select: {
 		width: '250px',
-	},
-	select1: {
-		border: '1px solid rgba(0, 0, 0, 0.12)',
-		height: '40px',
-		borderRadius: '22px',
-		textAlign: 'center',
 	},
 	divGray: {
 		backgroundColor: '#f2f6fa',
@@ -133,7 +91,8 @@ const Pricing = () => {
 	//const [pricePerPrp, setPricePerPrp] = useState((29 / 5).toFixed(2));
 	const [ttlPrice, setTtlPrice] = useState(29);
 	const [maxPrp,setMaxPrp] = useState(5)
-
+	const {setSubscriptionPlan} = useContext(SettingsContext);
+	
 	const backGround = (x) => {
 		return alignment === x ? { background: '#5EC198' } : { background: 'white' };
 	};
@@ -149,6 +108,7 @@ const Pricing = () => {
 		//	setPricePerPrp(((x / value) * (1 - parseFloat(AnnualDiscount) / 100)).toFixed(2));
 			setTtlPrice((x * (1 - parseFloat(AnnualDiscount) / 100)*12).toFixed(2));
 		}
+
 		setMaxPrp(mxPrp)
 	};
 
@@ -157,18 +117,25 @@ const Pricing = () => {
 		setNumPrp(value);
 
 		if (value === 1) {
+			if(tmp==='left'){setSubscriptionPlan('71579')}else{setSubscriptionPlan('71580')}
 			calc(9, value, tmp, 1);
 		} else if (value >= 2 && value <= 5) {
+			if(tmp==='left'){setSubscriptionPlan('71582')}else{setSubscriptionPlan('71581')}
 			calc(29, value, tmp,5);
 		} else if (value >= 6 && value <= 10) {
+			if(tmp==='left'){setSubscriptionPlan('71583')}else{setSubscriptionPlan('71584')}
 			calc(49, value, tmp,10);
 		} else if (value >= 11 && value <= 15) {
+			if(tmp==='left'){setSubscriptionPlan('71585')}else{setSubscriptionPlan('71586')}
 			calc(69, value, tmp,15);
 		} else if (value >= 16 && value <= 20) {
+			if(tmp==='left'){setSubscriptionPlan('71587')}else{setSubscriptionPlan('71588')}
 			calc(89, value, tmp,20);
 		} else if (value >= 21 && value <= 35) {
+			if(tmp==='left'){setSubscriptionPlan('71591')}else{setSubscriptionPlan('71589')}
 			calc(149, value, tmp,35);
 		} else if (value >= 36 && value <= 50) {
+			if(tmp==='left'){setSubscriptionPlan('71593')}else{setSubscriptionPlan('71595')}
 			calc(179, value, tmp,50);
 		}
 	}
@@ -199,20 +166,6 @@ const Pricing = () => {
 	
 	return (
 		<div>
-			<MMenu />
-			<div className={classes.root}>
-				<Container maxWidth="lg">
-					<div
-						className={classes.containerBlueUpperText}
-						style={{ textAlign: 'center', fontWeight: 400, color: '#ffffff' }}
-					>
-						<p>Simple, clear pricing for all.</p>
-						<p style={{ fontSize: '30px' }}>
-							For more than 50 rentals, contact us to get a better deal.
-						</p>
-					</div>
-				</Container>
-			</div>
 
 			<Container maxWidth="lg">
 				<Grid
@@ -252,8 +205,8 @@ const Pricing = () => {
 				</Grid>
 			</Container>
 
-			<div className={classes.divGray} style={{ marginTop: '30px' }}>
-				<Container maxWidth="lg" style={{ padding: '40px 0' }}>
+			<div>
+				<Container maxWidth="lg" style={{ padding: '20px 0' }}>
 					<Card>
 						<CardContent>
 							<div
@@ -262,22 +215,7 @@ const Pricing = () => {
 							>
 								How many properties/apartments do you plan to manage?
 							</div>
-							{/*<div
-								className={classes.fnt}
-								style={{
-									fontSize: '45px',
-									textAlign: 'center',
-									paddingTop: '10px',
-								}}
-							>
-								{`$${pricePerPrp}  `}
-								<span
-									className={classes.fnt}
-									style={{ fontSize: '15px', textAlign: 'center' }}
-								>
-									Per property, per month
-								</span>
-							</div> */}
+						
 							<Container maxWidth="sm" style={{paddingTop: '5px'}}>
 								<Grid container >
 									<Grid item xs={12} md={6}>
@@ -387,12 +325,10 @@ const Pricing = () => {
 											</div>
 										);
 									})}
-										<Link to="/freedemo" className={classes.lnk}>
-												<Button label="Request a Demo"  className={classes.btn1} />
+										<Link to="/paymentsubscription" className={classes.lnk}>
+												<Button label="Payment"  className={classes.btn1} />
 
 										</Link>
-									
-									
 								</Grid>
 							</Grid>
 							</Container>
@@ -401,76 +337,8 @@ const Pricing = () => {
 					</Card>
 				</Container>
 			</div>
-			 <Footer />
 		</div>
 	);
 };
 
 export default Pricing;
-
-/*<Grid item>
-						<div className={classes.txt}>Select your currency:</div>
-						<FormControl variant="outlined" className={classes.select} style={{ paddingTop: '10px' }}>
-							<Select
-								value={age}
-								onChange={handleChange}
-								className={classes.select1}
-							>
-								{currencies.map((option) => (
-									<MenuItem key={option.value} value={option.value}>
-										{option.label}
-									</MenuItem>
-								))}
-								
-							</Select>
-						</FormControl>
-					</Grid> 
-*/
-/*
-const currencies = [
-		{value: '$',label: 'US Dollar - $'},
-		{value: '€',label: 'Euro  -  €'},
-		{value: '£',label: 'British Pound Sterling - £'},
-		{value: 'J¥Y',label: 'Japanese Yen - ¥'},
-		{value: '₩',label: 'South Korean Won - ₩'},
-		{value: '₹',label: 'Indian Rupee - ₹'},
-		{value: '₪',label: 'Israeli New Sheqel - ₪'},
-		{value: '₱',label: 'Philippine Peso - ₱'},
-		{value: '฿',label: 'Thai Baht - ฿'},
-		{value: '₡',label: 'Costa Rican Colón - ₡'},
-		{value: '₫',label: 'Vietnamese Dong - ₫'},
-  ];
-  */
-
-/*
-
-<Grid item>
-						<div className={classes.txt}>How many rentals you plan to manage?</div>
-						<div
-							//	onChange={handleAlignment}
-							style={{ paddingTop: '10px' }}
-						>
-							<ToggleButton
-								value="left"
-								className={[classes.tglBTN1, classes.leftBTN].join(' ')}
-								onChange={() => setNumPrp(numPrp - 1)}
-							>
-								<div style={{ color: 'white', fontSize: '40px' }}>-</div>
-							</ToggleButton>
-							<input
-								type="text"
-								value={numPrp}
-								onChange={(e) => setNumPrp(e.target.value)}
-								className={classes.inptNumber}
-							/>
-							<ToggleButton
-								value="right"
-								className={[classes.tglBTN1, classes.rightBTN].join(' ')}
-								onChange={() => setNumPrp(numPrp + 1)}
-							>
-								<div style={{ color: 'white', fontSize: '30px' }}>+</div>
-							</ToggleButton>
-						</div>
-					</Grid>
-					
-					*/

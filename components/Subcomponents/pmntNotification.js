@@ -8,21 +8,25 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import {AuthContext} from '../../contexts/useAuthContext'; 
 import {getSubsciptionData} from '../../functions/functions';
-import { Link } from 'react-router-dom';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
 	return <Slide direction="down" ref={ref} {...props} />;
 });
 
-const noteAbove45 = <>You have reached the maximum free demo perioid.
+const noteAbove45 = <>Your GuesTodo free trial has ended. Upgrading to a paid plan allows you to
+						continue working with GuesTodo's features, integrations, calendar and many 
+						more.<br></br>
 						Please follow the <b>Subscription</b> button for payment.<br></br>
 						You will still be able to use GuesTodo app in read mode only.</>
+
+
 const noteAbove3045 = <>Your free demo period has ended. To ensure that your services are not interrupted, please set your billing account with a 							valid payment information by following <b>Subscription</b> button below. <br></br>
 							If you have already updated your payment information, please disregard this message.</>
 const noteAbove2030 = <>Your free demo period is about to end. To ensure that your services are not interrupted, please set your billing account with a 							valid payment information by following <b>Subscription</b> button below. <br></br>
 							If you have already updated your payment information, please disregard this message.</>
 
-export default function AlertDialogSlide() {
+export default function AlertDialogSlide(props) {
+	
 	const [open, setOpen] = useState(false);
 	const [note,setNote] = useState(null)
 	const {uidCollection, user, setWrite}  = useContext(AuthContext);
@@ -31,7 +35,12 @@ export default function AlertDialogSlide() {
 		setOpen(false);
 	};
 	
+	const handleClose1 = () => {
+		setOpen(false);
+		props.setPage('Subscription');
+	};
 	
+
 	useEffect(()=>{
 		
 		const checkPayment = async () => {
@@ -68,7 +77,7 @@ export default function AlertDialogSlide() {
 					} else if (diff > 45 ) {
 						setNote(noteAbove45)
 						setOpen(true)
-						setWrite(false)
+					//	setWrite(false)
 					}
 				}
 			}
@@ -98,11 +107,9 @@ export default function AlertDialogSlide() {
 					</DialogContentText>
 				</DialogContent>
 				<DialogActions>
-					<Link to='/paymentsubscription'>
-						<Button onClick={handleClose} color="primary">
-							Subscription 
-						</Button>
-					</Link>
+					<Button onClick={handleClose1} color="primary">
+						Subscription 
+					</Button>
 					<Button onClick={handleClose} color="primary">
 						Exit
 					</Button>

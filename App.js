@@ -49,7 +49,7 @@ const App = (props) => {
 								<Switch>
 									<Route exact path='/' render={()=> <Redirect to='/home' />} />
 									<Route path='/login' component={Login} />
-									<Route path='/signup123' component={SignUp} />
+									<Route path='/signup' component={SignUp} />
 									<Route path='/home' component={Home} />
 									<Route path="/contact"  component={Contact} />
 									<Route path="/features"  component={Features} />

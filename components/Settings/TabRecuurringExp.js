@@ -88,7 +88,7 @@ const TabExpRecurring =() =>{
 	
 	 const createEmptyObj = () =>{
         let tmpObj={Amnt: '',AptName: '',BlncExp: '',CostType: "Fixed Cost",ExpAmntWthtoutVat: '',	ExpType: '',
-		Expander: '',	Payments: [{Date:null, P: '', PM: ''}],	PmntStts: "Unpaid",	PrpName: '',TtlPmnt: '',Vat: false,
+		Expander: '',	Payments: [{Date:null, P: '', PM: '', id: uuidv4()}],	PmntStts: "Unpaid",	PrpName: '',TtlPmnt: '',Vat: false,
 		VatAmnt: '', recEnd: null,	recTransaction: uuidv4(),	startDate: null,uidCollection: uidCollection,vendor: ''}
 		
 		 return tmpObj;

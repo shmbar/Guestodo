@@ -71,11 +71,13 @@ export const setBalance=(arr, initCash)=>{
 }
 
 export const ChnnlPmnt = (pmnt, channelCommision, vat, pmntsSets)=>{
-
-            let cst = pmnt.Vat ? +(+pmnt.P/(1+parseFloat(vat)/100)*channelCommision).toFixed(2) : +(+pmnt.P*channelCommision).toFixed(2)
-
+            let cst = +(+pmnt.ChnPayment*channelCommision).toFixed(2)
+			
+			//Old Method Payment
+			 let oldP = pmnt.Vat ? +(+pmnt.P/(1+parseFloat(vat)/100)*channelCommision).toFixed(2) : +(+pmnt.P*channelCommision).toFixed(2)
+			
                let newObj={ExpInc:'Channel advance commission', VendChnnl: pmnt.RsrvChn, OpDate: dateFormat(pmnt.Date.seconds*1000, 'dd-mmm-yyyy'),
 						   pmnt: pmMthd(pmnt, pmntsSets),
-               Transaction: pmnt.ChnlTRex, receiving: '', cost: cst, balance:''}  
+               Transaction: pmnt.ChnlTRex, receiving: '', cost: cst || oldP, balance:''}  
                return newObj;
 }

@@ -33,6 +33,9 @@ const GettingStarted=(props)=>{
 							onClick={()=>setPage('Properties')}>here </span> </p>
 			}
             <p className={classes.txt}>Please follow the 3 steps connection.</p> 
+			
+			<p className={classes.txt}>Click <span style={{color: 'blue', cursor: 'pointer'}}
+							onClick={()=>props.setValueTab(1)}>here </span> to move to Step 1</p>
 	
         </div>
        

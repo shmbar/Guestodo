@@ -55,6 +55,8 @@ const GstDetails = () =>{
 	const {settings} = useContext(SettingsContext);
 	const {write, uidCollection} = useContext(AuthContext);					 						 				 
 	
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 	
 	return (
 			<Grid container spacing={7}>
@@ -89,13 +91,13 @@ const GstDetails = () =>{
 							<InputAdornment position="end">
 								 {write && <IconButton
 								edge="end"
-								onClick={e=>handleChangeDetails('add', 'adlts')}
+								onClick={e=>handleChangeDetails('add', 'adlts', null, clnFeeValue)}
 							  >
 								<Add />
 							  </IconButton> }
 								{write &&   <IconButton
 								edge="end"
-								onClick={e=>handleChangeDetails('minus', 'adlts')}
+								onClick={e=>handleChangeDetails('minus', 'adlts', null, clnFeeValue)}
 							  >
 								<Remove />
 							  </IconButton> }
@@ -117,14 +119,14 @@ const GstDetails = () =>{
 							 <InputAdornment position="end">
 								 {write && <IconButton
 								edge="end"
-								onClick={e=>handleChangeDetails('add', 'chldrn',e)}
+								onClick={e=>handleChangeDetails('add', 'chldrn',e, clnFeeValue)}
 								
 							  >
 								<Add />
 							  </IconButton> }
 							{write &&  <IconButton
 								edge="end"
-								onClick={e=>handleChangeDetails('minus', 'chldrn',e)}
+								onClick={e=>handleChangeDetails('minus', 'chldrn',e, clnFeeValue)}
 							
 							  >
 								<Remove />

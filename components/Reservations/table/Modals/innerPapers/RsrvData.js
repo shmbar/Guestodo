@@ -74,12 +74,12 @@ const RsrvAmounts = () =>{
 		   rcDataPrp,handleChangeTrueFalseFeesTaxes, getFees} = useContext(RcContext);
 	const {settings, selectValueSettings, setRunTab, selectValueSettingsApt,
 		   chnnlslogo} = useContext(SettingsContext);
-	const {apartments, channels} =  settings;
+	const {apartments, channels, properties} =  settings;
 	const {write, uidCollection} = useContext(AuthContext);					 						 	 const {date} = useContext(SelectContext);
 	
 	const  cur = settings.CompDtls.currency;
 	
-	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
+	const vat= properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	
 	const GreenCheckbox = withStyles({
 		  root: {
@@ -184,6 +184,31 @@ const RsrvAmounts = () =>{
 		setRunTab(tab)
 	}
 
+	const clnFeeValue = properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+	const clnFee = clnFeeValue!== '' && clnFeeValue!==undefined && clnFeeValue!=='0' ?
+		  		 <div className={classes.labelRoot} >
+		  			<Typography variant="body1" className={classes.labelText}
+						style={{marginLeft: '20px'}}>
+            			Cleaning Fee
+					</Typography>
+			  		<Typography variant="body1" className={classes.labelText}>
+            				{`${cur} ${clnFeeValue}`}
+						<FormControlLabel
+							control={
+								  <GreenCheckboxFeesTaxes
+									checked={true}
+								//	onChange={handleChangeTrueFalse('clnFee', null)} 
+								  />
+							}
+						disabled={true}
+						labelPlacement="end"
+						className={classes.GreenCheckboxFeesTaxes}
+						
+      					/>	
+					</Typography>
+		  		</div>
+			  : '';
+	
 	const tmpAmnt =  value.pStatus!=='Cancelled' ? +value.NetAmnt : +value.CnclFee
 	const fees = value.Fees!=null ? value.Fees.map((x,i)=>{
 		return  <div className={classes.labelRoot} key={i}>
@@ -200,14 +225,14 @@ const RsrvAmounts = () =>{
 						<Typography variant="body1" className={classes.labelText}>
             				{	x.FeeType==='Percent' ?  tmpAmnt*x.FeeAmount/100 + cur : 
 								x.FeeType==='Flat' && x.FeeModality==='Per Stay'  ? 
-							 (x.FeeAmount) + cur:
+							 		cur+' '+ x.FeeAmount  :
 								x.FeeType==='Flat' && x.FeeModality==='Per Night'  ? 
-							 ( x.FeeAmount*value.NigthsNum) + cur:
+							 cur+' '+ ( x.FeeAmount*value.NigthsNum):
 								x.FeeType==='Flat' && x.FeeModality==='Per Person'  ? 
-							 (x.FeeAmount*(+value.dtls.adlts + +value.dtls.chldrn)) + cur:
+							 cur+' '+ (x.FeeAmount*(+value.dtls.adlts + +value.dtls.chldrn)):
 							x.FeeType==='Flat' && x.FeeModality==='Per Person/Per Night' ?
-								(x.FeeAmount*( +value.dtls.adlts + 
-							+value.dtls.chldrn)*value.NigthsNum) + cur: ''
+								cur+' '+  (x.FeeAmount*( +value.dtls.adlts + 
+							+value.dtls.chldrn)*value.NigthsNum): ''
 						}
 						<FormControlLabel
 							control={
@@ -241,16 +266,16 @@ const RsrvAmounts = () =>{
 						}
 						{x.TaxAmount !=='' &&
 							<Typography variant="body1" className={classes.labelText}>
-								{	x.TaxType==='Percent' ?   Num2((tmpAmnt +
-							 +getFees(value, tmpAmnt ))*x.TaxAmount/100/vatExisted) + cur : 
+								{	x.TaxType==='Percent' ?   cur+' '+ Num2((tmpAmnt +
+							 +getFees(value, tmpAmnt ))*x.TaxAmount/100/vatExisted): 
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Stay'  ? 
-								x.TaxAmount + cur:
+								cur+' '+ x.TaxAmount:
 							  		x.TaxType==='Flat' && x.TaxModality==='Per Night'  ? 
-								x.TaxAmount*value.NigthsNum + cur:
+								cur+' '+ x.TaxAmount*value.NigthsNum:
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Person'  ? 
-								x.TaxAmount*(+value.dtls.adlts) + cur:
+								cur+' '+ x.TaxAmount*(+value.dtls.adlts):
 							 		x.TaxType==='Flat' && x.TaxModality==='Per Person/Per Night'  ?
-					x.TaxAmount*( +value.dtls.adlts )*value.NigthsNum + cur: ''
+							cur+' '+ x.TaxAmount*( +value.dtls.adlts )*value.NigthsNum: ''
 							 }
 							<FormControlLabel
 								control={
@@ -267,7 +292,7 @@ const RsrvAmounts = () =>{
 						}
 					</div>
 		}): [];
-
+	
 	return (
 			<Grid container spacing={3} alignItems="flex-end">
 					<Grid item xs={12} md={7}>
@@ -378,7 +403,7 @@ const RsrvAmounts = () =>{
 							control={
 							  <GreenCheckbox
 								checked={value.Vat}
-								onChange={handleChangeTrueFalse('Vat', vat)}
+								onChange={handleChangeTrueFalse('Vat', vat, settings)}
 								value="Tax"
 							  />
 							}
@@ -393,6 +418,7 @@ const RsrvAmounts = () =>{
 						 <TreeView  className={classes.treeview} 
 							 defaultCollapseIcon={<ExpandMoreIcon />} 
 							 defaultExpandIcon={<ChevronRightIcon />}>
+							  {clnFee}
 							  {fees}
 							  {taxes}
 						</TreeView>

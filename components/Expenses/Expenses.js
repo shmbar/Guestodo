@@ -26,21 +26,25 @@ function addCommas(x) {
 	}
 
 const prepareTreeTable = (listDataEX,pmnts, settings) =>{
-	let exDataTmp = listDataEX.map(x=> ({...x, 'tmpCol': x.PrpName.concat(dateFormat(x.AccDate, "mmm-yyyy"))
-						   .concat(x.vendor).concat(x.ExpType),
-							'AptName' :  x.AptName!=='All'? settings.apartments.filter(y=> y.id===x.AptName)[0]['AptName'] : x.AptName,
-						   	'ExpType': (x.ExpType==='Channel advance commission' || x.ExpType==='Management commission') ? x.ExpType:
-							idToItem(settings.exType, x.ExpType, 'item' ),
-							'vendor': (x.ExpType!=='Channel advance commission') ? x.vendor :	idToItem(settings.channels, x.vendor, 'RsrvChn'),
-										Amnt: +x.Amnt, ExpAmntWthtoutVat: +x.ExpAmntWthtoutVat, TtlPmnt:+x.TtlPmnt}))
-							.filter(x=> (x.ExpType!=='Management commission' || +x.Amnt!==0))  //omit the commissions with amount===0	
+	let exDataTmp = listDataEX.map(x=> ({...x, 'tmpCol': x.PrpName.concat(dateFormat(x.AccDate,
+					"mmm-yyyy")).concat(x.vendor).concat(x.ExpType),
+				'AptName' :  x.AptName!=='All'? settings.apartments.filter(y=> 
+				y.id===x.AptName)[0]['AptName'] : x.AptName,
+				'ExpType': (x.ExpType==='Channel advance commission' ||
+				x.ExpType==='Management commission') ? x.ExpType:
+				idToItem(settings.exType, x.ExpType, 'item' ),
+				'vendor': (x.ExpType!=='Channel advance commission') ? x.vendor :	
+				idToItem(settings.channels, x.vendor, 'RsrvChn'),
+				Amnt: +x.Amnt, ExpAmntWthtoutVat: +x.ExpAmntWthtoutVat, TtlPmnt:+x.TtlPmnt}))
+				.filter(x=> (x.ExpType!=='Management commission' || +x.Amnt!==0)) 
+			//omit the commissions with amount===0	
 	
 
 	//////////////////////////////////////////////////////////////////////////////
 	//////////////////////////////////////////////////////////////////////////////
 	const sumVals = (val) =>{
 		
-		let tmpD = {'Amnt': 0, 'ExpAmntWthtoutVat': 0,'BlncExp': '', 'TtlPmnt': 0, 'VatAmnt': 0};
+		let tmpD = {'Amnt': 0, 'ExpAmntWthtoutVat': 0,'BlncExp': '', 'TtlPmnt': 0, 'VatAmnt': 0, CleanAmount: 0, ExpAmnt:0};
 		
 	
 		tmpD.LstSave = '';
@@ -61,6 +65,15 @@ const prepareTreeTable = (listDataEX,pmnts, settings) =>{
 				tmpD.BlncExp =  +tmpD.BlncExp + +exDataTmp[z].BlncExp;
 				tmpD.TtlPmnt = +tmpD.TtlPmnt + +exDataTmp[z].TtlPmnt;
 				tmpD.VatAmnt = +tmpD.VatAmnt + +exDataTmp[z].VatAmnt;   
+				
+				if(exDataTmp[z].ExpType==='Management commission' && exDataTmp[z].CleanAmount!=null){
+					tmpD.CleanAmount =  +tmpD.CleanAmount + +exDataTmp[z].CleanAmount;
+					tmpD.ExpAmnt =  +tmpD.ExpAmnt + +exDataTmp[z].ExpAmnt;
+					
+				}else{
+					tmpD.CleanAmount='';
+					tmpD.ExpAmnt='';
+				}
 			}
 		}
 		
@@ -69,6 +82,8 @@ const prepareTreeTable = (listDataEX,pmnts, settings) =>{
 
 		 tmpD.TtlPmnt = TotalPmnt!==null ? TotalPmnt : tmpD.TtlPmnt
 		 tmpD.BlncExp =  TotalPmnt!==null ? (tmpD.Amnt - TotalPmnt) : tmpD.BlncExp
+		
+		
 		return 	tmpD;
 	}
 	///////////////////////////////////////////////
@@ -76,7 +91,7 @@ const prepareTreeTable = (listDataEX,pmnts, settings) =>{
 		let tmp = exDataTmp.map(x=> x.ExpType==="Management commission" ? ({...x, 'TtlPmnt': '', 'BlncExp': ''}) : x);
 		tmp = tmp.filter(c=> c.tmpCol===val.tmpCol).map((x,i)=> ({'key': i, 'data': x }));
 		tmp = tmp.map(x=> { delete x.data.tmpCol
-						return	x; })									
+						return	x; })		
 		return tmp;	 
 	}
 	

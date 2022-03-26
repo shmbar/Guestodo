@@ -69,7 +69,7 @@ export default function CashFlowTable(props) {
 				 for (var i = dateFormat(dates.start, 'yyyy'); i <= dateFormat(dates.end, 'yyyy'); i++) {
 					 let tmpPayments =  await readDataCashFlow(uidCollection, 'payments',fundSlct, i, dates.start, dates.end) 
 					 let tmpMoneyTransfer =  await readDataMoneyTransferforCashFlow(uidCollection, 'cashflow',fundSlct, i, dates.start, dates.end) 
-				
+			
 				/*	let start = Years[i].toString().concat('-').concat('01')
 					let end = Years[i].toString().concat('-').concat('12')
 
@@ -105,8 +105,7 @@ export default function CashFlowTable(props) {
 						
 							const tmpChnlCmsnPrcntg = settings.channels.filter(x => x.id===AgrArr[i].RsrvChn)[0]['ChnCmsn']; //Channel Commission
 							if(tmpChnlCmsnPrcntg!==''){  //payment commission
-								let channelCommision = parseFloat(settings.channels
-									  .filter(x => x.id===AgrArr[i].RsrvChn)[0]['ChnCmsn'])/100;
+								let channelCommision = parseFloat(tmpChnlCmsnPrcntg)/100;
 								channelCommision  = AgrArr[i].ChnPrcnt!=null? AgrArr[i].ChnPrcnt*1/100 : channelCommision;	
 								let tmpVT = AgrArr[i].PrpName!=null? settings.properties.filter(x=> x.id===AgrArr[i].PrpName)[0]['VAT']: settings.vat	
 								let tmpChannelPayment = ChnnlPmnt (AgrArr[i], channelCommision, tmpVT, settings.pmntMethods );

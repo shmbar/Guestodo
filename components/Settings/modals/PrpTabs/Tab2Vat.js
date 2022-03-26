@@ -3,13 +3,17 @@ import { Grid, TextField, InputAdornment } from '@material-ui/core';
 import { SettingsContext } from '../../../../contexts/useSettingsContext';
 import { makeStyles } from '@material-ui/core/styles';
 import {AuthContext} from '../../../../contexts/useAuthContext';
-
+import { FormControl, Select, MenuItem, InputLabel } from '@material-ui/core';
 
 const useStyles = makeStyles(theme => ({
   Vat: {
     marginBottom: '0px',
 	color: 'red'
-  }
+  },
+	formControl: {
+		width: '100%',
+		minWidth: 120,
+	},
  
 }));
 
@@ -23,10 +27,20 @@ const Tab2Vat = (props) => {
 	} ;
 	
 	const handleChange = (e) => {
-	
-			setValueSettings({...valueSettings,[e.target.name]: cmsnNum(e.target.value)});
+		if(e.target.name==='VAT'){
+			setValueSettings({...valueSettings,[e.target.name]:cmsnNum(e.target.value)});
+		}else{
+			setValueSettings({...valueSettings,[e.target.name]:(e.target.value)});
+		}
+			
 	}
-	
+	const YesNo = ['Yes', 'No'].map((s, i) => {
+		return (
+			<MenuItem key={i} value={s}>
+				{s}
+			</MenuItem>
+		);
+	});
 	
 	return (
 		<Grid container spacing={3}>
@@ -40,6 +54,23 @@ const Tab2Vat = (props) => {
 					InputProps={{endAdornment: <InputAdornment position="end" className={classes.Vat}>%</InputAdornment>}}
 				/>	
 			</Grid>
+			<Grid item xs={12} md={5}>
+						<FormControl className={classes.formControl}>
+							<InputLabel	htmlFor="importWthVat"	>
+								Import reservations with VAT
+							</InputLabel>
+							<Select
+								value={valueSettings.importWthVat}
+								onChange={e=> write && handleChange(e)}
+								fullWidth
+								inputProps={{
+									name: 'importWthVat',
+								}}
+							>
+								{YesNo}
+							</Select>
+						</FormControl>
+				</Grid>
 		</Grid>
 	);
 };

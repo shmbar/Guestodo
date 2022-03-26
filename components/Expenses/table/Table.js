@@ -29,6 +29,8 @@ const tableCols = [
 			{field: 'AccDate', header: 'Accounting Date', showcol: true,s:['xs','sm','md','lg', 'xl']},
 		//	{field: 'PrpName', header: 'Property', showcol: true,initial: 4},
 			{field: 'AptName', header: 'Apartment', showcol: true,s:['sm','md','lg', 'xl']},
+			{field: 'CleanAmount', header: 'Cleaning Fee', showcol: false,s:['lg', 'xl']},
+			{field: 'ExpAmnt', header: 'Expense Amount', showcol: false,s:['lg', 'xl']},
 			{field: 'ExpAmntWthtoutVat', header: 'Expense Amount Before VAT', showcol: true,s:['lg', 'xl']},
 			{field: 'VatAmnt', header: 'VAT', showcol: true,s:['lg', 'xl']},
 			{field: 'Amnt', header: 'Amount', showcol: true,s:['xs','sm','md','lg', 'xl']},
@@ -43,6 +45,11 @@ const useStyles = makeStyles(theme => ({
      margin: theme.spacing(1.5, 0 ,0, 1),
 	background: '#5ec198'
   },
+txt:{
+	whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+}
 }));
 
 const Table =(props) =>{
@@ -155,6 +162,7 @@ const Table =(props) =>{
 				<div>
 					<IconButton aria-label='Edit' onClick={() => selectValueOrder(node.data)}
 							style={(node.data.ExpType=== 'Channel advance commission' || 
+							node.data.ExpType=== 'Cleaning commission' ||
 							node.data.ExpType=== 'Management commission' || node.data.Transaction==='') ? {display:'none'}:
 						{display:'block'}}
 						>
@@ -166,6 +174,7 @@ const Table =(props) =>{
 				<div>
 					<IconButton aria-label='Delete' onClick={()=> delRow(node.data)} 
 						style={(node.data.ExpType=== 'Channel advance commission' || 
+								node.data.ExpType=== 'Cleaning commission' ||
 							node.data.ExpType=== 'Management commission' || node.data.Transaction==='') ? {display:'none'}:
 						{display:'block'}}
 						disabled={!write}>
@@ -217,14 +226,18 @@ const Table =(props) =>{
 	
 	const cur = settings.CompDtls.currency;	
 	const showAmnt=(node)=>`${cur} ${Num2(node.data.Amnt)}`;
+	const showCleanAmount=(node)=> {return (node.data.CleanAmount!==undefined && node.data.CleanAmount!=='') ? 
+		`${cur} ${Num2(node.data.CleanAmount)}` : '' };
+	const showExpAmnt=(node)=> {return (node.data.ExpAmnt!==undefined && node.data.ExpAmnt!=='') ? 
+		`${cur} ${Num2(node.data.ExpAmnt)}` : '' };
 	const ShowExpAmntWthtoutVat=(node)=>`${cur} ${Num2(node.data.ExpAmntWthtoutVat)}`;
-	const showBlncExp=(node)=> {return (node.data.Transaction!=='' && node.data.ExpType==='Management commission') ? '' : `${cur} ${Num2(node.data.BlncExp)}`}
+	const showBlncExp=(node)=> {return (node.data.Transaction!=='' && node.data.ExpType==='Management commission' ) ? '' : `${cur} ${Num2(node.data.BlncExp)}`}
 	const showTtlPmnt=(node)=> {return (node.data.Transaction!=='' && node.data.ExpType==='Management commission') ? '' : `${cur} ${Num2(node.data.TtlPmnt)}`}
 	const showVatAmnt=(node)=>`${cur} ${Num2(node.data.VatAmnt)}`;
 	const showDatesMonth=(node)=> dateFormat(node.data.AccDate, "mmm-yyyy");
 	const showRCref=(node)=>{
 			return <div>
-			<Tooltip title={(node.data.ExpType==='Channel advance commission' || 
+			<Tooltip title={(node.data.ExpType==='Channel advance commission' ||  node.data.ExpType==='Cleaning commission' ||
 						node.data.ExpType==='Management commission')? <span>{showShortTR(node.data.RC)} {node.data.GstName}</span> :''}>
 				<div>
 					<span>{showShortTR(node.data.Transaction)}</span>
@@ -232,6 +245,17 @@ const Table =(props) =>{
 			</Tooltip>
 			</div>
 	}
+	const showExpType=(node)=>{
+			return <div>
+			<Tooltip title={node.data.ExpType}>
+				<div className={classes.txt}>
+					<span>{node.data.ExpType}</span>
+				</div>
+			</Tooltip>
+			</div>
+	}
+	
+	
 	
 
 	// const showItemExpType=(node)=>{
@@ -250,6 +274,9 @@ const Table =(props) =>{
 					   		header={col.header}
 					   		body={col.field==='el' ? actionTemplate: 
 							col.field==='Amnt'? showAmnt :
+							col.field==='ExpType'? showExpType :
+							col.field==='CleanAmount'? showCleanAmount :
+							col.field==='ExpAmnt'? showExpAmnt :
 							col.field==='ExpAmntWthtoutVat'? ShowExpAmntWthtoutVat:
 							col.field==='BlncExp'? showBlncExp: 
 							col.field==='TtlPmnt'? showTtlPmnt: 

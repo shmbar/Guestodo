@@ -86,7 +86,7 @@ export default function PaperSheet() {
 			
 				
 				let tmpD = {'AmntInclVat': 0, 'AmntExcllVat': 0,'TtlPmnt': '', 'Blnc': '',
-							'PmntStts': '',  'Cmsn':'', 'VatAmnt':0, 'CmsnVat':''};
+							'PmntStts': '',  'Cmsn':'', 'VatAmnt':0, 'CmsnVat':'', CleanAmount: '', ExpAmnt: ''};
 				
 				
 				tmpD.Payments =pmnts.filter(x=>x.tmpCol===val.tmpCol)[0]['pmnts']['Payments'];
@@ -100,7 +100,7 @@ export default function PaperSheet() {
 				
 				
 				for(let z in tmpData){ //sum amount per property and date
-				
+
 					if(tmpData[z].tmpCol===val.tmpCol){
 						if(tmpData[z].RsrvAmntDesc==='YesVat'){
 							tmpD.AmntInclVat = +tmpD.AmntInclVat + +tmpData[z].RsrvAmnt;
@@ -108,11 +108,18 @@ export default function PaperSheet() {
 							tmpD.AmntExcllVat= +tmpD.AmntExcllVat + +tmpData[z].RsrvAmnt;
 						}
 					
+						
 						tmpD.Cmsn =  +tmpD.Cmsn + +tmpData[z].AmntWihtoutVat;
 						tmpD.VatAmnt =  +tmpD.VatAmnt + +tmpData[z].VatAmnt;
 						tmpD.CmsnVat =  +tmpD.CmsnVat + +tmpData[z].CmsnVat;
 						tmpD.Blnc = +(+tmpD.CmsnVat).toFixed(2) - +TotalPmnt;
 						tmpD.PmntStts = paymentStatus(TotalPmnt, +tmpD.CmsnVat);
+						
+						if(tmpData[z].CleanAmount!==undefined){
+							tmpD.CleanAmount =  +tmpD.CleanAmount + +tmpData[z].CleanAmount;
+							tmpD.ExpAmnt =  +tmpD.ExpAmnt + +tmpData[z].ExpAmnt;
+							
+						}
 					}
 				}
 	
@@ -121,10 +128,11 @@ export default function PaperSheet() {
 			
 			
 			const addVals = (val) =>{
-				
 				let tmpDD = tmpData.filter(c=> c.tmpCol===val.tmpCol).map(v=> ({...v,
 							'AmntInclVat': v.RsrvAmntDesc==='YesVat' ? v.RsrvAmnt: 0,													
 							'AmntExcllVat': v.RsrvAmntDesc==='NoVat' ? v.RsrvAmnt: 0, 'Cmsn': v.AmntWihtoutVat,
+							'CleanAmount' : v.CleanAmount!==undefined ? v.CleanAmount: 0, 
+							'ExpAmnt' : v.ExpAmnt!==undefined ? v.ExpAmnt: v.AmntWihtoutVat, 
 							'TtlPmnt': '', 'Blnc': '', 'PmntStts':'' }));
 			
 				return tmpDD.map((x,i)=> ({'key': i, 'data': x}))

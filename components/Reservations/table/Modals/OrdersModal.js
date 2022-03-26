@@ -18,7 +18,7 @@ import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import SnackBar from '../../../Subcomponents/SnackBar';
 import {formValidation, checkDates, delEmptyPaymentS} from '../../../../functions/formValidation';
-import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,updateTokeetData,getFees, getTaxes} from '../../../../functions/functions.js';
+import {addData, updateField, delData, getNewTR, deleteSlots, addSlots, updateSlots, addDPaymentsBatch, delDPaymentsBatch,updateTokeetData,getFees, getTaxes, Num2} from '../../../../functions/functions.js';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import { v4 as uuidv4 } from 'uuid';
 import GridLoader from 'react-spinners/GridLoader';  // //https://www.react-spinners.com/
@@ -141,12 +141,17 @@ const OrdersModal = (props) =>{
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
 		
-		const Amnt = +((+value.TtlRsrvWthtoutVat + 
-				+getFees(value, value.NetAmnt)/eliminateVat)*tmpChnlCmsnPrcntg/100).toFixed(2)
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 		
+		const Amnt = +((+value.TtlRsrvWthtoutVat + 
+				+clnFeeValue/eliminateVat)*tmpChnlCmsnPrcntg/100).toFixed(2)
+
 		const tmp  = +value.TtlPmnt/(+value.NetAmnt + +getFees(value, value.NetAmnt) + 
-							+getTaxes(value, value.NetAmnt, eliminateVat)) // calcuate ratio
-		const pmntRatio = tmp*(+value.NetAmnt + +getFees(value, value.NetAmnt))
+							+getTaxes(value, value.NetAmnt, eliminateVat) + clnFeeValue) // calcuate ratio
+									 
+		//const pmntRatio = tmp*(+value.NetAmnt + +getFees(value, value.NetAmnt))
+		const pmntRatio = tmp*(+value.NetAmnt + clnFeeValue)
 		const ttlPmnt = value.Vat ? 
 			  (pmntRatio/(1+parseFloat(vat)/100)*tmpChnlCmsnPrcntg/100).toFixed(2) : 
 					  (pmntRatio*tmpChnlCmsnPrcntg/100).toFixed(2) //omit the Vat from payment
@@ -164,29 +169,58 @@ const OrdersModal = (props) =>{
 		
 		const vatCompany = settings.vat.substring(0, settings.vat.length - 1)/100; //should be company vat
 		const vatProperty = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']/100;
-		const feetWithoutVat = getFees(value, value.NetAmnt )/(value.Vat ? (1 + parseFloat(vatProperty)) : 1)
+		const eliminateVat = value.Vat ? (1 + parseFloat(vatProperty)): 1;
+		
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 		
 		//Include VAT: YES or NO
-		const baseAmnt = tmpMngCmsnVatYesNo ? (+value.NetAmnt + +getFees(value, value.NetAmnt )) : (+value.TtlRsrvWthtoutVat + +feetWithoutVat); 
-		const commissionAmount = tmpMngCmsnAddVatYesNo ? +(baseAmnt*tmpMngCmsn/100*(1 + +vatCompany)).toFixed(2) : (+baseAmnt*tmpMngCmsn/100).toFixed(2);
-		//For expense Table
-	
+		let baseAmnt;
+		let cmsnType = settings.properties.filter(x=> x.id===value.PrpName)[0]['Commissions']
+		['CommissionType'];
+		
+		let incldClnFee = settings.properties.filter(x=> x.id===value.PrpName)[0]['Commissions']
+		['clnFee'];
+		
+		if(cmsnType===0){  //Base Charge Only
+			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt : +value.TtlRsrvWthtoutVat;
+		}else if(cmsnType===1){ //Base Charge Plus Extra Fee
+			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt + +getFees(value, value.NetAmnt): 
+						+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/eliminateVat
+		}else if(cmsnType===2){ //Total Amount Paid By Guest
+			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt + +getFees(value, value.NetAmnt) + clnFeeValue:
+					+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/eliminateVat + 
+				clnFeeValue/eliminateVat;
+		}else{  //Base Charge Only -- Default
+			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt : +value.TtlRsrvWthtoutVat;
+		}
+		
+		
+		let cleanAmount = incldClnFee ? clnFeeValue/eliminateVat : 0;
+		
+		const commissionAmount = tmpMngCmsnAddVatYesNo ? +((baseAmnt*tmpMngCmsn/100 + cleanAmount)*(1 + 
+								+vatCompany)).toFixed(2): (+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2);
+
 		return {'LstSave' : dateFormat(Date(),'dd-mmm-yyyy'), 'ExpType': 'Management commission',
 					'vendor': settings.CompDtls.cpmName, 'Transaction': MngTRexCmsn,
 					'AccDate': value.ChckIn,'PrpName': value.PrpName, 'AptName': value.AptName,
 					'CostType': 'Variable Cost','TtlPmnt': 0,'Amnt': +commissionAmount,
-					'AmntWihtoutVat': +(+baseAmnt*tmpMngCmsn/100).toFixed(2),
+					'AmntWihtoutVat': +(+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2),
 					'BlncExp': +commissionAmount - 0,  // 0 means totall payment
 					'RC': value.Transaction,	'RsrvAmnt': baseAmnt,
 					'RsrvAmntDesc': !value.Vat || tmpMngCmsnVatYesNo===false ? 'NoVat': 'YesVat',
 					'Vat': tmpMngCmsnAddVatYesNo? true:false,
-					'VatAmnt': tmpMngCmsnAddVatYesNo ? +(vatCompany*baseAmnt*tmpMngCmsn/100).toFixed(2):0,
+					'VatAmnt': tmpMngCmsnAddVatYesNo ? +(vatCompany*(baseAmnt*tmpMngCmsn/100 + cleanAmount)).toFixed(2):0,
 				//for Company Revenue table
-					'CmsnVat': +(+baseAmnt*tmpMngCmsn/100).toFixed(2) + +(tmpMngCmsnAddVatYesNo ?
-					(vatCompany*baseAmnt*tmpMngCmsn/100).toFixed(2):''),
-					'ExpAmntWthtoutVat' : (+baseAmnt*tmpMngCmsn/100).toFixed(2), 'GstName' : value.GstName,
+					'CmsnVat': +(+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2) + +(tmpMngCmsnAddVatYesNo ?
+					(vatCompany*(baseAmnt*tmpMngCmsn/100 + cleanAmount)).toFixed(2):''),
+					'ExpAmntWthtoutVat' : (+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2),
+						'CleanAmount': +cleanAmount,
+						'ExpAmnt': +(+baseAmnt*tmpMngCmsn/100).toFixed(2),
+					'GstName' : value.GstName,
 					'm': dateFormat(value.ChckIn,'mm')}
 	}
+	
 	
 	////////////////////////////////////////////////////////////////
 	
@@ -246,18 +280,24 @@ const OrdersModal = (props) =>{
 		const tmpChnlCmsn = tmpChnlCmsnPrcntg!=='' ? true: false; //if not empty then true
 		newObj = {...newObj, 'ChnPrcnt' : tmpChnlCmsnPrcntg};
 		
-	const tmpMngCmsn = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
+		const tmpMngCmsn = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
 		['ManagCommission']; //Management Commission
-	const tmpMngCmsnVatYesNo = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
+		const tmpMngCmsnVatYesNo = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
 		['inclVat']; 
-	const tmpMngCmsnAddVatYesNo = settings.properties.filter(x=>value.PrpName===x.id)[0]['Commissions']
+		const tmpMngCmsnAddVatYesNo = settings.properties.filter(x=>value.PrpName===x.id)[0]['Commissions']
 		['addVat'];
+		
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		const vatProperty = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']/100;
+		const eliminateVat = value.Vat ? (1 + parseFloat(vatProperty)): 1;
 		
 		
 		//if to add Vat to the management commission or not
 		
 		let ChnlTRex = value.ChnlTRex; //Channel commission transaction => if exists
 		let MngTRexCmsn = value.MngTRexCmsn;  //Management commission transaction => if exists
+		
 		
 		let oldVal = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0];
 		let startDold;
@@ -288,11 +328,12 @@ const OrdersModal = (props) =>{
 
 			}else{ //should be commission => normal update
 					if(ChnlTRex===undefined){ //ChnlTRex doesn't exist
-						newObj.ChnlTRex = 'EX'.concat( await getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4()); //create new commission transaction
+						newObj.ChnlTRex = 'EX'.concat( await getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4());
+						//create new commission transaction
 					}
 
-					if(newObj.pStatus!=='Tentative')updateCommissionExpense(newObj.ChnlTRex, newObj.MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,
-										tmpMngCmsnAddVatYesNo)
+					if(newObj.pStatus!=='Tentative')updateCommissionExpense(newObj.ChnlTRex, newObj.MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, 
+																		tmpMngCmsnVatYesNo,	tmpMngCmsnAddVatYesNo)
 			}
 			
 			setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(newObj.ChckIn,'yyyy'), newObj)), msg: 'Order has been updated!',
@@ -310,11 +351,16 @@ const OrdersModal = (props) =>{
 			
 			setRcDataPrp(tmpArrUpdate);
 			
-			
+		
+			//////////////////////////////////////////////////////
 			let pmtnsObj = value.Payments.map(x=>{
-					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date), 'Transaction': newObj.Transaction,
+				
+				const ratio  = +x.P/+value.TtlPmnt // calcuate ratio
+				return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date), 'Transaction': newObj.Transaction,
 							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'], ChnPrcnt: newObj.ChnPrcnt, Vat: newObj.Vat, 
-							ChnlTRex: !tmpChnlCmsn ? '': newObj.ChnlTRex, PrpName: value.PrpName}
+							ChnlTRex: !tmpChnlCmsn ? '': newObj.ChnlTRex, PrpName: value.PrpName,
+						   	ChnPayment: !tmpChnlCmsn ? '' : Num2(value.TtlRsrvWthtoutVat + +clnFeeValue/eliminateVat)*ratio
+							}		   
 			})
 			let olPayments = rcDataPrp.filter(k => k.Transaction===value.Transaction)[0]['Payments'];
 			
@@ -347,14 +393,13 @@ const OrdersModal = (props) =>{
 					//value.tmpChanneCommissionTR;  //channel Advance Commission transaction
 					MngTRexCmsn =await 'EX'.concat( await getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4());
 					//value.tmpMngCommissionTR; //Management Commission transaction
-					const tmpObj = {...newObj, 'ChnlTRex': ChnlTRex, 'MngTRexCmsn': MngTRexCmsn} //new Object incl commission transactions
-
+					
+					let tmpObj = {...newObj, 'ChnlTRex': ChnlTRex, 'MngTRexCmsn': MngTRexCmsn} 
 					let tmpArrAdd = [...rcDataPrp, tmpObj ];
 
 					setSnackbar( {open: (await addData(uidCollection, 
-				'reservations',dateFormat(tmpObj.ChckIn,'yyyy'), tmpObj)), 
-				msg: 'New Order has been added!',
-							  variant: 'success'});
+						'reservations',dateFormat(tmpObj.ChckIn,'yyyy'), tmpObj)), 
+						msg: 'New Order has been added!',  variant: 'success'});
 					updateSettingsShows(); 
 
 
@@ -376,11 +421,15 @@ const OrdersModal = (props) =>{
 			
 			//Payments
 			let pmtnsObj = value.Payments.map(x=>{
+				
+				const ratio  = +x.P/+value.TtlPmnt // calcuate ratio
+				
 					return {...x, 'RsrvChn': value.RsrvChn, 'Date': new Date(x.Date),
 							'Transaction': value.Transaction,
 							'Fund': settings.properties.filter(x=>x.id===value.PrpName)[0]['Fund'],
 							ChnPrcnt: newObj.ChnPrcnt, Vat: value.Vat,
-							ChnlTRex: !tmpChnlCmsn ? '': ChnlTRex, PrpName: value.PrpName}
+							ChnlTRex: !tmpChnlCmsn ? '': ChnlTRex, PrpName: value.PrpName,
+							ChnPayment: !tmpChnlCmsn ? '' : Num2(value.TtlRsrvWthtoutVat + +clnFeeValue/eliminateVat)*ratio}
 			})
 			await addDPaymentsBatch(uidCollection,'payments',pmtnsObj)
 			
@@ -403,7 +452,7 @@ const OrdersModal = (props) =>{
 			
 			let tmpChannelCmsnVal= createCmsnObj(ChnlTRex, tmpChnlCmsnPrcntg);
 			let tmpMngCmsnVal = MngCmsnObj(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn)
-		
+
 			await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpChannelCmsnVal)
 			await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpMngCmsnVal)
 

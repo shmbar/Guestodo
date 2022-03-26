@@ -74,7 +74,7 @@ const DialogActions = withStyles(theme => ({
 const Tab2Modal = (props) =>{
 	
 	const {settings,settingsShows, setSettingsShows,  selectValueSettings, displayDialogSettings,
-		  setDisplayDialogSettings, valueSettings, setRedValid, updtShows, setPropertyList, setSettings} = useContext(SettingsContext);
+		  setDisplayDialogSettings, valueSettings,setValueSettings, setRedValid, updtShows, setPropertyList, setSettings} = useContext(SettingsContext);
 	const {uidCollection} = useContext(AuthContext);
 	const [valueTab, setValueTab] = useState(0);
 	const [feesRedValid, setFeesRedValid] = useState(false)
@@ -178,7 +178,7 @@ const Tab2Modal = (props) =>{
 					exstIntheList=true;  // the channel exist and is valid, do not update/add	
 				}else{
 					newArr = settings.properties.map(x =>x.id===valueSettings.id ?
-									  {...valueSettings}: x);
+									  {...valueSettings, 'VAT': valueSettings.VAT==='' ? 0 : valueSettings.VAT}: x);
 				}
 			}
 		}else{ //new, not in the list
@@ -189,7 +189,7 @@ const Tab2Modal = (props) =>{
 		 		}else if(settings.properties[rw].PrpName.toLowerCase()===valueSettings.PrpName.toLowerCase()
 						 &&	!settings.properties[rw].show ){ //channel is deleted but in use
 		 			newArr = settings.properties.map(x =>x.PrpName.toLowerCase()===valueSettings.PrpName.toLowerCase()
-						   ? {...valueSettings, 'id': x.id}: x);
+						   ? {...valueSettings, 'id': x.id, 'VAT': valueSettings.VAT==='' ? 0 : valueSettings.VAT}: x);
 		 		}
 			}
 		}
@@ -200,9 +200,10 @@ const Tab2Modal = (props) =>{
 		}
 		//////////////////////////////
 		
-		let tmpValue = valueSettings;
+		let tmpValue = {...valueSettings, 'VAT': valueSettings.VAT==='' ? 0 : valueSettings.VAT};
+		setValueSettings(tmpValue)
 		let tmpApts = settings.apartments
-		
+	
 		
 		if(newArr.length!==0){ //just an update
 			props.setSnackbar( {open: (await addDataSettings(uidCollection, 'settings', 'properties', {'properties':newArr})),
@@ -268,12 +269,13 @@ const Tab2Modal = (props) =>{
 				
   <Tabs value={valueTab} onChange={handleChangeTabs} aria-label="simple tabs example">
     <Tab label="Details"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
-    <Tab label="Fees"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
-    <Tab label="VAT"   className={['element-class', 'tab'].join(" ")}/>
+    <Tab label="Extra Fees"    className={['element-class', 'tab', 'tabText'].join(" ")}/>
+    <Tab label="VAT"   className={['element-class', 'tab', 'tabText'].join(" ")}/>
 	<CustomToolTip title="Applies to Adults only" placement="top">
-		<Tab label="Taxes"   className={['element-class', 'tab', 'tabText'].join(" ")}/> 
+	  	<Tab label="Taxes"    className={['element-class', 'tab', 'tabText'].join(" ")}/> 
 	</CustomToolTip>
-	<Tab label="Commission"  className={['tab', 'tabText'].join(" ")}/>
+	<Tab label="Commission"  className={['element-class', 'tab', 'tabText'].join(" ")} />
+	 <Tab label="Cleaning Fee" className={['tab', 'tabText'].join(" ")}/>
   </Tabs>
 
   <DialogContent dividers style={{minHeight: '230px'}}>

@@ -2,7 +2,6 @@ import React, {useState} from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { Grid, Typography } from '@material-ui/core';
 import { InputText } from 'primereact/inputtext';
-import { InputMask } from 'primereact/inputmask';
 import { Button } from 'primereact/button';
 import {addMsg} from '../../functions/functions';
 import { v4 as uuidv4 } from 'uuid';
@@ -212,8 +211,8 @@ const CustomizedInputs = (props) => {
 								</Grid>
 								<Grid item xs={12} md={6}  >
 									<span className="p-float-label">
-										<InputMask id="phone" mask="(999) 999-9999" className={classes.customInpt}
-											value={value.phone} onChange={(e) => setValue({...value, 'phone': e.target.value})}></InputMask>
+										<InputText  id="phone"  className={classes.customInpt}
+											value={value.phone} onChange={(e) => setValue({...value, 'phone': e.target.value})}></InputText>
 										<label htmlFor="in" className={classes.lbl}>Phone Number</label>
 									</span>
 									{submitting && <p style={{color:'red'}}>{validateContact(value).phone}</p>}

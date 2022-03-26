@@ -115,7 +115,7 @@ const OtherIncomeData = () =>{
 								  />
 									}
 								 label={`${vat}% VAT included`}
-								disabled={!write || vat===0}
+								disabled={!write || +vat===0}
 								labelPlacement="end"
 								/>	
 					</Grid>

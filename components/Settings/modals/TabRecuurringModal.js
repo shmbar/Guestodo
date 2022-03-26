@@ -106,7 +106,8 @@ const TabRecuurringModal = (props) => {
 		///////////////////
 		
 		let indx = props.recData.findIndex((x) => x.recTransaction === valueSettings.recTransaction);
-		let newObj = {...valueSettings, 'startDate': dateFormat(recStart, '01-mmm-yyyy') , 'recEnd':dateFormat(recEnd===null? '12-12-2099' : recEnd, '01-mmm-yyyy'),
+		let newObj = {...valueSettings, 'startDate': dateFormat(recStart, '01-mmm-yyyy') , 
+					  'recEnd':dateFormat(recEnd===null? '12-12-2099' : recEnd, '01-mmm-yyyy'),
 					  'VatAmnt': +(+valueSettings.Amnt - +valueSettings.ExpAmntWthtoutVat).toFixed(2)};
 		if (indx !== -1) {
 			

@@ -1,4 +1,5 @@
 import React from 'react';
+import {DataTable} from 'primereact/datatable';
 import { makeStyles } from '@material-ui/core/styles';
 import {
 	InputLabel,//Checkbox,
@@ -9,7 +10,6 @@ import {
 } from '@material-ui/core';
 
 import Button from '@material-ui/core/Button';
-import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Checkbox } from 'primereact/checkbox';
 
@@ -96,19 +96,15 @@ const ConnectAptsTable = (props) => {
 				<DataTable
 					value={props.assignApts}
 					className="p-datatable-responsive-demo"
-					rowHover 
-					//	header={header}
 					footer={footer}
-					paginator={false}
-				
-					rows={20}
-					rowsPerPageOptions={[5, 10, 20]}
-					paginatorTemplate="CurrentPageReport FirstPageLink 
-							   PrevPageLink PageLinks NextPageLink LastPageLink 
-							   RowsPerPageDropdown" 
-					/*currentPageReportTemplate={
-						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : '' 
-					} */
+					paginator
+					 rows={20} rowsPerPageOptions={[10,20,50]}
+					  paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink PageLinks NextPageLink LastPageLink "
+                        currentPageReportTemplate="Showing {first} to {last} of {totalRecords}"
+					//paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
+				//			   PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+					
+				//	 paginatorTemplate="">
 				>
 					 <Column field="el" header="" body={SetYel} style={{width: '5em', textAlign: 'center', background: '#f8f9fa'}}
 						/>

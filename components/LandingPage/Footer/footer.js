@@ -60,10 +60,14 @@ return (
 						<p className='footerTtl'>Contact</p>
 						<div style={{paddingTop: '10px', textAlign: 'center'}} id='ftr'>
 							<EmailIcon style={{color: '#193e6d', marginRight: '10px'}} className='footerEmail'/>
-							<span style={{color: '#193e6d', userSelect: 'text'}}>info@guestodo.com</span>
+							<span style={{color: '#193e6d',
+									userSelect: 'text'}}>info@guestodo.com</span>
 							<Link to='/terms'><div  className='bnft' >Terms of Service</div> </Link>
 							<Link to='/contact'><div  className='bnft' >Write Us</div> </Link>
-							<FacebookIcon style={{color: '#193e6d', marginTop: '10px'}} />
+							<Link to={{ pathname: "https://www.facebook.com/guestodo" }} 
+								target="_blank">
+								<FacebookIcon style={{color: '#193e6d', marginTop: '10px'}} />
+							</Link>
 							<LinkedInIcon style={{color: '#193e6d', marginTop: '10px'}}/>
 						</div>
 					</Grid>

@@ -1,6 +1,9 @@
-import React, {useContext} from 'react';
+import React, {useContext } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
 import { AuthContext } from '../../contexts/useAuthContext';
+import { Link } from 'react-router-dom';
+import Button from '@material-ui/core/Button';
+import {SettingsContext} from '../../contexts/useSettingsContext'; 
 
 const useStyles = makeStyles((theme) => ({
 	root: {
@@ -27,11 +30,13 @@ const useStyles = makeStyles((theme) => ({
 		position: 'absolute',
 		top: '10px',
 		right: '10px',
-		border: 'none',
-		outline: 'none',
-		color: '#fff',
-		fontSize: '30px',
-		lineHeight: '1',
+	//	border: 'none',
+	//	outline: 'none',
+	//	color: '#fff',
+	//	fontSize: '30px',
+	//	lineHeight: '1',
+	//	background: 'none',
+	//	color: 'blue'
 	},
 	styleIframe : {
 		width: '100%',
@@ -46,14 +51,18 @@ const useStyles = makeStyles((theme) => ({
 export default function ContainedButtons() {
 	const classes = useStyles();
 	const { uidCollection } = useContext(AuthContext);
-
+	const {subscriptionPlan} = useContext(SettingsContext);
+	
 	let checkoutUrl =
-		`https://store.payproglobal.com/checkout?products[1][id]=69304&page-template=22222&currency=USD&exfo=742&x-UniqueID=${uidCollection}`;
+		`https://store.payproglobal.com/checkout?products[1][id]=${subscriptionPlan}&page-template=15402&currency=USD&exfo=742&x-UniqueID=${uidCollection}`;
 
 	return (
 		<div className={classes.divMain}>
 			<div style={{ position: 'absolute', width: 'calc(100% - 20px)' }}>
-				<button className={classes.exitButton}>Exit</button>
+				<Link to='/owners'>
+					<Button variant="contained" color="primary" className={classes.exitButton}>Back</Button>
+				</Link>
+				
 			</div>
 			<iframe
 				frameBorder={0}

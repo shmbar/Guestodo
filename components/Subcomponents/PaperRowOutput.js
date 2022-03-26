@@ -1,7 +1,7 @@
 import React from 'react';
 //import Grid from '@material-ui/core/Grid';
 
-const PaperRowOutput=({name,value,pad,st})=>{
+const PaperRowOutput=({name,value,pad,st,b})=>{
 
 	return(
 		
@@ -9,10 +9,10 @@ const PaperRowOutput=({name,value,pad,st})=>{
 				<div style={{width: '100%', display: 'inline-flex', paddingTop:`${pad}px`}}>
 					
 					<div style={{width: '60%'}}>
-						<label>{name}</label>
+						<label style={b ? {fontWeight:600}: {}}>{name}</label>
 					</div>
 					<div style={{width: '40%',textAlign: 'right'}}>
-						<label>{value}</label>	
+						<label  style={b ? {fontWeight:600}: {}}>{value}</label>	
 					</div> 
 				</div>		
 	);

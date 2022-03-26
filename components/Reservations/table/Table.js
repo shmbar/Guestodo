@@ -39,6 +39,7 @@ const tableCols = [
 			{field: 'BlncRsrv', header: 'Balance Due', showcol: true, s:['lg', 'xl']},	
 			{field: 'PmntStts', header: 'Payment Status', showcol: true, s:['md','lg', 'xl']},	
 			{field: 'NetAmnt', header: 'Base Amount', showcol: false, s:['xs','sm','md','lg', 'xl']},
+			{field: 'ClnFee', header: 'Cleaning Fee', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'Fees', header: 'Fees', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false,
 			 s:['xs','sm','md','lg', 'xl']},
@@ -219,17 +220,23 @@ const Table =() =>{
 	const setSHortTr=(ddd) => { //for data export to excel
 		
 		const vat = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct )[0]['VAT'] : 0
+		let clnFeeValue = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee'] : 0;
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		
 		
 		let tmp = ddd.map(x=> {
 			const tmpAmnt = x.pStatus!=='Cancelled' ? +x.NetAmnt : +x.CnclFee;
 			const eliminateVat = x.Vat ? (1 + parseFloat(vat)/100): 1;
-			let vatAmount =	x.RsrvAmnt-x.TtlRsrvWthtoutVat -
-				getFees(x, tmpAmnt )/eliminateVat - +getTaxes(x, tmpAmnt,eliminateVat );
+			const VatCalc = x.Vat ? parseFloat(vat)/100: 0;
 			
+			let vatAmount =	(x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/eliminateVat + 
+										 +clnFeeValue/eliminateVat)*VatCalc;
+
 			let tmpRow = ({...x, 'Transaction': showShortTR(x, null), NetAmnt: x.TtlRsrvWthtoutVat,
+			ClnFee:+(clnFeeValue/eliminateVat).toFixed(2),
 			Fees: +(+getFees(x,tmpAmnt )/eliminateVat).toFixed(2),
 			Taxes: +(+getTaxes(x, tmpAmnt, eliminateVat )).toFixed(2), VAT: +(+vatAmount).toFixed(2),
-			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/eliminateVat).toFixed(2)})
+			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/eliminateVat +(clnFeeValue/eliminateVat)).toFixed(2)})
 			
 			return tmpRow;
 		})

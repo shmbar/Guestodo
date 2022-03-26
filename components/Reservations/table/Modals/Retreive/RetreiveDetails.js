@@ -79,8 +79,11 @@ const getRsrvPrice=(x)=>{
 			tmp = x.booking_engine.base
 			break;
 		case 'tokeet':
-			tmp = x.booking_engine.base
+			tmp = x.booking_engine.base - x.booking_engine.discounttotal*-1
 			break;
+		case 'webready':
+			tmp = x.booking_engine.base - x.booking_engine.discounttotal*-1
+			break;	
 		default:
 			tmp = 0;
 			break;
@@ -155,6 +158,7 @@ const classes = useStyles();
 
 	useEffect(() => {
 		const isTokenExist = async () => {
+		
 			const token = await firebase
 				.firestore()
 				.collection(uidCollection)
@@ -238,7 +242,7 @@ const classes = useStyles();
 		setLoading(true);
 		setGstdAptsArr([]);
 		const nowTime = Date.now();
-
+			
 		if (nowTime - lastTokenTime > 3600000) {
 			let newToken = await firebase.functions().httpsCallable('newToken');
 			await newToken(uidCollection).then(async (result) => {
@@ -246,10 +250,10 @@ const classes = useStyles();
 			});
 
 			let getAptsTokeet = await firebase.functions().httpsCallable('getAptsTokeet');
-			await getAptsTokeet({uidCollection: uidCollection})
+			await getAptsTokeet({uidCollection:uidCollection})
 				.then(async (result) => {
 				//console.log(result.data);
-
+				
 				setAssignApts(checkTokeetSets(result.data.rental.data));
 				setLoading(false);
 			});
@@ -329,6 +333,8 @@ const classes = useStyles();
 		);
 	};
 	
+	const convertDate=(x)=> dateFormat(new Date(x * 1000).toUTCString().substr(5, 11), 'dd-mmm-yyyy')
+	
 	const handleChangeChecked = (row) => {
 		setAssignApts(assignApts.map((x, k) => (x.TokeetId !== row.TokeetId ? x :
 					{ ...x, checked: !x.checked})));
@@ -340,41 +346,49 @@ const classes = useStyles();
 		let tktData = await getTokeetReservs();
 		let tktReservs = tktData.tmpTktReservs.filter(x=> x.booked!==0)
 		tktReservs = [...tktReservs,...tktData.tmpCalendars]
-
+	
 		let newArr = [];
 		for (let k in tktReservs) {
 			let a = tktReservs[k];
 			let Nrsrv = a.check_in ? true: false; // Normal reservation or hold resservation
-			
+		
 			let GstAptName = assignApts.filter((x) => x.TokeetId === a.rental_id)[0]['GstdApt'];
 			let set1 = settings.apartments.filter((x) => x.AptName === GstAptName)[0];
 
 			const AptID = set1['id'];
 			const PrpName = set1['PrpName'];
-
+		/*
 			let Vat =
 				+settings.properties.filter((x) => x.id === set1['PrpName'])[0]['VAT'] === 0
 					? false
 					: true;
+		*/
 
 			let vat = settings.properties.filter((x) => x.id === PrpName)[0]['VAT'];
+			let importWithVat = settings.properties.filter((x) => x.id === PrpName)[0]['importWthVat'];
+			importWithVat = importWithVat==='Yes' ? true: false; //import reservations with vat
+			const vatA = importWithVat ? +vat : 0;
+			
 			let ChnPrcnt1 = settings.channels.filter(
 				(x) => getIdChannel(a.inquiry_source, settings) === x.id
 			)[0]['ChnCmsn'];
 			
 			const basePrice = Nrsrv ? getRsrvPrice(a): 0;
 			
-			let netAmnt = (+basePrice / (1 + +vat / 100 - +ChnPrcnt1 / 100)) *
-					(1 + vat / 100)
+			let clnFeeValue = settings.properties.filter(x=> x.id===PrpName)[0]['ClnFee'];
+			clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		
+			let netAmnt = +((+basePrice / (1 + vatA / 100 - +ChnPrcnt1 / 100)) *
+					(1 + vatA / 100) - clnFeeValue).toFixed(2);
 			
 			let tmpObj = {
-				ChckIn: Nrsrv ? dateFormat(new Date(+a.check_in * 1000), 'dd-mmm-yyyy'):
-						dateFormat(new Date(+a.start * 1000), 'dd-mmm-yyyy'), 
-				ChckOut: Nrsrv ? dateFormat(new Date(+a.check_out * 1000), 'dd-mmm-yyyy'):
-						dateFormat(new Date(+a.end * 1000), 'dd-mmm-yyyy'),
+				ChckIn: Nrsrv ? convertDate(+a.check_in):
+						convertDate(+a.start), 
+				ChckOut: Nrsrv ? convertDate(+a.check_out):
+						convertDate(+a.end),
 				Transaction: '',
 				Payments: [{ P: '', Date: null, PM: '', id: uuidv4() }],
-				Vat: Vat,
+				Vat: importWithVat,
 				PrpName: PrpName,
 				RsrvChn: Nrsrv ? getIdChannel(a.inquiry_source, settings): getIdChannel(a.source, settings),
 				NetAmnt: netAmnt,
@@ -412,8 +426,8 @@ const classes = useStyles();
 				},
 				//	LstSave: dateFormat(Date(), 'dd-mmm-yyyy'),
 				PmntStts: 'Unpaid',
-				m: Nrsrv ? dateFormat(new Date(+a.check_in * 1000), 'mm'):dateFormat(new Date(+a.start * 1000), 'mm'),
-				TtlRsrvWthtoutVat: Vat === false? netAmnt : netAmnt / (1 + parseFloat(vat) / 100),
+				m: Nrsrv ? dateFormat(convertDate(+a.check_in), 'mm'):dateFormat(convertDate(+a.start), 'mm'),
+				TtlRsrvWthtoutVat: !importWithVat? netAmnt : netAmnt / (1 + parseFloat(vat) / 100),
 				tokeet: {
 					tokeetID: a.pkey,
 					TokeetApt: assignApts.filter((x) => x.TokeetId === a.rental_id)[0]['TokeetApt'],
@@ -421,20 +435,22 @@ const classes = useStyles();
 				},
 			};
 			
-			const eliminateVat = Vat ? 1 + parseFloat(vat) / 100 : 1;
+			const eliminateVat = importWithVat ? 1 + parseFloat(vat) / 100 : 1;
 
 			let tmpAMount =
 				+tmpObj.NetAmnt +
 				+getFees(tmpObj, +tmpObj.NetAmnt) +
-				+getTaxes(tmpObj, +tmpObj.NetAmnt, eliminateVat);
-
+				+getTaxes(tmpObj, +tmpObj.NetAmnt, eliminateVat)+
+				+clnFeeValue;
+				
 			tmpObj = { ...tmpObj, RsrvAmnt: tmpAMount, BlncRsrv: tmpAMount };
-
+	
 			newArr.push(tmpObj);
 		}
 	
-	
-		setGstdAptsArr(newArr.filter(x=> (x.m*1-1)===startDate.getMonth())); //show only the reservations of the selected month
+		
+		setGstdAptsArr(newArr.filter(x=> ((x.m*1-1)===startDate.getMonth() &&
+				 dateFormat(x.ChckIn,'yyyy')*1===startDate.getFullYear()))); //show only the reservations of the selected month
 
 		setLoading(false);
 	};
@@ -502,7 +518,7 @@ const classes = useStyles();
 			
 
 			<TabPanel value={valueTab} index={0}>
-					<GettingStarted settings={settings}/>
+					<GettingStarted settings={settings} setValueTab={setValueTab}/>
 			</TabPanel>
 			<TabPanel value={valueTab} index={1}>
 					<TabStep1 runAuth={runAuth} authorized={authorized}/>

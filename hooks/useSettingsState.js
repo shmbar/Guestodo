@@ -39,7 +39,7 @@ const   chnnlslogo=  [{brnd: 'Booking', img: BookingShort, width:'25px'},
 				  ];
 const expOwner = ['Insurance',
 				 'Taxes & Fees',
-				 'Repairs, Maintenance & Cleaninig',
+				 'Repairs, Maintenance & Cleaning',
 				 'Sales & Marketing',
 				 'General & Administrative',
 				 'Towels, Sheets & other Supplies',
@@ -51,7 +51,7 @@ const expOwner = ['Insurance',
 
 const expCompany = ['Insurance',
 				  'Taxes & Fees',
-				  'Maintenance & Cleaninig',
+				  'Maintenance & Cleaning',
 				  'Sales & Marketing',
 				  'General & Administrative',
 				  'Furniture & other Supplies',
@@ -86,6 +86,7 @@ const useSettingsState = (props) =>{
 	const [isFirstTime,setIsFirstTime] = useState(false)
 	const [recStart, setRecStart] = useState(null)
 	const [recEnd, setRecEnd] = useState(null)
+	const [subscriptionPlan, setSubscriptionPlan] = useState(null)
 	
 return {
 	settings,
@@ -93,6 +94,7 @@ return {
 	cshFlowTableCompany, setCshFlowTableCompany,
 	recStart, setRecStart,
 	recEnd, setRecEnd,
+	subscriptionPlan, setSubscriptionPlan,
 	updtShows: async(uidCollection,id,value) =>{
 		let tmp = {...settingsShows, [id] : value};
 		await setSettingsShows(tmp) //update localstorage

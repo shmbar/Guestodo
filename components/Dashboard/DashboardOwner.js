@@ -9,7 +9,7 @@ import PannelData from './SubComponents/PannelData';
 import { makeStyles } from '@material-ui/core/styles';
 //import 'chartjs-plugin-datalabels';
 import {idToItem ,/*  addDataSettings,  addData, addNewSlotDoc ,*/ readDataPerPropertyDates, /*readDataDates,*/ readDataSlots,
-		setSets, getFees } from '../../functions/functions.js';
+		/*setSets,*/ getFees  } from '../../functions/functions.js';
 import useWindowSize from '../../hooks/useWindowSize';
 
 import Rsrv from '../../logos/pics/balancedue.svg';
@@ -19,8 +19,7 @@ import Income from '../../logos/pics/Inc.png';
 import Expense from '../../logos/pics/Exp.png';
 import {AuthContext} from '../../contexts/useAuthContext';
 
-
-//import {obj} from './obj';
+//import {obj} from './maxObj';
 //
 
 const daysInMonth =  (month, year) => { 
@@ -53,6 +52,10 @@ const Dashboard = () => {
 	const {uidCollection, admn} = useContext(AuthContext);
 
 	let  cur = settings.length===0 ? "Currency" : settings.CompDtls.currency ;
+	
+	let clnFeeValue = settings.properties.length===0 || settings.properties.length===undefined || propertySlct===null? 0 :
+			settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee'];
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 
 	const useStyles = makeStyles(theme => ({
 		root: {
@@ -103,6 +106,7 @@ const Dashboard = () => {
 					listDataEXprevYr = 	await readDataPerPropertyDates(uidCollection, 'expenses', propertySlct, date.year-1, date.month);
 					listDataOi = 		await readDataPerPropertyDates(uidCollection, 'otherIncome', propertySlct, date.year, date.month);
 					listDataOiprevYr = 	await readDataPerPropertyDates(uidCollection,'otherIncome', propertySlct, date.year-1, date.month);
+					
 					for(let i in apts){
 						let tmp =  await readDataSlots(uidCollection, 'slots', date.year, date.month, apts[i]);
 						OccupCurrentYear = [...OccupCurrentYear, ...tmp.dates]
@@ -111,13 +115,12 @@ const Dashboard = () => {
 						OccupPrevYear = [...OccupPrevYear, ...tmp.dates]
 					}
 				}
-
 		
 				let tmpRcDataDsh = [...listDataRC, ...listDataRCprevYr];
 				tmpRcDataDsh = tmpRcDataDsh.filter(x=> x.pStatus!=='Tentative') //filter the tentative reservations
 				let tmpExDataDsh = [...listDataEX, ...listDataEXprevYr]
 				let tmpOtherIncDsh = [...listDataOi, ...listDataOiprevYr]
-			
+
 			let nightsNum=0;
 			let reservs=0;
 			let otherInc=0;
@@ -149,10 +152,11 @@ const Dashboard = () => {
 					
 					const vatProperty = settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']/100;
 					let val = +tmpRcDataDsh[i].TtlRsrvWthtoutVat + 
-							+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(1 + parseFloat(vatProperty));
+						+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(1 + parseFloat(vatProperty)) +
+						clnFeeValue/(tmpRcDataDsh[i].Vat ? (1 + parseFloat(vatProperty)) : 1)
 						
-						
-					if(dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()){
+					
+							if(dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()){
 						nightsNum+= tmpRcDataDsh[i].NigthsNum;
 						reservs+= (+tmpRcDataDsh[i].RsrvAmnt);
 						revenue+= +val;
@@ -265,12 +269,33 @@ const Dashboard = () => {
 
 		runData(); 
 
-	},[  date, settings , uidCollection, expOwner,admn, propertySlct, setLoading])
+	},[  date, settings , uidCollection, expOwner,admn, propertySlct, setLoading, clnFeeValue])
 	
-	const runAA=async()=>{
+	//const runAA=async()=>{
+	/*	
+		let obj1 = obj.map((x,i)=> ({...x, 'Amnt' : x.Amnt*1, 'BlncExp': x.BlncExp*1, 'ExpAmntWthtoutVat': x.ExpAmntWthtoutVat*1, VatAmnt: 
+								x.VatAmnt*1, 'TtlPmnt': x.TtlPmnt*1, Vat: false, recCost: false,
+								Transaction:'EX'.concat(i + 98).concat('_' + uuidv4()),
+								Payments:[{Date:x.Pdate, P: x.Amnt*1, PM: x.PM, id: uuidv4(), m: dateFormat(x.m, 'mm')  }] }))
 		
+		for(let i in obj1){
+			delete obj1[i].Pdate
+			delete obj1[i].P
+			delete obj1[i].PM
+		}
 		
+		let pmnts = obj1.map((x,i)=> ({Date: new Date(x.Payments[0].Date), id: x.Payments[0].id, P: x.Payments[0].P, PM: x.Payments[0].PM,
+									  ExpInc: x.ExpType, 'VendChnnl': x.vendor, 'Transaction': x.Transaction,
+									  'Fund': settings.properties.filter(q=>q.id===x.PrpName)[0]['Fund'] }))
+								  
+		
+		console.log(obj1)
+		console.log(pmnts)
 	
+			
+	await setBatchExpense(uidCollection,obj1, 'expenses')
+	await setBatchPayments(uidCollection,pmnts, 'payments')
+		*/
 	//		await setSets('903dbfe0-5cb3-4e71-b389-781bed81558b')
 		
 	//await	setID('d25f1c39-cadf-4a4d-9993-6073c8db84de', 'reservations_2021')
@@ -283,7 +308,7 @@ const Dashboard = () => {
 	//	uploadData(uidCollection)
 	//	uploadSlots(uidCollection)
 		
-	}
+	//}
 
 	
 	return (
@@ -339,7 +364,7 @@ const Dashboard = () => {
 					</Paper>
 		  		</Grid>
 		  	</Grid>
-			{/*<button style={{width: '50px', height: '50px'}}onClick={runAA}></button>*/ }
+			{/*<button style={{width: '50px', height: '50px'}}onClick={runAA}></button> */}
 	</div>
 	)
 	

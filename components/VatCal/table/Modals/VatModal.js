@@ -15,7 +15,7 @@ import PMmodal from '../../../Settings/modals/listOfItems/PMmodal';
 import {SettingsContext} from '../../../../contexts/useSettingsContext';
 import {formValidation, delEmptyPaymentS} from '../../../../functions/formValidation';
 import {addData, getNewTR, readDataPropsDatesRange, addDPaymentsBatch,
-		delDPaymentsBatch, getFees, getTaxes} from '../../../../functions/functions.js';
+		delDPaymentsBatch, getFees} from '../../../../functions/functions.js';
 import useWindowSize from '../../../../hooks/useWindowSize';
 import {AuthContext} from '../../../../contexts/useAuthContext';
 import {SelectContext} from '../../../../contexts/useSelectContext';
@@ -75,17 +75,24 @@ const VatModal = () =>{
 		let tmp = {...valueVatTmp};
 		let newTmp='';
 		const vatProperty = settings.properties.filter(x=> x.id===val.PrpName)[0]['VAT'];
+		let clnFeeValue = settings.properties.filter(x=> x.id===val.PrpName)[0]['ClnFee'];
+		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 		
+		const eliminateVat = val.Vat ? (1 + parseFloat(vatProperty)/100): 1;
+		const VatCalc = val.Vat ? parseFloat(vatProperty)/100: 0;
+	
 		if(val.Vat===false){
 			newTmp = ({...tmp, 'withVat': +(+tmp.withVat + (+val.NetAmnt + 
-								+getFees(val, val.NetAmnt ))).toFixed(2)});
+								+getFees(val, val.NetAmnt ))  + +clnFeeValue ).toFixed(2)});
 		}else{
 			newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat +
-				   (+val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/
-					(1 + parseFloat(vatProperty)/100))).toFixed(2),
-			   		'Vat': +(+tmp.Vat + (+val.RsrvAmnt - +val.TtlRsrvWthtoutVat -
-							getFees(val, val.NetAmnt )/(1 + parseFloat(vatProperty)/100) -
-							+getTaxes(val, val.NetAmnt ))).toFixed(2)
+				   (+val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/eliminateVat +
+					+clnFeeValue/eliminateVat)).toFixed(2),
+			   		'Vat': +(+tmp.Vat + (val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/eliminateVat + 
+										 +clnFeeValue/eliminateVat)*VatCalc).toFixed(2)
+					   
+					 
+					   
 			});
 		}
 		return newTmp;

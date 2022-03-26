@@ -3,7 +3,7 @@ import 'firebase/firestore';
 import 'firebase/auth';
 import 'firebase/functions';
 import 'firebase/analytics'
-import { v4 as uuidv4 } from 'uuid';
+//import { v4 as uuidv4 } from 'uuid';
 
 import config from '../firebase.js';
 
@@ -826,6 +826,48 @@ export const getSubsciptionData = (x)=>{
     console.log("Error getting document:", error);
 	});
 };
+
+/*
+export const setBatchExpense=async(uidCollection,obj, collection)=>{
+	
+	let batch = db.batch();
+	
+	for(let i in obj){
+		 let docRef = await db.collection(uidCollection).doc('alldata')
+		 .collection(collection + '_' + dateFormat(obj[i].AccDate,'yyyy')).doc(obj[i].Transaction);
+				 await batch.set(docRef, obj[i]);
+			
+				}
+	
+	
+	// Commit the batch
+	batch.commit().then(() => {
+    console.log('Done')
+});
+	
+}
+
+
+export const setBatchPayments=async(uidCollection,obj, collection)=>{
+	
+	let batch = db.batch();
+	
+	for(let i in obj){
+	
+		 let docRef = await db.collection(uidCollection).doc('alldata').collection(collection + '_' + 
+				dateFormat(obj[i].Date,'yyyy')).doc(obj[i].id);
+				 await batch.set(docRef, obj[i]);
+			
+				}
+	
+	
+	// Commit the batch
+	batch.commit().then(() => {
+    console.log('Done')
+});
+	
+}
+*/
 /*
 export const setID=async(uidCollection, collection)=>{
 	
@@ -1026,7 +1068,7 @@ export const setNewRsrvCncl = async(uidCollection, collection )=>{
 	}) 
 	
 }
-*/
+
 
 export const setSets=async(uidCollection)=>{
 	 const properties = await db.collection(uidCollection).doc('data').collection('settings').doc('properties').get()
@@ -1052,4 +1094,4 @@ export const setSets=async(uidCollection)=>{
 	console.log(arr)
 	await db.collection(uidCollection).doc('data').collection('settings').doc('properties').set( {properties: arr})
 	console.log('done')
-}
+}*/

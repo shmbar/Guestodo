@@ -31,10 +31,13 @@ const logos = [{ txt: 'Gross', img: Gross, width: '50px' },
 
 
 
-const RC = (x, vatProperty) => {
+const RC = (x, vatProperty, clnFeeValue) => {
 
-	const Income = +(+x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/(x.Vat ? 
-				(1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
+	
+	
+	const Income = +(+x.TtlRsrvWthtoutVat +
+				 +getFees(x, x.NetAmnt )/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1) +
+				clnFeeValue/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
 	
 	let newObj = {
 		ExpInc: 'Guest Payment', VendChnnl: x.RsrvChn, PrpName: x.PrpName, AccDate: x.ChckIn,
@@ -83,6 +86,10 @@ export default function PaperSheet() {
 	const [vatProperty, setVatProperty] = useState(null);
 	
 	let cur = settings.length === 0 ? "Currency" : settings.CompDtls.currency;
+	
+	let clnFeeValue = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee']:0;
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	
 	const useStyles = makeStyles(theme => ({
 		root: {
 			padding: scrSize === 'xs' ? theme.spacing(1, 1, 5, 1) : theme.spacing(1, 4, 5, 4),
@@ -199,7 +206,7 @@ export default function PaperSheet() {
 				let ChckIn = dateFormat(listDataRC[i].ChckIn, "yyyy-mm");
 
 				if (ChckIn >= From && ChckIn <= To && listDataRC[i].pStatus!=='Tentative') {
-					tableArr.push(RC(listDataRC[i], vatProperty));
+					tableArr.push(RC(listDataRC[i], vatProperty, clnFeeValue));
 				}
 			}
 
@@ -239,7 +246,7 @@ export default function PaperSheet() {
 			loadData()
 		}
 
-	}, [uidCollection, valuePL, setPlData, settings, setFilteredData, setLoading, checked, vatProperty])
+	}, [uidCollection, valuePL, setPlData, settings, setFilteredData, setLoading, checked, vatProperty, clnFeeValue])
 
 
 	const handleClose = () => {

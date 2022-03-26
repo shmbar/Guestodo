@@ -70,9 +70,12 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 	}else if (column.field==='Fund') {
 		tmp = scrSize !== 'xs' ? showItem(rowData, column, settings.funds): <> <span className="p-column-title">{column.header}
 		</span>{showItem(rowData, column, settings.funds)} </>
-	}else if (column.field==='NetAmnt' || column.field==='Fees' || column.field==='Taxes' || column.field==='VAT') {
+	}else if (column.field==='NetAmnt' || column.field==='Fees' || column.field==='Taxes' || column.field==='VAT' || column.field==='ClnFee') {
 		tmp = scrSize !== 'xs' ? showCommasNfees1(rowData, column, settings, cur): <> <span className="p-column-title">{column.header}
 		</span>{showCommasNfees1(rowData, column, settings, cur)} </>
+	}else if (column.field==='ClnFee') {
+		tmp = scrSize !== 'xs' ? showCurrency(rowData, column, cur): <> <span className="p-column-title">{column.header}
+		</span>{showCurrency(rowData, column, cur)} </>
 	}else{
 		tmp = scrSize !== 'xs' ? rowData[column.field]: <> <span className="p-column-title">{column.header}</span>{rowData[column.field]} </>
 	}
@@ -103,7 +106,11 @@ const showCommas=(rowData, column, cur)=>{
 const showCommasNfees=(rowData, column, cur, settings)=>{
 	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
 	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
-	let tmp = rowData[column.field] + +getFees(rowData, tmpAmnt )/(rowData.Vat ? (1 + parseFloat(vat)/100): 1)
+	const eliminateVat = rowData.Vat ? (1 + parseFloat(vat)/100): 1;
+	let clnFeeValue = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['ClnFee'];
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	
+	let tmp = rowData[column.field] + +getFees(rowData, tmpAmnt )/eliminateVat + +clnFeeValue/eliminateVat ;
 	
 	return `${cur} ${addCommas(tmp) }`;
 }
@@ -112,13 +119,17 @@ const showCommasNfees1=(rowData, column, settings, cur )=>{
 	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
 	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
 	const eliminateVat = rowData.Vat ? (1 + parseFloat(vat)/100): 1;
+	let clnFeeValue = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['ClnFee'];
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	const VatCalc = rowData.Vat ? parseFloat(vat)/100: 0;
 	
-	let vatAmount =	rowData.RsrvAmnt-rowData.TtlRsrvWthtoutVat -
-				getFees(rowData, tmpAmnt )/eliminateVat - +getTaxes(rowData, tmpAmnt,eliminateVat );
+	let vatAmount =(rowData.TtlRsrvWthtoutVat + +getFees(rowData, rowData.NetAmnt )/eliminateVat + 
+										 +clnFeeValue/eliminateVat)*VatCalc;
 	
 	const tmp = column.field==='NetAmnt' ? rowData.TtlRsrvWthtoutVat :
 								column.field==='Fees' ? +getFees(rowData, tmpAmnt )/eliminateVat :
 								column.field==='Taxes' ? +getTaxes(rowData, tmpAmnt, eliminateVat ):
+								column.field==='ClnFee' ? clnFeeValue/eliminateVat :
 								vatAmount;
 	
 	return `${cur} ${addCommas(tmp) }`;
@@ -174,6 +185,10 @@ const showPrcntg = (rowData, column)=>{
 	return (rowData[column.field]==='' || rowData[column.field]===undefined) ? '-' : `${rowData[column.field]}%`;
 }
 
+const showCurrency = (rowData, column, cur)=>{
+	return (rowData[column.field]==='' || rowData[column.field]===undefined) ? '-' : `${cur} ${addCommas(rowData[column.field]) }`;
+}
+
 const setStatIcon= (rowData, column)=>{
 	
 	const confirmed = '#65E188';
@@ -219,7 +234,8 @@ export const showDataTreeTable=( node, column, scrSize, settings) => {
 	let cur = settings.CompDtls.currency
 	let tmp;
 	
-	if (column.field==='Amnt' || column.field==='ExpAmntWthtoutVat' || column.field==='VatAmnt' ) {
+	if (column.field==='Amnt' || column.field==='ExpAmntWthtoutVat' || column.field==='VatAmnt' || column.field==='CleanAmount' 
+		|| column.field==='ExpAmnt') {
 		tmp = showCommas(node.data,column, cur )
 	}else if (column.field==='AccDate') {
 		tmp = dateFormat(node.data.AccDate, "mmm-yyyy");

@@ -9,7 +9,7 @@ import Footer from './Footer/footer';
 import Button from '@material-ui/core/Button';
 import quote from './Pics/quote.svg';
 import idanPic from './Pics/idanPic.png';
-import nirPic from './Pics/nirPic.jpg';
+import nirPic from './Pics/nirPic.png';
 import Avatar from '@material-ui/core/Avatar';
 import { Link } from 'react-router-dom';
 import Faqs from './faqs';
@@ -189,6 +189,21 @@ const useStyles = makeStyles((theme) => ({
 			fontFamily: '"Poppins", Sans-serif',
 		},
 	},
+	videoResponsive: {
+  		overflow: 'hidden',
+  		paddingBottom: '56.25%',
+  		position: 'relative',
+  		paddingTop: 25,
+        height: 0,
+		width: '100%',
+		'& iframe': {
+			left: 0,
+			top: 0,
+  			height: '100%',
+  			width: '100%',
+  			position: 'absolute'
+		},
+	}
 }));
 
 const defaultOptions = (x) => {
@@ -364,6 +379,22 @@ const LandingPage = () => {
 			{containerBlueTextBottom}
 		</Grid>
 	);
+
+	const YoutubeEmbed = ({ embedId }) => (
+	  <div className={classes.videoResponsive}> 
+		<iframe
+		  width="853"
+		  height="480"
+		  src={`https://www.youtube.com/embed/${embedId}`}
+		  frameBorder="0"
+		  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+		  allowFullScreen
+		  title="my youtube"
+		/>
+	  </div>
+);
+
+
 	return (
 		<div style={{ background: 'white' }}>
 			<MMenu />
@@ -411,7 +442,16 @@ const LandingPage = () => {
 					)}
 				</Container>
 			</div>
-
+			
+			<div className={classes.divGray}>
+				<Container maxWidth="md">
+					<div style={sreenSM ? { padding: '40px 0' } : { padding: '60px 30px'}}
+					>
+						<YoutubeEmbed embedId="F2Xci8YjGfI" />
+					</div>
+				</Container>
+			</div>
+			
 			<Container maxWidth="lg">
 				<Grid
 					container

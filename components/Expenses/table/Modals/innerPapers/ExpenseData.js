@@ -70,7 +70,7 @@ const ExpenseData = () =>{
 	// 	 	aptArr = ['Add new apartment'].concat([...new Set(apartments.filter(y=>
 	// 					y.PrpName===value.PrpName))].map(x=> x.AptName));
 	// }
-	
+
 	let aptArr = apartments ? ['Add new apartment'].concat('All').concat([...new Set(apartments.filter(y=>
 					(y.PrpName===value.PrpName && y.show) || (y.id===value.AptName && !y.show) ))].map(x=> x.AptName)) : ['Add new apartment', 'All'];
 	let aptMenu = aptArr.map((s,i)=>{
@@ -216,7 +216,7 @@ const ExpenseData = () =>{
 								  />
 									}
 								 label={`${vat}% VAT included`}
-								disabled={!write || vat===0}
+								disabled={!write || +vat===0}
 								labelPlacement="end"
 								/>	
 					</Grid>

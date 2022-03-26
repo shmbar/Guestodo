@@ -6,9 +6,8 @@ import { Paper, IconButton, Tooltip } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { SettingsContext } from '../../../../../contexts/useSettingsContext';
 import {RcContext} from '../../../../../contexts/useRcContext';
-import { convId2Item, readDataSlots, getNewTR, checkAvailableSlot } from '../../../../../functions/functions.js';
+import { convId2Item, readDataSlots, checkAvailableSlot } from '../../../../../functions/functions.js';
 import EditIcon from '@material-ui/icons/Edit';
-import { v4 as uuidv4 } from 'uuid';
 import {showDataTable} from '../../../../../functions/setTableDt.js';
 import { InputText } from 'primereact/inputtext';
 
@@ -52,9 +51,6 @@ const TktReservationsTable = (props) => {
 
 		selectValue(val);
 		
-		let tmpRC = await  getNewTR(props.uidCollection, 'lastTR', 'lastTR', 'RC');
-		val =({...val, 'Transaction' : 'RC'.concat(tmpRC).concat('_' + uuidv4())});
-		
 		let availORnotavail = await checkAvailableSlot(props.uidCollection, val.AptName,
 							val.Transaction, val.ChckIn, val.ChckOut);
 		setIsSlotAvailable(!availORnotavail);
@@ -87,6 +83,7 @@ const TktReservationsTable = (props) => {
 	}
 	
 	const classes = useStyles();
+	
 	let dynamicColumns = tableCols.map((col, i) => {
 		return (
 			<Column
@@ -129,15 +126,19 @@ const TktReservationsTable = (props) => {
 				<DataTable
 					value={convId2Item(props.gstdAptsArr.map(x=> ({...x, TokeetApt:
 						x.tokeet.TokeetApt})), ['AptName', 'PrpName', 'RsrvChn'], settings)}
+					
 					className="p-datatable-responsive-demo"
-					paginator={true}
+					paginator
 					globalFilter={globalFilter}
-					rows={10} rowsPerPageOptions={[5,10,20]}
-								paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
-							   PageLinks NextPageLink LastPageLink RowsPerPageDropdown"
+					rows={10}
+					rowsPerPageOptions={[5,10,20]} 
+					
+					
+					paginatorTemplate="CurrentPageReport FirstPageLink PrevPageLink 
+							   PageLinks NextPageLink LastPageLink"
 					currentPageReportTemplate={
-						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : ''
-					}
+						scrSize !== 'xs' ? 'Showing {first} to {last} of {totalRecords}' : ''  
+					} 
 				>
 					{dynamicColumns}
 				</DataTable>

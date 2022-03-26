@@ -51,6 +51,7 @@ import Tab9OtherIncomeCompany from './Settings/Tab9OtherIncomeCompany';
 import Tab10OtherIncome from './Settings/Tab10OtherIncome';
 import CompanyDetails from './Settings/CompanyDetails';
 import VatModal from './Settings//modals/VatModal';
+import Subscription from './Subcomponents/Subscription';
 
 import MainMenu from './Subcomponents/MainMenu';
 import PropertySelect from './Subcomponents/PropertySelect';
@@ -60,7 +61,7 @@ import FundSelect from './Subcomponents/FundSelect';
 import TimeOut from './Subcomponents/Idle/timeOut';
 import Logo from './LandingPage/Menu/Logo.svg';
 
-import PmntNotification from './Subcomponents/pmntNotification';
+//import PmntNotification from './Subcomponents/pmntNotification';
 
 const drawerWidth = 220;
 
@@ -273,7 +274,7 @@ const Main =(props) =>{
 	
   return (
     <div className={classes.root}>
-		<PmntNotification />
+		  {/*<PmntNotification setPage={setPage}/> */}
       <CssBaseline />
       <AppBar   position="fixed" className={clsx(classes.appBar, {[classes.appBarShift]: openMenu})}   >
         <Toolbar>
@@ -387,6 +388,7 @@ const Main =(props) =>{
 		  	{page==='DashboardOwner' && <DashboardOwner /> }
 		  	{page==='Dashboard ' && <DashboardCompany /> }
 			{page==='Recurring Expenses' && <TabRecuurringExp /> }
+		  	{page==='Subscription' && <Subscription /> }
 		  
 		  
       </main>

@@ -5,6 +5,7 @@ import Tab2Fees from './PrpTabs/Tab2Fees'
 import Tab2Vat from './PrpTabs/Tab2Vat'
 import Tab2Taxes from './PrpTabs/Tab2Taxes'
 import Tab2Commission from './PrpTabs/Tab2Commission'
+import Tab2ClnFee from './PrpTabs/Tab2ClnFee'
 
 const Tab2Details = (props) => {
 	
@@ -17,6 +18,7 @@ const Tab2Details = (props) => {
 			{props.valueTab===2 && <Tab2Vat />	}
 			{props.valueTab===3 && <Tab2Taxes taxesRedValid={props.taxesRedValid}/>	}
 			{props.valueTab===4 && <Tab2Commission />	}
+			{props.valueTab===5 && <Tab2ClnFee />	}
 			
 		</div>
 	);

@@ -65,9 +65,12 @@ return {
 	//	let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+	let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 		
 	const RsrvAmount = (+e.target.value + +getFees(value, e.target.value) +
-					  			+getTaxes(value, e.target.value, eliminateVat));
+					  			+getTaxes(value, e.target.value, eliminateVat)) +
+		  							clnFeeValue;
 
 		if (e.target.name==='NetAmnt') {
 		
@@ -110,8 +113,10 @@ return {
 		
 			let ChnItem= settings.channels.filter(x => e.target.value===x.RsrvChn)[0];
 	//		let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
-			const RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt, eliminateVat);
+			let RsrvAmount = +value.NetAmnt + +getFees(value, value.NetAmnt) +
+					  			+getTaxes(value, value.NetAmnt, eliminateVat) +
+				  				clnFeeValue;
+			RsrvAmount = RsrvAmount.toFixed(2)
 
 			value.NetAmnt!=='' ?	setValue({...value, [e.target.name]: ChnItem['id'],
 										'BlncRsrv': +(+RsrvAmount-value.TtlPmnt),
@@ -190,15 +195,16 @@ return {
 		
 	},
 	
-	handleChangeDetails: (x,y,e)=>{
+	handleChangeDetails: (x,y,e, clnFeeValue)=>{
 		let tmp = (x==='add')? +value.dtls[y] +1 : +value.dtls[y] -1;
 		tmp=tmp<0?0:tmp;
 		let moshe={...value.dtls,[y]:tmp};
 		const val = {...value, 'dtls' : moshe}
+	
 	//	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	//	const vatExisted = value.Vat ? (1 + parseFloat(vat)/100): 1;
 		const RsrvAmount = +value.NetAmnt + +getFees(val, value.NetAmnt) +
-					  			+getTaxes(val, value.NetAmnt);
+					  			+getTaxes(val, value.NetAmnt) +clnFeeValue;
 		
 		setValue({...value,'dtls':moshe, 'RsrvAmnt': RsrvAmount, 'BlncRsrv': +(+RsrvAmount-value.TtlPmnt), });
 	},
@@ -254,11 +260,15 @@ return {
 		
 		setValue({...value,'Payments':newVal});
 	},
-	handleChangeTrueFalse: (name,vat) => e => {
+	handleChangeTrueFalse: (name,vat, settings) => e => {
 		
 	const eliminateVat = e.target.checked ? (1 + parseFloat(vat)/100): 1;
+	let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		
 	const RsrvAmount = (+value.NetAmnt + +getFees(value, value.NetAmnt) +
-					  			+getTaxes(value, value.NetAmnt, eliminateVat));
+					  			+getTaxes(value, value.NetAmnt, eliminateVat))+
+		  						clnFeeValue;
 			
 		if(name==='Vat'){
    	 		setValue({ ...value, [name]: e.target.checked,
@@ -279,11 +289,14 @@ return {
 		
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+		const clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];  							
 		
 		const RsrvAmount = value.pStatus!=='Cancelled' ?  +value.NetAmnt +
-			+getFees(value, value.NetAmnt) + +getTaxes(value, value.NetAmnt, eliminateVat) :
+			+getFees(value, value.NetAmnt) + +getTaxes(value, value.NetAmnt, eliminateVat) + 
+			(clnFeeValue*1>0 ? clnFeeValue*1 : 0 ) :
 			+value.CnclFee + +getFees(value, value.CnclFee) + 
-			  +getTaxes(value, value.CnclFee, eliminateVat);
+			  +getTaxes(value, value.CnclFee, eliminateVat) + 
+				(clnFeeValue*1>0 ? clnFeeValue*1 : 0 );
 								
 		setValue({...value, [name]: tmp, 
 					'RsrvAmnt': RsrvAmount,
