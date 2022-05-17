@@ -52,6 +52,7 @@ const CompanyDetails=()=> {
 	{value: '฿',label: 'Thai Baht - ฿'},
 	{value: '₡',label: 'Costa Rican Colón - ₡'},
 	{value: '₫',label: 'Vietnamese Dong - ₫'},
+	{value: 'د.م',label: 'Moroccan Dirham - د.م'},
   ];
 
 

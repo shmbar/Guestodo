@@ -29,7 +29,7 @@ const fqs = [
 			{ttl: 'What are the payment methods GuesTodo accepts?', txt: <>We currently accept all major credit / debit cards and Paypal thanks to integration with our reseller <a href='https://payproglobal.com/'>Paypro.</a></>}, 
 			{ttl: 'Who is the target market of GuesTodo App?', txt: 'Airbnb entrepreneurs, vacation rental property management firms and property owners.'},
 			{ttl: 'Is GuesTodo compatible with any of the existing channel managers?',
-			 	txt: <>At this moment, GuesTodo has API with <a href='https://www.tokeet.com'>Tokeet.com</a> and we are in the process of creating a link to ensure compatibility with other channel manager software.</>},
+			 	txt: <>At this moment, we are in the process of creating a link to ensure compatibility with other channel manager software.</>},
 			{ttl: 'Can I access GuesTodo App on my smartphone?', txt: 'Yes! GuesTodo is accessible through your smartphone.'},
 			{ttl: 'Is my GuesTodo data secured?',
 			 txt: <>Yes! GuesTodo is serviced by the Google cloud to store its data, your business information is safe and secured. For more details, see our <Link to='/privacy'>Privacy Policy.</Link></>},

@@ -54,6 +54,9 @@ export const getIdChannel = (x, settings) => {
 	}else if(x==='tokeet'){
 		tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
 		return tmp;
+	}else if(x==='webready'){
+		tmp = settings.channels.filter((q) => q.RsrvChn === 'Webready')[0]['id'];
+		return tmp;
 	}else{
 		tmp = settings.channels.filter((q) => q.RsrvChn === 'Tokeet')[0]['id'];
 		return tmp;
@@ -373,13 +376,18 @@ const classes = useStyles();
 				(x) => getIdChannel(a.inquiry_source, settings) === x.id
 			)[0]['ChnCmsn'];
 			
+			let upFrnt = settings.channels.filter(
+				(x) => getIdChannel(a.inquiry_source, settings) === x.id
+			)[0]['UpFrnt'];
+
 			const basePrice = Nrsrv ? getRsrvPrice(a): 0;
 			
 			let clnFeeValue = settings.properties.filter(x=> x.id===PrpName)[0]['ClnFee'];
 			clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
-		
-			let netAmnt = +((+basePrice / (1 + vatA / 100 - +ChnPrcnt1 / 100)) *
-					(1 + vatA / 100) - clnFeeValue).toFixed(2);
+			
+			let netAmnt = (upFrnt===undefined || upFrnt===true) ?+((+basePrice / (1 + vatA / 100 - +ChnPrcnt1 / 100)) *
+					(1 + vatA / 100) - (a.inquiry_source==='Booking.com'? 0 : clnFeeValue)).toFixed(2):
+					+(+basePrice).toFixed(2);
 			
 			let tmpObj = {
 				ChckIn: Nrsrv ? convertDate(+a.check_in):

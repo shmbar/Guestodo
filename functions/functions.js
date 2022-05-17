@@ -456,6 +456,10 @@ export const addComma = (nStr) => {
 		 return (x1 + x2);
 }
 
+export const Num=(x)=>{
+	return x!=='' ? x===0 ? x :x.toFixed(2) : ''
+}
+
 export const Num2=(x)=>{
 	return x!=='' ? x===0 ? x :addComma(x.toFixed(2)) : ''
 }

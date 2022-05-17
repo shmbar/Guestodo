@@ -63,6 +63,12 @@ const TktReservationsTable = (props) => {
 		setRcTable(slotsData.rc);  
 	};
 
+	/*
+	const runImport=()=>{
+		console.log(props.gstdAptsArr)
+	}
+	*/
+	
 	const actionTemplate = (rowData, column) => {
 	
 		return ( 
@@ -119,7 +125,11 @@ const TktReservationsTable = (props) => {
 		<Paper className={classes.root}>
 			<div style={{display:'flex', alignItems: 'center', width: '100%', justifyContent: 'space-between'}}>
 				<h4 className="ttlClr">Tokeet reservations</h4>
-				{searchBox}
+				<div style={{display: 'inline-flex'}}>
+					{searchBox}
+				{/*	<Button variant="contained" color="primary" style={{marginLeft: '20px'}} onClick={runImport}>Import All</Button> */}
+				</div>
+				
 			</div>
 			
 			<div className="datatable-responsive-demo">

@@ -1,6 +1,6 @@
 import React, { useContext, useState, useEffect } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import { Paper, Button } from '@material-ui/core';
+import { Paper } from '@material-ui/core';
 import Table from '../Reservations/table/Table';
 import PannelData from '../Subcomponents/PannelData';
 import Grid from '@material-ui/core/Grid';
@@ -50,10 +50,10 @@ export default function PaperSheet() {
 		calendarView,
 		setCalendarView,
 		displayRetrieveDialog,
-		setDisplayRetrieveDialog,
+	//	setDisplayRetrieveDialog,
 	} = useContext(RcContext);
 	const { date, setDate, propertySlct, multiPropertySlct } = useContext(SelectContext);
-	const { uidCollection, PropMangr, admn, creator, write } = useContext(AuthContext);
+	const { uidCollection, /*PropMangr, admn, creator, write */} = useContext(AuthContext);
 	const { setLoading, settings } = useContext(SettingsContext);
 
 	const useStyles = makeStyles((theme) => ({
@@ -211,13 +211,13 @@ export default function PaperSheet() {
 			<Grid container direction='row' spacing={scrSize==='xs' ? 2:5} 
 				justifyContent="flex-end" alignItems="center" style={{padding: '20px'}}>
 				<Grid item>
-				{((PropMangr || admn || creator) && write)	&& <Button
+				{/*((PropMangr || admn || creator) && write)	&& <Button
 						variant="contained"
 						color="primary"
 						onClick={() => setDisplayRetrieveDialog(true)}
 					>
 						Tokeet Integration
-					</Button> }
+					</Button> */}
 				</Grid>
 				<Grid item>
 						<Switcher id="newsletter" onChange={setSwitcherToCalendar} />

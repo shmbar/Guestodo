@@ -159,7 +159,7 @@ export default function DatesRangePicker(props) {
 		
 		if(dates.start ==='' || dates.end ==='')return;
 			
-		handleChangeDNew(dates.start, dates.end)
+		handleChangeDNew(dates.start, dates.end, props.settings)
 		setOpen(false);
 	}
 	

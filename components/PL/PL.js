@@ -31,13 +31,15 @@ const logos = [{ txt: 'Gross', img: Gross, width: '50px' },
 
 
 
-const RC = (x, vatProperty, clnFeeValue) => {
+const RC = (x, vatProperty, clnFeeValue,settings) => {
 
-	
+	const eliminateVat = x.Vat ? (1 + parseFloat(vatProperty)/100): 1;
+	const isChnBooking = settings.channels.filter(y=> y.id===x.RsrvChn)[0]['RsrvChn']==='Booking';
+	const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
 	
 	const Income = +(+x.TtlRsrvWthtoutVat +
-				 +getFees(x, x.NetAmnt )/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1) +
-				clnFeeValue/(x.Vat ? (1 + parseFloat(vatProperty)/100) : 1)).toFixed(2)
+				 +getFees(x, x.NetAmnt )/eliminateVat +
+				clnFeeValue/eliminateVatIfBooking).toFixed(2)
 	
 	let newObj = {
 		ExpInc: 'Guest Payment', VendChnnl: x.RsrvChn, PrpName: x.PrpName, AccDate: x.ChckIn,
@@ -86,9 +88,7 @@ export default function PaperSheet() {
 	const [vatProperty, setVatProperty] = useState(null);
 	
 	let cur = settings.length === 0 ? "Currency" : settings.CompDtls.currency;
-	
-	let clnFeeValue = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee']:0;
-	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	let clnFeeValue = propertySlct!==null ? settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee']: 0;
 	
 	const useStyles = makeStyles(theme => ({
 		root: {
@@ -204,9 +204,11 @@ export default function PaperSheet() {
 
 			for (let i = 0; i < listDataRC.length; i++) {  //Income
 				let ChckIn = dateFormat(listDataRC[i].ChckIn, "yyyy-mm");
-
+				
+				let clnFeeValue1 = listDataRC[i].clnFee===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : listDataRC[i].clnFee
+				
 				if (ChckIn >= From && ChckIn <= To && listDataRC[i].pStatus!=='Tentative') {
-					tableArr.push(RC(listDataRC[i], vatProperty, clnFeeValue));
+					tableArr.push(RC(listDataRC[i], vatProperty, clnFeeValue1, settings));
 				}
 			}
 

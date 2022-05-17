@@ -76,20 +76,23 @@ const VatModal = () =>{
 		let newTmp='';
 		const vatProperty = settings.properties.filter(x=> x.id===val.PrpName)[0]['VAT'];
 		let clnFeeValue = settings.properties.filter(x=> x.id===val.PrpName)[0]['ClnFee'];
-		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		clnFeeValue = val.clnFee===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : val.clnFee
 		
 		const eliminateVat = val.Vat ? (1 + parseFloat(vatProperty)/100): 1;
 		const VatCalc = val.Vat ? parseFloat(vatProperty)/100: 0;
-	
+		
+		const isChnBooking = settings.channels.filter(y=> y.id===val.RsrvChn)[0]['RsrvChn']==='Booking';
+		const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
+		
 		if(val.Vat===false){
 			newTmp = ({...tmp, 'withVat': +(+tmp.withVat + (+val.NetAmnt + 
 								+getFees(val, val.NetAmnt ))  + +clnFeeValue ).toFixed(2)});
 		}else{
 			newTmp = ({...tmp, 'withoutVat': +(+tmp.withoutVat +
 				   (+val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/eliminateVat +
-					+clnFeeValue/eliminateVat)).toFixed(2),
+					+clnFeeValue/eliminateVatIfBooking)).toFixed(2),
 			   		'Vat': +(+tmp.Vat + (val.TtlRsrvWthtoutVat + +getFees(val, val.NetAmnt )/eliminateVat + 
-										 +clnFeeValue/eliminateVat)*VatCalc).toFixed(2)
+										 (isChnBooking ? 0: +clnFeeValue/eliminateVat))*VatCalc).toFixed(2)
 					   
 					 
 					   

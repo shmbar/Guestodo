@@ -24,7 +24,7 @@ const NumberFormatCustom = (props) =>{
        thousandSeparator
        isNumericString
        allowNegative={false}
-       prefix= {tmp + ' ' }
+       prefix= {props.name==='ChnCmsn'? '': tmp + ' ' }
      />
    );
  }

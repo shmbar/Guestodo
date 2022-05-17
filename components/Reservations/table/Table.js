@@ -41,7 +41,7 @@ const tableCols = [
 			{field: 'NetAmnt', header: 'Base Amount', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'ClnFee', header: 'Cleaning Fee', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'Fees', header: 'Fees', showcol: false, s:['xs','sm','md','lg', 'xl']},
-			{field: 'TtlRsrvWthtoutVat', header: 'Reservation Amount Before VAT', showcol: false,
+			{field: 'TtlAmnt', header: 'Reservation Amount Before VAT', showcol: false,
 			 s:['xs','sm','md','lg', 'xl']},
 			{field: 'Taxes', header: 'Taxes', showcol: false, s:['xs','sm','md','lg', 'xl']},
 			{field: 'VAT', header: 'VAT', showcol: false, s:['xs','sm','md','lg', 'xl']},	
@@ -229,11 +229,18 @@ const Table =() =>{
 			const eliminateVat = x.Vat ? (1 + parseFloat(vat)/100): 1;
 			const VatCalc = x.Vat ? parseFloat(vat)/100: 0;
 			
-			let vatAmount =	(x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/eliminateVat + 
-										 +clnFeeValue/eliminateVat)*VatCalc;
+			const isChnBooking = x.RsrvChn==='Booking';
+			const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
+			
+			let TtlAmnt = x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/eliminateVat + 
+										 +clnFeeValue/eliminateVatIfBooking;
+			
+			let vatAmount =(x.TtlRsrvWthtoutVat + +getFees(x, x.NetAmnt )/eliminateVat + 
+										 +(isChnBooking ? 0 : clnFeeValue/eliminateVat))*VatCalc;
 
 			let tmpRow = ({...x, 'Transaction': showShortTR(x, null), NetAmnt: x.TtlRsrvWthtoutVat,
-			ClnFee:+(clnFeeValue/eliminateVat).toFixed(2),
+			ClnFee:+(clnFeeValue/eliminateVatIfBooking).toFixed(2),
+			TtlAmnt: +(+TtlAmnt).toFixed(2),
 			Fees: +(+getFees(x,tmpAmnt )/eliminateVat).toFixed(2),
 			Taxes: +(+getTaxes(x, tmpAmnt, eliminateVat )).toFixed(2), VAT: +(+vatAmount).toFixed(2),
 			TtlRsrvWthtoutVat: +(+x.TtlRsrvWthtoutVat + +getFees(x, tmpAmnt )/eliminateVat +(clnFeeValue/eliminateVat)).toFixed(2)})
@@ -274,7 +281,6 @@ const Table =() =>{
 					   />;
         	});
 	
-
 	return(	
 		 <div className="datatable-responsive-demo">
 			<SnackBar msg={snackbar.msg} snackbar={snackbar.open} setSnackbar={setSnackbar}

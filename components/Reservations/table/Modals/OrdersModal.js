@@ -137,12 +137,9 @@ const OrdersModal = (props) =>{
 	
 	///////////////////////////////////////////////////////////////
 	
-	const createCmsnObj=(ChnlTRex, tmpChnlCmsnPrcntg)=>{
+	const createCmsnObj=(ChnlTRex, tmpChnlCmsnPrcntg, clnFeeValue)=>{
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
-		
-		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 		
 		const Amnt = +((+value.TtlRsrvWthtoutVat + 
 				+clnFeeValue/eliminateVat)*tmpChnlCmsnPrcntg/100).toFixed(2)
@@ -165,23 +162,43 @@ const OrdersModal = (props) =>{
 					'm': dateFormat(value.ChckIn,'mm')}
 	}
 	
-	const MngCmsnObj=(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn )=>{
+	const MngCmsnObj=(MngTRexCmsn, clnFeeValue)=>{
 		
 		const vatCompany = settings.vat.substring(0, settings.vat.length - 1)/100; //should be company vat
 		const vatProperty = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']/100;
 		const eliminateVat = value.Vat ? (1 + parseFloat(vatProperty)): 1;
 		
-		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		const isChnBooking = value.RsrvChn!=='' ? settings.channels.filter(x=> x.id===value.RsrvChn)[0]['RsrvChn']==='Booking' : '';
+		const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
+		
+		const VatCalc = value.Vat ? parseFloat(vatProperty): 0;
+		const ChnPrcnt = value.RsrvChn!=='' ? settings.channels.filter(x=> x.id===value.RsrvChn)[0]['ChnCmsn'] : 0;
+		let tmpVal = value.TtlRsrvWthtoutVat + clnFeeValue/eliminateVatIfBooking ;
+		
+		const tmpMngData = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
+		const tmpMngCmsn = tmpMngData['ManagCommission']; //Management Commission
+		const tmpMngCmsnInclVatYesNo = tmpMngData['inclVat']; 
+		const tmpMngCmsnAddVatYesNo = tmpMngData['addVat'];
+		const tmpMngCmsnChannelSrvFee = tmpMngData['channelSrvFee'];
+		const tmpMngCmsnExtraFee = tmpMngData['extraFee'];
+		const tmpMngCmsnClnFee = tmpMngData['clnFee'];
+		
+		let incldClnFee = tmpMngData['clnFee'];
 		
 		//Include VAT: YES or NO
-		let baseAmnt;
-		let cmsnType = settings.properties.filter(x=> x.id===value.PrpName)[0]['Commissions']
-		['CommissionType'];
 		
-		let incldClnFee = settings.properties.filter(x=> x.id===value.PrpName)[0]['Commissions']
-		['clnFee'];
+	
 		
+		const baseAmnt = +value.TtlRsrvWthtoutVat -
+						(tmpMngCmsnChannelSrvFee ? 0 : tmpVal*ChnPrcnt/100) +  //Channel Service Fee
+						(tmpMngCmsnExtraFee ? +getFees(value, value.NetAmnt )/eliminateVat : 0) +  //Extra Fee
+						(tmpMngCmsnClnFee==='perc' ? clnFeeValue/eliminateVatIfBooking : 0) + //Cleaning Fee
+						(tmpMngCmsnInclVatYesNo ? (tmpMngCmsnClnFee==='perc' ? (value.TtlRsrvWthtoutVat +  //Vat
+								+(isChnBooking ? 0 : clnFeeValue/eliminateVat))*VatCalc : +value.TtlRsrvWthtoutVat *VatCalc) + 
+						(tmpMngCmsnExtraFee ? +getFees(value, value.NetAmnt )/eliminateVat*VatCalc : 0)	: 0); 
+	
+
+	/*	
 		if(cmsnType===0){  //Base Charge Only
 			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt : +value.TtlRsrvWthtoutVat;
 		}else if(cmsnType===1){ //Base Charge Plus Extra Fee
@@ -190,14 +207,28 @@ const OrdersModal = (props) =>{
 		}else if(cmsnType===2){ //Total Amount Paid By Guest
 			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt + +getFees(value, value.NetAmnt) + clnFeeValue:
 					+value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/eliminateVat + 
-				clnFeeValue/eliminateVat;
+				clnFeeValue/eliminateVatIfBooking;
+		}else if(cmsnType===3){ //channel Payout
+				let tmpVal = value.TtlRsrvWthtoutVat + clnFeeValue/eliminateVatIfBooking ;
+				let vatAmount =tmpMngCmsnVatYesNo ? (value.TtlRsrvWthtoutVat + +getFees(value, value.NetAmnt )/eliminateVat + 
+										 +(isChnBooking ? 0 : clnFeeValue/eliminateVat))*VatCalc : 0;
+
+				baseAmnt =  tmpVal + +getFees(value, value.NetAmnt)/eliminateVat - tmpVal*ChnPrcnt/100 + vatAmount;
+					
 		}else{  //Base Charge Only -- Default
 			baseAmnt = tmpMngCmsnVatYesNo ? +value.NetAmnt : +value.TtlRsrvWthtoutVat;
 		}
 		
+	*/	
+		let cleanAmount;
 		
-		let cleanAmount = incldClnFee ? clnFeeValue/eliminateVat : 0;
-		
+		if(value.clnFeeData){ //just Update, cleaning commission already exists
+			cleanAmount = value.clnFeeData.incldClnFee ? clnFeeValue/eliminateVatIfBooking : 0;
+		}else{ // create cleaning commission for the first time
+			cleanAmount = incldClnFee && tmpMngCmsnClnFee==='flat'? clnFeeValue/eliminateVatIfBooking : 0;
+		}
+			
+			
 		const commissionAmount = tmpMngCmsnAddVatYesNo ? +((baseAmnt*tmpMngCmsn/100 + cleanAmount)*(1 + 
 								+vatCompany)).toFixed(2): (+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2);
 
@@ -208,7 +239,7 @@ const OrdersModal = (props) =>{
 					'AmntWihtoutVat': +(+baseAmnt*tmpMngCmsn/100 + cleanAmount).toFixed(2),
 					'BlncExp': +commissionAmount - 0,  // 0 means totall payment
 					'RC': value.Transaction,	'RsrvAmnt': baseAmnt,
-					'RsrvAmntDesc': !value.Vat || tmpMngCmsnVatYesNo===false ? 'NoVat': 'YesVat',
+					'RsrvAmntDesc': !value.Vat || tmpMngCmsnInclVatYesNo===false ? 'NoVat': 'YesVat',
 					'Vat': tmpMngCmsnAddVatYesNo? true:false,
 					'VatAmnt': tmpMngCmsnAddVatYesNo ? +(vatCompany*(baseAmnt*tmpMngCmsn/100 + cleanAmount)).toFixed(2):0,
 				//for Company Revenue table
@@ -280,15 +311,19 @@ const OrdersModal = (props) =>{
 		const tmpChnlCmsn = tmpChnlCmsnPrcntg!=='' ? true: false; //if not empty then true
 		newObj = {...newObj, 'ChnPrcnt' : tmpChnlCmsnPrcntg};
 		
-		const tmpMngCmsn = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
-		['ManagCommission']; //Management Commission
-		const tmpMngCmsnVatYesNo = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
-		['inclVat']; 
-		const tmpMngCmsnAddVatYesNo = settings.properties.filter(x=>value.PrpName===x.id)[0]['Commissions']
-		['addVat'];
 		
-		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-		clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+		const tmpMngData = settings.properties.filter(x => value.PrpName===x.id)[0]['Commissions']
+		
+		const tmpMngCmsn = tmpMngData['ManagCommission']; //Management Commission
+		const tmpMngCmsnVatYesNo = tmpMngData['inclVat']; 
+		const tmpMngCmsnAddVatYesNo = tmpMngData['addVat'];
+		let incldClnFee = tmpMngData['clnFee'];
+		
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee']; 
+		clnFeeValue = newObj.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : newObj.clnFeeData.clnFee
+	
+		newObj = {...newObj, 'clnFeeData' : {clnFee: clnFeeValue, incldClnFee: incldClnFee==='flat' ? true: false}};
+		
 		const vatProperty = settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']/100;
 		const eliminateVat = value.Vat ? (1 + parseFloat(vatProperty)): 1;
 		
@@ -321,7 +356,7 @@ const OrdersModal = (props) =>{
 				}	
 				//update management commission only if the reservaion is confirmed or cancelled
 				if(newObj.pStatus!=='Tentative'){
-					let tmpMngCmsnVal = MngCmsnObj(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn )
+					let tmpMngCmsnVal = MngCmsnObj(MngTRexCmsn, clnFeeValue )
 					await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpMngCmsnVal)
 				}
 				
@@ -333,9 +368,9 @@ const OrdersModal = (props) =>{
 					}
 
 					if(newObj.pStatus!=='Tentative')updateCommissionExpense(newObj.ChnlTRex, newObj.MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, 
-																		tmpMngCmsnVatYesNo,	tmpMngCmsnAddVatYesNo)
+																		tmpMngCmsnVatYesNo,	tmpMngCmsnAddVatYesNo, clnFeeValue)
 			}
-			
+	
 			setSnackbar( {open: (await addData(uidCollection, 'reservations',dateFormat(newObj.ChckIn,'yyyy'), newObj)), msg: 'Order has been updated!',
 						  variant: 'success'});
 			
@@ -386,7 +421,7 @@ const OrdersModal = (props) =>{
 					}
 
 					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(false, MngTRexCmsn,
-						tmpChnlCmsnPrcntg, tmpMngCmsn,tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo); 
+						tmpChnlCmsnPrcntg, tmpMngCmsn,tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, clnFeeValue); 
 					//do nothing for channel commission , managemnt transaction, management commisson, include or not include vat
 				}else{
 					ChnlTRex = await 'EX'.concat( await  getNewTR(uidCollection, 'lastTR', 'lastTR', 'EX')).concat('_' + uuidv4()); 
@@ -409,7 +444,7 @@ const OrdersModal = (props) =>{
 					}
 
 					if(tmpObj.pStatus!=='Tentative')createCommissionExpense(ChnlTRex, MngTRexCmsn,
-					tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,tmpMngCmsnAddVatYesNo); 
+					tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo,tmpMngCmsnAddVatYesNo, clnFeeValue); 
 					//channel transacton, managemnt transaction, management commisson, include or not include vat
 
 				}
@@ -448,20 +483,20 @@ const OrdersModal = (props) =>{
 	
 	
 	const updateCommissionExpense=
-		  async(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn,tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo)=>{
+		  async(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn,tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, clnFeeValue)=>{
 			
-			let tmpChannelCmsnVal= createCmsnObj(ChnlTRex, tmpChnlCmsnPrcntg);
-			let tmpMngCmsnVal = MngCmsnObj(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn)
+			let tmpChannelCmsnVal= createCmsnObj(ChnlTRex, tmpChnlCmsnPrcntg, clnFeeValue);
+			let tmpMngCmsnVal = MngCmsnObj(MngTRexCmsn, clnFeeValue)
 
 			await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpChannelCmsnVal)
 			await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpMngCmsnVal)
 
 	}
 	
-	const createCommissionExpense =async(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo)=>{
+	const createCommissionExpense =async(ChnlTRex, MngTRexCmsn, tmpChnlCmsnPrcntg, tmpMngCmsn, tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, clnFeeValue)=>{
 	
-			let tmpChannelCmsnVal = ChnlTRex!==false && createCmsnObj(ChnlTRex, tmpChnlCmsnPrcntg);
-			let tmpMngCmsnVal = MngCmsnObj(tmpMngCmsnVatYesNo, tmpMngCmsnAddVatYesNo, tmpMngCmsn, MngTRexCmsn );
+			let tmpChannelCmsnVal = ChnlTRex!==false && createCmsnObj(ChnlTRex, tmpChnlCmsnPrcntg, clnFeeValue);
+			let tmpMngCmsnVal = MngCmsnObj(MngTRexCmsn, clnFeeValue );
 	
 			if( ChnlTRex!==false){ await addData(uidCollection, 'expenses',dateFormat(value.ChckIn,'yyyy'), tmpChannelCmsnVal) }
 			await addData(uidCollection, 'expenses', dateFormat(value.ChckIn,'yyyy'), tmpMngCmsnVal)

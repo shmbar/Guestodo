@@ -65,8 +65,9 @@ return {
 	//	let Cmsn = value.RsrvChn!=='' ? parseFloat(ChnItem['ChnCmsn'])/100 : '0';
 	const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 	const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
+	
 	let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	clnFeeValue = value.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : value.clnFeeData.clnFee
 		
 	const RsrvAmount = (+e.target.value + +getFees(value, e.target.value) +
 					  			+getTaxes(value, e.target.value, eliminateVat)) +
@@ -117,7 +118,7 @@ return {
 					  			+getTaxes(value, value.NetAmnt, eliminateVat) +
 				  				clnFeeValue;
 			RsrvAmount = RsrvAmount.toFixed(2)
-
+		
 			value.NetAmnt!=='' ?	setValue({...value, [e.target.name]: ChnItem['id'],
 										'BlncRsrv': +(+RsrvAmount-value.TtlPmnt),
 										'PmntStts': paymentStatus(value.TtlPmnt, RsrvAmount),
@@ -230,16 +231,18 @@ return {
 			
 		}
 	},	
-	handleChangeDNew: (start, end) =>{
+	handleChangeDNew: (start, end,settings) =>{
 		
 		let tmp = getNight(dateFormat(end,'dd-mmm-yyyy'), dateFormat(start,'dd-mmm-yyyy'))
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+		clnFeeValue = value.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : value.clnFeeData.clnFee
 		
 		let newValue = {...value, 'ChckIn': dateFormat(start,'dd-mmm-yyyy'),
 					  'ChckOut' : dateFormat(end,'dd-mmm-yyyy'),'NigthsNum' : tmp}
 		
 		
 		const RsrvAmount = +newValue.NetAmnt + +getFees(newValue, newValue.NetAmnt) +
-					  			+getTaxes(newValue, newValue.NetAmnt);
+					  			+getTaxes(newValue, newValue.NetAmnt) + clnFeeValue;
 	
 	
 			setValue({...newValue, 
@@ -264,7 +267,7 @@ return {
 		
 	const eliminateVat = e.target.checked ? (1 + parseFloat(vat)/100): 1;
 	let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	clnFeeValue = value.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : value.clnFeeData.clnFee
 		
 	const RsrvAmount = (+value.NetAmnt + +getFees(value, value.NetAmnt) +
 					  			+getTaxes(value, value.NetAmnt, eliminateVat))+
@@ -289,14 +292,15 @@ return {
 		
 		const vat= settings.properties.filter(x=> x.id===value.PrpName)[0]['VAT']
 		const eliminateVat = value.Vat ? (1 + parseFloat(vat)/100): 1;
-		const clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];  							
+		let clnFeeValue = settings.properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];  							
+		clnFeeValue = value.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : value.clnFeeData.clnFee
 		
 		const RsrvAmount = value.pStatus!=='Cancelled' ?  +value.NetAmnt +
 			+getFees(value, value.NetAmnt) + +getTaxes(value, value.NetAmnt, eliminateVat) + 
-			(clnFeeValue*1>0 ? clnFeeValue*1 : 0 ) :
+				clnFeeValue :
 			+value.CnclFee + +getFees(value, value.CnclFee) + 
 			  +getTaxes(value, value.CnclFee, eliminateVat) + 
-				(clnFeeValue*1>0 ? clnFeeValue*1 : 0 );
+				clnFeeValue;
 								
 		setValue({...value, [name]: tmp, 
 					'RsrvAmnt': RsrvAmount,

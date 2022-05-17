@@ -22,6 +22,7 @@ const tableCols = [
             {field: 'RsrvChn', header: 'Reservation Channel'},
 			{field: 'ChnCmsn', header: 'Invoice Channel Fee'},
 			//{field: 'MngCmsn', header: 'Management Commission'},
+			{field: 'UpFrnt', header: 'Up Front Fee'},
 			{field: 'el' , header: '', el: 'el'}
 
 ];
@@ -183,7 +184,7 @@ const Tab4 =() =>{
 					   />;
         });
 
-
+	
 	return(	
 		<div className="datatable-responsive-demo" /* style={{maxWidth: '1100px'}} */>
 		<Container maxWidth="lg" style={{paddingLeft:'0px', paddingRight:'0px'}}>

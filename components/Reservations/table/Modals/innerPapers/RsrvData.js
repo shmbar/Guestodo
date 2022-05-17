@@ -184,8 +184,15 @@ const RsrvAmounts = () =>{
 		setRunTab(tab)
 	}
 
-	const clnFeeValue = properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
-	const clnFee = clnFeeValue!== '' && clnFeeValue!==undefined && clnFeeValue!=='0' ?
+	
+	
+	const showClnfieldValue = properties.filter(x=> x.id===value.PrpName)[0]['Commissions']['clnFee']===undefined || 
+		  properties.filter(x=> x.id===value.PrpName)[0]['Commissions']['clnFee']==='noclnfee'
+
+	
+	let clnFeeValue = properties.filter(x=> x.id===value.PrpName)[0]['ClnFee'];
+	clnFeeValue = value.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : value.clnFeeData.clnFee
+	const clnFee = clnFeeValue!==0  || !showClnfieldValue?
 		  		 <div className={classes.labelRoot} >
 		  			<Typography variant="body1" className={classes.labelText}
 						style={{marginLeft: '20px'}}>
@@ -344,7 +351,7 @@ const RsrvAmounts = () =>{
 							</FormControl>
 					</Grid>
 					<Grid item xs={12} md={6} >
-							<CustomDatePicker />
+							<CustomDatePicker settings={settings}/>
 					</Grid>
 					<Grid item xs={12} md={3}>
 						  	<FormControl className={classes.formControl}>

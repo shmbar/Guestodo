@@ -1,12 +1,23 @@
 import React, {useContext} from 'react';
-import Grid from '@material-ui/core/Grid';
+import {Grid, FormControl, FormControlLabel, Checkbox} from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import {SettingsContext} from '../../../contexts/useSettingsContext';
-
+import NumberFormatCustom from '../../Subcomponents/NumberFormatCustom';
+import { withStyles } from '@material-ui/core/styles';
+import { green } from '@material-ui/core/colors';
 //const SelectOptions = ['Upfront Payment','Standard Payment', 'No Cimmission'];
-const cnlArr = ['Airbnb','Booking','Tripadvisor','Agoda','Flipkey','Expedia','HomeAway'];
+const cnlArr = ['Airbnb','Booking','Tripadvisor','Agoda','Flipkey','Expedia','HomeAway', 'Tokeet', 'Webready'];
 
+const GreenCheckbox = withStyles({
+	root: {
+		'&$checked': {
+			color: green[600],
+		},
+		padding: '5px',
+	},
+	checked: {},
+})((props) => <Checkbox color="default" {...props} />);
 
 const Tab4Details = (props) =>{
 
@@ -16,7 +27,7 @@ const Tab4Details = (props) =>{
 	/*let sopts=SelectOptions.map(s=>{
 			return <MenuItem key={s} value={s}>{s}</MenuItem>
 	}); */
-	
+
 	return (
    	<div>
 			<Grid container spacing={3}>
@@ -40,10 +51,22 @@ const Tab4Details = (props) =>{
 						//disabled={(valueSettings.MngCmsn==='No Cimmission') ?
 						//		 true: false}
 						fullWidth
-						InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>}}
+						InputProps={{endAdornment: <InputAdornment position="end">%</InputAdornment>,
+									inputComponent: NumberFormatCustom}}
 						// error={valueSettings.ChnCmsn==='' && redValid ? true: false}
 					  />
-					</Grid>
+				</Grid>
+				<Grid item>
+						<FormControl>
+							<FormControlLabel
+								control={<GreenCheckbox checked={valueSettings.UpFrnt===undefined? true : valueSettings.UpFrnt } />}
+								onChange={props.handleChange}
+								name="UpFrnt"
+								label="Up Front Fee"
+								labelPlacement="end"
+							/>
+						</FormControl>
+				</Grid>
 				{/*<Grid item xs={12} > 
 					 	<FormControl className={classes.formControl}>
 							<InputLabel htmlFor="MngCmsn">Management Commission</InputLabel>

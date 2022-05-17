@@ -55,7 +55,6 @@ const Dashboard = () => {
 	
 	let clnFeeValue = settings.properties.length===0 || settings.properties.length===undefined || propertySlct===null? 0 :
 			settings.properties.filter(x=> x.id===propertySlct)[0]['ClnFee'];
-	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
 
 	const useStyles = makeStyles(theme => ({
 		root: {
@@ -151,9 +150,16 @@ const Dashboard = () => {
 				for(let i=0; i<tmpRcDataDsh.length;i++){
 					
 					const vatProperty = settings.properties.filter(x=> x.id===propertySlct)[0]['VAT']/100;
+					let clnFeeValue1 = tmpRcDataDsh[i].clnFee===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : tmpRcDataDsh[i].clnFee
+					
+					const eliminateVat = tmpRcDataDsh[i].Vat ? (1 + parseFloat(vatProperty)): 1;
+					const isChnBooking = settings.channels.filter(y=> y.id===tmpRcDataDsh[i].RsrvChn)[0]['RsrvChn']==='Booking';
+					const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
+					
+					
 					let val = +tmpRcDataDsh[i].TtlRsrvWthtoutVat + 
-						+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(1 + parseFloat(vatProperty)) +
-						clnFeeValue/(tmpRcDataDsh[i].Vat ? (1 + parseFloat(vatProperty)) : 1)
+						+getFees(tmpRcDataDsh[i], tmpRcDataDsh[i].NetAmnt )/(tmpRcDataDsh[i].Vat ? (1 + parseFloat(vatProperty)/100) : 1) +
+						clnFeeValue1/eliminateVatIfBooking
 						
 					
 							if(dateFormat(tmpRcDataDsh[i].ChckIn,'yyyy')===date.year.toString()){

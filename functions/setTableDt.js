@@ -1,6 +1,6 @@
 import React from 'react';
 
-import {idToItem, Num2, getFees, getTaxes} from './functions.js';
+import {idToItem, Num2, getFees, getTaxes, Num} from './functions.js';
 import Booking from '../logos/chnlsPics/Booking.png';
 import Airbnb from '../logos/chnlsPics/Airbnb.png';
 import Tripadvisor from '../logos/chnlsPics/Tripadvisor.png';
@@ -8,6 +8,7 @@ import Agoda from '../logos/chnlsPics/Agoda.png';
 import Flipkey from '../logos/chnlsPics/Flipkey.png';
 import Expedia from '../logos/chnlsPics/Expedia.png';
 import HomeAway from '../logos/chnlsPics/HomeAway.png';
+import Webready from '../logos/chnlsPics/Webready.png';
 import DefaultChannel from '../logos/chnlsPics/DefaultChannel.png';
 import Tokeet from '../logos/chnlsPics/Tokeet.png';
 import Check from '@material-ui/icons/Check';
@@ -23,6 +24,7 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 				 {brnd: 'Flipkey', img: Flipkey, width: '90px'},
 				 {brnd: 'Expedia', img: Expedia, width: '85px'},
 				 {brnd: 'HomeAway', img: HomeAway, width: '95px'},
+				 {brnd: 'Webready', img: Webready, width: '95px'},
 				 {brnd: 'DefaultChannel', img: DefaultChannel, width: '90px'},
 				 {brnd: 'Tokeet', img: Tokeet, width: '80px'}
 		];
@@ -43,9 +45,6 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 			column.field==='BlncVat' || column.field==='BlncExp'||	column.field==='ExpAmntWthtoutVat'	|| column.field==='IntCshFlBnce') {		
 		tmp = scrSize !== 'xs' ? showCommas(rowData,column, cur ): <> <span className="p-column-title">{column.header}</span>
 		{showCommas(rowData,column, cur )} </>
-	}else if (column.field==='TtlRsrvWthtoutVat') {
-		tmp = scrSize !== 'xs' ? showCommasNfees(rowData,column, cur , settings): <> <span className="p-column-title">{column.header}</span>
-		{showCommasNfees(rowData,column, cur, settings )} </>
 	}else if (column.field==='RsrvChn') {
 		tmp = scrSize !== 'xs' ? brandTemplate(rowData): <> <span className="p-column-title">{column.header}</span>{brandTemplate(rowData)} </>
 	}else if (column.field==='AccDate' || column.field==='From' || column.field==='To') {
@@ -63,19 +62,17 @@ const   logos=  [{brnd: 'Booking', img: Booking, width:'90px'},
 		</span>{showItem(rowData, column, settings.owners)} </>
 	}else if (column.field==='ManagCommission' || column.field==='ChnCmsn' || column.field==='ExtraRevCommission' ) {
 		tmp = scrSize !== 'xs' ? showPrcntg(rowData, column): <> <span className="p-column-title">{column.header}</span>{showPrcntg(rowData, column)} </>
-	}else if (column.field==='inclVat' || column.field==='addVat' || column.field==='admin' || column.field==='write') {
+	}else if (column.field==='inclVat' || column.field==='addVat' || column.field==='admin' || column.field==='write' || column.field==='UpFrnt') {
 		tmp = scrSize !== 'xs' ? showIcons(rowData, column): <> <span className="p-column-title">{column.header}</span>{showIcons(rowData, column)} </>
 	}else if (column.field==='pStatus') {
 		tmp = scrSize !== 'xs' ? setStatIcon(rowData, column): <> <span className="p-column-title">{column.header}</span>{setStatIcon(rowData, column)} </>
 	}else if (column.field==='Fund') {
 		tmp = scrSize !== 'xs' ? showItem(rowData, column, settings.funds): <> <span className="p-column-title">{column.header}
 		</span>{showItem(rowData, column, settings.funds)} </>
-	}else if (column.field==='NetAmnt' || column.field==='Fees' || column.field==='Taxes' || column.field==='VAT' || column.field==='ClnFee') {
+	}else if (column.field==='NetAmnt' || column.field==='Fees' || column.field==='Taxes' || column.field==='VAT' || column.field==='ClnFee'
+			  ||column.field==='TtlAmnt') {
 		tmp = scrSize !== 'xs' ? showCommasNfees1(rowData, column, settings, cur): <> <span className="p-column-title">{column.header}
 		</span>{showCommasNfees1(rowData, column, settings, cur)} </>
-	}else if (column.field==='ClnFee') {
-		tmp = scrSize !== 'xs' ? showCurrency(rowData, column, cur): <> <span className="p-column-title">{column.header}
-		</span>{showCurrency(rowData, column, cur)} </>
 	}else{
 		tmp = scrSize !== 'xs' ? rowData[column.field]: <> <span className="p-column-title">{column.header}</span>{rowData[column.field]} </>
 	}
@@ -102,7 +99,7 @@ const PmntClrStatus = (rowData) =>{
 const showCommas=(rowData, column, cur)=>{
 	return `${cur} ${addCommas(rowData[column.field]) }`;
 }
-
+/*
 const showCommasNfees=(rowData, column, cur, settings)=>{
 	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
 	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
@@ -113,23 +110,32 @@ const showCommasNfees=(rowData, column, cur, settings)=>{
 	let tmp = rowData[column.field] + +getFees(rowData, tmpAmnt )/eliminateVat + +clnFeeValue/eliminateVat ;
 	
 	return `${cur} ${addCommas(tmp) }`;
-}
+}*/
 
 const showCommasNfees1=(rowData, column, settings, cur )=>{
 	const tmpAmnt = rowData.pStatus!=='Cancelled' ? +rowData.NetAmnt : +rowData.CnclFee;
 	const vat = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['VAT'];
 	const eliminateVat = rowData.Vat ? (1 + parseFloat(vat)/100): 1;
 	let clnFeeValue = settings.properties.filter(x=> x.id===rowData.PrpName)[0]['ClnFee'];
-	clnFeeValue = clnFeeValue*1>0 ? clnFeeValue*1 : 0;
+	clnFeeValue = rowData.clnFeeData===undefined ? (clnFeeValue*1>0 ? clnFeeValue*1 : 0) : rowData.clnFeeData.clnFee
+
+	const isChnBooking = rowData.RsrvChn==='Booking';
+	const eliminateVatIfBooking = isChnBooking ? 1: eliminateVat;
+	
 	const VatCalc = rowData.Vat ? parseFloat(vat)/100: 0;
 	
-	let vatAmount =(rowData.TtlRsrvWthtoutVat + +getFees(rowData, rowData.NetAmnt )/eliminateVat + 
-										 +clnFeeValue/eliminateVat)*VatCalc;
+	let TtlAmnt = +Num2(+Num(+rowData.TtlRsrvWthtoutVat) + +Num(+getFees(rowData, rowData.NetAmnt )/eliminateVat) + 
+										 +Num(+clnFeeValue/eliminateVatIfBooking));
 	
+	let vatAmount =(rowData.TtlRsrvWthtoutVat + +getFees(rowData, rowData.NetAmnt )/eliminateVat + 
+										 +(isChnBooking ? 0 : clnFeeValue/eliminateVat))*VatCalc;
+
 	const tmp = column.field==='NetAmnt' ? rowData.TtlRsrvWthtoutVat :
+								column.field==='TtlAmnt' ? TtlAmnt:
+								column.field==='TtlAmnt' ? vatAmount:
 								column.field==='Fees' ? +getFees(rowData, tmpAmnt )/eliminateVat :
 								column.field==='Taxes' ? +getTaxes(rowData, tmpAmnt, eliminateVat ):
-								column.field==='ClnFee' ? clnFeeValue/eliminateVat :
+								column.field==='ClnFee' ? clnFeeValue/eliminateVatIfBooking :
 								vatAmount;
 	
 	return `${cur} ${addCommas(tmp) }`;
@@ -185,10 +191,6 @@ const showPrcntg = (rowData, column)=>{
 	return (rowData[column.field]==='' || rowData[column.field]===undefined) ? '-' : `${rowData[column.field]}%`;
 }
 
-const showCurrency = (rowData, column, cur)=>{
-	return (rowData[column.field]==='' || rowData[column.field]===undefined) ? '-' : `${cur} ${addCommas(rowData[column.field]) }`;
-}
-
 const setStatIcon= (rowData, column)=>{
 	
 	const confirmed = '#65E188';
@@ -202,8 +204,8 @@ const setStatIcon= (rowData, column)=>{
 }
 
 const showIcons = (rowData, column)=>{
-	
-	let icon = (rowData[column.field])==="Yes" || rowData[column.field]=== true ? <Check style={{color: '#43a047'}} /> :
+	let icon = (rowData[column.field])==="Yes" || rowData[column.field]=== true  ||
+			(column.field==='UpFrnt' && (rowData[column.field]===undefined || rowData[column.field]===true))? <Check style={{color: '#43a047'}} /> :
 		<Close style={{color: '#dc1b4e'}} />
 	return icon;
 }

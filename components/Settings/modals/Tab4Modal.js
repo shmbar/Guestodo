@@ -13,6 +13,7 @@ import {SettingsContext} from '../../../contexts/useSettingsContext';
 import {addDataSettings} from '../../../functions/functions.js';
 import {AuthContext} from '../../../contexts/useAuthContext';
 
+
 const styles = theme => ({
   root: {
     margin: 0,
@@ -53,9 +54,9 @@ const DialogActions = withStyles(theme => ({
   },
 }))(MuiDialogActions);
 
-const cmsnNum = (n)=>{ //Clean commas and validate numbers
+/*const cmsnNum = (n)=>{ //Clean commas and validate numbers
 		return (/^\d+$/.test( n ) && n.length<=3) ? n :  n.substring(0, n.length - 1);
-	} ;
+	} ; */
 
 const Tab4Modal = (props) =>{
 
@@ -68,10 +69,13 @@ const Tab4Modal = (props) =>{
 		setDisplayDialogSettings(false);	
 	}
 	
-	const handleChange = e => {
-	
-		 let tmp= (e.target.name=== 'ChnCmsn') ? cmsnNum(e.target.value):e.target.value;
-		 
+	const handleChange = (e) => {
+
+		 let tmp= (e.target.nam === 'ChnCmsn') ? (e.target.value):
+		          (e.target.name === 'UpFrnt') ? (e.target.checked ? true: false) :
+		 		  e.target.value;
+			 
+		
 		// let CmsnOptChange = (e.target.name==='MngCmsn' && (e.target.value==='No Cimmission'))?true:false;
 		 
 		selectValueSettings({...valueSettings, [e.target.name]:tmp });
